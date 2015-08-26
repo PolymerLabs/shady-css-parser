@@ -1,0 +1,29 @@
+<script>
+function ShadeyCssCommon() {
+  'use strict';
+
+  var matcher = {
+    whitespace: /\s/,
+    commentOpen: /^\/\*/,
+    commentClose: /\*\/$/,
+    boundary: /[\(\)\{\}\[\]'"@;:\s\.+>~\^]|\/\*/,
+    blockBoundary: /[;\{\}]/,
+    propertyBoundary: /^[;:]/,
+    propertyDelimiter: /^[;\}]/,
+    quotation: /['"]/
+  };
+
+  var tokenType = {
+    none: 0,
+    whitespace: 1,
+    boundary: 2,
+    string: 3,
+    word: 4
+  };
+
+  return {
+    matcher: matcher,
+    tokenType: tokenType
+  };
+}
+</script>
