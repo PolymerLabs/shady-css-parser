@@ -1,1 +1,1 @@
-Shadey CSS Parser
+Shady CSS Parser

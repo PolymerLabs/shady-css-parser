@@ -1,0 +1,28 @@
+{
+  "name": "shady-css-parser",
+  "version": "0.0.1",
+  "description": "Shady CSS Parser",
+  "main": "index.js",
+  "dependencies": {
+    "babel": "^5.8.21"
+  },
+  "devDependencies": {
+    "del": "^1.2.1",
+    "gulp": "^3.9.0",
+    "gulp-babel": "^5.2.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-watch": "^4.3.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PolymerLabs/shady-css-parser.git"
+  },
+  "author": [
+    "The Polymer Authors"
+  ],
+  "license": "http://polymer.github.io/LICENSE.txt",
+  "bugs": {
+    "url": "https://github.com/PolymerLabs/shady-css-parser/issues"
+  },
+  "homepage": "https://github.com/PolymerLabs/shady-css-parser#readme"
+}
