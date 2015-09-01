@@ -1,20 +1,63 @@
 'use strict';
-
 var gulp = require('gulp');
 var babel = require('gulp-babel');
 var concat = require('gulp-concat');
+var uglify = require('gulp-uglify');
+var size = require('gulp-size');
+var rename = require('gulp-rename');
+var mocha = require('gulp-mocha');
 var del = require('del');
 
-var src = ['src/shady-css-parser/*.js', 'src/*.js'];
+require('babel-core/register');
+
+var src = [
+  'src/shady-css/common.js',
+  'src/shady-css/node-factory.js',
+  'src/shady-css/lexer.js',
+  'src/shady-css/token-cursor.js',
+  'src/shady-css/parser.js',
+  'src/*.js'
+];
 var dest = 'dist/';
 
-gulp.task('default', ['clean'], function() {
+gulp.task('default', ['clean', 'test', 'build']);
+
+gulp.task('build', function() {
   return gulp.src(src)
     .pipe(babel({
-      modules: 'umd'
+      modules: 'umd',
+      loose: true,
+      blacklist: ['regenerator', 'es6.forOf']
     }))
-    .pipe(concat('shady-css-parser.js'))
+    .pipe(concat('shady-css.js'))
     .pipe(gulp.dest(dest));
+});
+
+gulp.task('minify', ['default'], function() {
+  return gulp.src('dist/shady-css.js')
+    .pipe(uglify())
+    .on('error', function(error) {
+      console.error(error);
+    })
+    .pipe(rename('shady-css.min.js'))
+    .pipe(gulp.dest(dest));
+});
+
+gulp.task('measure', ['minify'], function() {
+  return gulp.src('dist/*.js')
+    .pipe(size({
+      showFiles: true
+    }))
+    .pipe(size({
+      showFiles: true,
+      gzip: true
+    }));
+});
+
+gulp.task('test', function() {
+  return gulp.src('test/*.js', {
+    read: false
+  }).pipe(mocha());
 });
 
 gulp.task('clean', function(done) {
@@ -22,5 +65,5 @@ gulp.task('clean', function(done) {
 });
 
 gulp.task('watch', function(done) {
-  gulp.watch(src, ['default']);
+  gulp.watch(src, ['default', 'minify', 'measure']);
 });
