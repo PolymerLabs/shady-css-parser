@@ -25,8 +25,8 @@ class NodeFactory {
     return { type: nodeType.value, text };
   }
 
-  parserError(index, ...artifacts) {
-    return { type: nodeType.parserError, index, artifacts };
+  discarded(text) {
+    return { type: nodeType.discarded, text };
   }
 
   stylesheet(declaractions) {

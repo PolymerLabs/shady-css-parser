@@ -64,7 +64,7 @@ describe('parser', () => {
       ]))
     });
 
-    it('can parsed minifie rulesets', () => {
+    it('can parse minified rulesets', () => {
       expect(parser.parse(fixtures.minifiedRuleset))
           .to.be.eql(nodeFactory.stylesheet([
         nodeFactory.selector('.foo', nodeFactory.block([
@@ -91,6 +91,20 @@ describe('parser', () => {
         nodeFactory.selector('.foo', nodeFactory.block([
           nodeFactory.property('bar', nodeFactory.propertyValue('url(qux;gib)'))
         ]))
+      ]));
+    });
+
+    it('can parse pathological comments', () => {
+      expect(parser.parse(fixtures.pathologicalComments))
+          .to.be.eql(nodeFactory.stylesheet([
+        nodeFactory.selector('.foo', nodeFactory.block([
+          nodeFactory.property('bar', nodeFactory.propertyValue('/*baz*/vim'))
+        ])),
+        nodeFactory.comment('/* unclosed\n@fiz {\n  --huk: {\n    /* buz */'),
+        nodeFactory.property('baz', nodeFactory.propertyValue('lur')),
+        nodeFactory.discarded('};'),
+        nodeFactory.discarded('}\n'),
+        nodeFactory.atRule('gak', 'wiz')
       ]));
     });
   });

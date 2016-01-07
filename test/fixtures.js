@@ -44,6 +44,19 @@ let psuedoRuleset = '.foo:bar:not(#rif){baz:qux}';
 
 let dataUriRuleset = '.foo{bar:url(qux;gib)}';
 
+let pathologicalComments = `
+.foo {
+  bar: /*baz*/vim;
+}
+/* unclosed
+@fiz {
+  --huk: {
+    /* buz */
+    baz: lur;
+  };
+}
+@gak wiz;`;
+
 export {
   basicSelector,
   atRules,
@@ -51,5 +64,6 @@ export {
   customProperties,
   minifiedRuleset,
   psuedoRuleset,
-  dataUriRuleset
+  dataUriRuleset,
+  pathologicalComments
 };

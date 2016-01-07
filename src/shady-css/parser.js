@@ -39,9 +39,12 @@ class Parser {
         return this.parseAtRule(tokenCursor);
       }
 
-      // Everything else is assumed to be a Rule (a Property or a Selector):
-      if (tokenCursor.next.type === tokenType.word ||
-          tokenCursor.next.type === tokenType.boundary) {
+      // Everything else is assumed to be a Rule (a Property or a Selector).
+      // Make sure we didn't land on an untaken delimiter or an unbalanced
+      // brace.
+      if (!matcher.propertyDelimiter.test(tokenCursor.next.text) &&
+          (tokenCursor.next.type === tokenType.word ||
+           tokenCursor.next.type === tokenType.boundary)) {
         return this.parseRule(tokenCursor);
       }
 
@@ -57,10 +60,6 @@ class Parser {
   parseComment(tokenCursor) {
     let comment = '';
 
-    if (matcher.commentOpen.test(tokenCursor.next.type)) {
-      return this.nodeFactory.parserError(tokenCursor.index);
-    }
-
     while (tokenCursor.next) {
       let token = tokenCursor.takeOne();
       comment += token.text;
@@ -74,17 +73,21 @@ class Parser {
   }
 
   parseUnknown(tokenCursor) {
-    let tokens = [];
+    let unknown = '';
 
     while (tokenCursor.next) {
       let token = tokenCursor.takeOne();
+
+      unknown += token.text;
 
       if (token && token.type === tokenType.boundary) {
         break;
       }
     }
 
-    return this.nodeFactory.parserError(tokenCursor.index, tokens);
+    unknown += this.traverseDelimiter(tokenCursor);
+
+    return this.nodeFactory.discarded(unknown);
   }
 
   parseAtRule(tokenCursor) {

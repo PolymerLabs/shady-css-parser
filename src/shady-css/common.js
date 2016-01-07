@@ -32,7 +32,7 @@ let nodeType = {
   value: 5,
   property: 6,
   block: 7,
-  parserError: 8
+  discarded: 8
 };
 
 export { matcher, tokenType, nodeType };
