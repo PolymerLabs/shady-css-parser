@@ -20,9 +20,9 @@ var src = [
 ];
 var dest = 'dist/';
 
-gulp.task('default', ['clean', 'test', 'build']);
+gulp.task('default', ['clean', 'test', 'build', 'minify', 'measure']);
 
-gulp.task('build', function() {
+gulp.task('build', ['test'], function() {
   return gulp.src(src)
     .pipe(babel({
       modules: 'umd',
@@ -33,7 +33,7 @@ gulp.task('build', function() {
     .pipe(gulp.dest(dest));
 });
 
-gulp.task('minify', ['default'], function() {
+gulp.task('minify', ['build'], function() {
   return gulp.src('dist/shady-css.js')
     .pipe(uglify())
     .on('error', function(error) {
@@ -60,8 +60,8 @@ gulp.task('test', function() {
   }).pipe(mocha());
 });
 
-gulp.task('clean', function(done) {
-  del([dest], done);
+gulp.task('clean', function() {
+  del.sync([dest]);
 });
 
 gulp.task('watch', function(done) {
