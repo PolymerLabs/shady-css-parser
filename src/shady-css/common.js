@@ -1,4 +1,10 @@
-let matcher = {
+/**
+ * A set of common RegExp matchers for tokenizing CSS.
+ * @constant
+ * @type {object}
+ * @default
+ */
+const matcher = {
   whitespace: /\s/,
   whitespaceGreedy: /(\s+)/g,
   commentOpen: /^\/\*/,
@@ -14,7 +20,13 @@ let matcher = {
   stringBoundary: /['"]/
 };
 
-let tokenType = {
+/**
+ * An enumeration of Token types.
+ * @constant
+ * @type {object}
+ * @default
+ */
+const tokenType = {
   none: 0,
   whitespace: 1,
   boundary: 2,
@@ -23,7 +35,13 @@ let tokenType = {
   word: 5
 };
 
-let nodeType = {
+/**
+ * An enumeration of Node types.
+ * @constant
+ * @type {object}
+ * @default
+ */
+const nodeType = {
   unknown: 0,
   stylesheet: 1,
   comment: 2,
