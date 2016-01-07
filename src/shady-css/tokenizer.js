@@ -1,6 +1,6 @@
 import { matcher, tokenType } from './common';
 
-class Lexer {
+class Tokenizer {
   constructor(cssText) {
     this.cssText = cssText;
     this.offset = 0;
@@ -138,4 +138,4 @@ class Lexer {
   }
 }
 
-export { Lexer };
+export { Tokenizer };

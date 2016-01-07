@@ -3,10 +3,8 @@
   "version": "0.0.1",
   "description": "Shady CSS Parser",
   "main": "index.js",
-  "dependencies": {
-    "babel": "^5.8.21"
-  },
   "devDependencies": {
+    "babel": "^6.0.0",
     "babel-runtime": "^6.3.19",
     "chai": "^3.4.0",
     "del": "^1.2.1",

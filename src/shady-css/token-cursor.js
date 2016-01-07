@@ -1,24 +1,24 @@
 const index = Symbol('index');
-const lexer = Symbol('lexer');
+const tokenizer = Symbol('tokenizer');
 const nextToken = Symbol('nextToken');
 
 /**
- * Class that implements peek and take behavior on top of a given Lexer
+ * Class that implements peek and take behavior on top of a given Tokenizer
  * instance.
  */
 class TokenCursor {
   /**
    * Create a TokenCursor.
-   * @param {Lexer} _lexer A Lexer instance for the TokenCursor to operate on.
+   * @param {Tokenizer} _tokenizer A Tokenizer instance for the TokenCursor to operate on.
    */
-  constructor(_lexer) {
+  constructor(_tokenizer) {
     this[index] = 0;
-    this[lexer] = _lexer;
+    this[tokenizer] = _tokenizer;
     this[nextToken] = null;
   }
 
   /**
-   * Get the index of the next token that will be taken from the Lexer.
+   * Get the index of the next token that will be taken from the Tokenizer.
    * @return {number} The index of the next token.
    */
   get index() {
@@ -26,20 +26,20 @@ class TokenCursor {
   }
 
   /**
-   * Peek at the next token that will be taken from the Lexer.
-   * @return {object} The next token that will be taken from the Lexer.
+   * Peek at the next token that will be taken from the Tokenizer.
+   * @return {object} The next token that will be taken from the Tokenizer.
    */
   get next() {
     if (this[nextToken] == null) {
-      this[nextToken] = this[lexer].nextToken();
+      this[nextToken] = this[tokenizer].nextToken();
     }
 
     return this[nextToken];
   }
 
   /**
-   * Take the next token from the Lexer.
-   * @return {object} The next token from the Lexer.
+   * Take the next token from the Tokenizer.
+   * @return {object} The next token from the Tokenizer.
    */
   takeOne() {
     let takenToken = this.next;

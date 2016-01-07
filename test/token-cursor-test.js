@@ -2,7 +2,7 @@ let expect = require('chai').expect;
 let helpers = require('./helpers');
 let fixtures = require('./fixtures');
 let TokenCursor = require('../src/shady-css/token-cursor').TokenCursor;
-let Lexer = require('../src/shady-css/lexer').Lexer;
+let Tokenizer = require('../src/shady-css/tokenizer').Tokenizer;
 let common = require('../src/shady-css/common');
 let tokenType = common.tokenType;
 
@@ -11,7 +11,7 @@ describe('TokenCursor', () => {
     let tokenCursor;
 
     beforeEach(() => {
-      tokenCursor = new TokenCursor(new Lexer(fixtures.basicSelector));
+      tokenCursor = new TokenCursor(new Tokenizer(fixtures.basicSelector));
     });
 
     it('tracks the token index', () => {
