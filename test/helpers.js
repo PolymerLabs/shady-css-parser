@@ -12,7 +12,6 @@ function expectTokenTypeOrder(lexer, types) {
 
   while (token = lexer.nextToken()) {
     lexedTypes.push(token.type);
-    expect(token.type).to.be.equal(_types.shift());
   }
 
   expect(lexedTypes).to.be.eql(types);

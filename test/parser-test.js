@@ -6,7 +6,7 @@ import { nodeType } from '../src/shady-css/common';
 
 const nodeFactory = new DebugNodeFactory();
 
-describe('parser', () => {
+describe('Parser', () => {
   let parser;
 
   beforeEach(() => {
@@ -17,36 +17,36 @@ describe('parser', () => {
     it('can parse a basic selector', () => {
       expect(parser.parse(fixtures.basicSelector))
           .to.be.eql(nodeFactory.stylesheet([
-        nodeFactory.selector('body', nodeFactory.block([
-          nodeFactory.property('margin', nodeFactory.propertyValue('0')),
-          nodeFactory.property('padding', nodeFactory.propertyValue('0px'))
+        nodeFactory.selector('body', nodeFactory.ruleset([
+          nodeFactory.declaration('margin', nodeFactory.expression('0')),
+          nodeFactory.declaration('padding', nodeFactory.expression('0px'))
         ]))
       ]));
     });
 
     it('can parse at rules', () => {
       expect(parser.parse(fixtures.atRules)).to.be.eql(nodeFactory.stylesheet([
-        nodeFactory.atRule('import', 'url(\'foo.css\')'),
-        nodeFactory.atRule('font-face', '', nodeFactory.block([
-          nodeFactory.property(
+        nodeFactory.atRule('import', 'url(\'foo.css\')', null),
+        nodeFactory.atRule('font-face', '', nodeFactory.ruleset([
+          nodeFactory.declaration(
             'font-family',
-            nodeFactory.propertyValue('foo')
+            nodeFactory.expression('foo')
           )
         ])),
-        nodeFactory.atRule('charset', '\'foo\'')
+        nodeFactory.atRule('charset', '\'foo\'', null)
       ]));
     });
 
     it('can parse keyframes', () => {
       expect(parser.parse(fixtures.keyframes))
           .to.be.eql(nodeFactory.stylesheet([
-        nodeFactory.atRule('keyframes', 'foo', nodeFactory.block([
-          nodeFactory.selector('from', nodeFactory.block([
-            nodeFactory.property('fiz', nodeFactory.propertyValue('0%'))
+        nodeFactory.atRule('keyframes', 'foo', nodeFactory.ruleset([
+          nodeFactory.selector('from', nodeFactory.ruleset([
+            nodeFactory.declaration('fiz', nodeFactory.expression('0%'))
           ])),
-          nodeFactory.selector('99.9%', nodeFactory.block([
-            nodeFactory.property('fiz', nodeFactory.propertyValue('100px')),
-            nodeFactory.property('buz', nodeFactory.propertyValue('true'))
+          nodeFactory.selector('99.9%', nodeFactory.ruleset([
+            nodeFactory.declaration('fiz', nodeFactory.expression('100px')),
+            nodeFactory.declaration('buz', nodeFactory.expression('true'))
           ]))
         ]))
       ]));
@@ -55,10 +55,10 @@ describe('parser', () => {
     it('can parse custom properties', () => {
       expect(parser.parse(fixtures.customProperties))
           .to.be.eql(nodeFactory.stylesheet([
-        nodeFactory.selector(':root', nodeFactory.block([
-          nodeFactory.property('--qux', nodeFactory.propertyValue('vim')),
-          nodeFactory.property('--foo', nodeFactory.block([
-             nodeFactory.property('bar', nodeFactory.propertyValue('baz'))
+        nodeFactory.selector(':root', nodeFactory.ruleset([
+          nodeFactory.declaration('--qux', nodeFactory.expression('vim')),
+          nodeFactory.declaration('--foo', nodeFactory.ruleset([
+             nodeFactory.declaration('bar', nodeFactory.expression('baz'))
           ]))
         ]))
       ]))
@@ -67,11 +67,11 @@ describe('parser', () => {
     it('can parse minified rulesets', () => {
       expect(parser.parse(fixtures.minifiedRuleset))
           .to.be.eql(nodeFactory.stylesheet([
-        nodeFactory.selector('.foo', nodeFactory.block([
-          nodeFactory.property('bar', nodeFactory.propertyValue('baz'))
+        nodeFactory.selector('.foo', nodeFactory.ruleset([
+          nodeFactory.declaration('bar', nodeFactory.expression('baz'))
         ])),
-        nodeFactory.selector('div .qux', nodeFactory.block([
-          nodeFactory.property('vim', nodeFactory.propertyValue('fet'))
+        nodeFactory.selector('div .qux', nodeFactory.ruleset([
+          nodeFactory.declaration('vim', nodeFactory.expression('fet'))
         ]))
       ]));
     });
@@ -79,8 +79,8 @@ describe('parser', () => {
     it('can parse psuedo selectors', () => {
       expect(parser.parse(fixtures.psuedoRuleset))
           .to.be.eql(nodeFactory.stylesheet([
-        nodeFactory.selector('.foo:bar:not(#rif)', nodeFactory.block([
-          nodeFactory.property('baz', nodeFactory.propertyValue('qux'))
+        nodeFactory.selector('.foo:bar:not(#rif)', nodeFactory.ruleset([
+          nodeFactory.declaration('baz', nodeFactory.expression('qux'))
         ]))
       ]));
     });
@@ -88,8 +88,8 @@ describe('parser', () => {
     it('can parse rulesets with data URIs', () => {
       expect(parser.parse(fixtures.dataUriRuleset))
           .to.be.eql(nodeFactory.stylesheet([
-        nodeFactory.selector('.foo', nodeFactory.block([
-          nodeFactory.property('bar', nodeFactory.propertyValue('url(qux;gib)'))
+        nodeFactory.selector('.foo', nodeFactory.ruleset([
+          nodeFactory.declaration('bar', nodeFactory.expression('url(qux;gib)'))
         ]))
       ]));
     });
@@ -97,14 +97,14 @@ describe('parser', () => {
     it('can parse pathological comments', () => {
       expect(parser.parse(fixtures.pathologicalComments))
           .to.be.eql(nodeFactory.stylesheet([
-        nodeFactory.selector('.foo', nodeFactory.block([
-          nodeFactory.property('bar', nodeFactory.propertyValue('/*baz*/vim'))
+        nodeFactory.selector('.foo', nodeFactory.ruleset([
+          nodeFactory.declaration('bar', nodeFactory.expression('/*baz*/vim'))
         ])),
         nodeFactory.comment('/* unclosed\n@fiz {\n  --huk: {\n    /* buz */'),
-        nodeFactory.property('baz', nodeFactory.propertyValue('lur')),
-        nodeFactory.discarded('};'),
+        nodeFactory.declaration('baz', nodeFactory.expression('lur')),
+        nodeFactory.discarded('};\n'),
         nodeFactory.discarded('}\n'),
-        nodeFactory.atRule('gak', 'wiz')
+        nodeFactory.atRule('gak', 'wiz', null)
       ]));
     });
   });

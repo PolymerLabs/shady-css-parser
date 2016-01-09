@@ -1,5 +1,5 @@
-export { Lexer } from './shady-css/lexer';
-export { Parser } from './shady-css/parser';
-export { TokenCursor } from './shady-css/token-cursor';
+export { Token } from './shady-css/token';
+export { nodeType } from './shady-css/common';
+export { Tokenizer } from './shady-css/tokenizer';
 export { NodeFactory } from './shady-css/node-factory';
-export { nodeType, tokenType } from './shady-css/common';
+export { Parser } from './shady-css/parser';

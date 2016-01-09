@@ -8,23 +8,23 @@ import { nodeType } from './common';
 class NodeFactory {
   /**
    * Creates a Stylesheet node.
-   * @param {array} declarations The list of declarations that appear at the top
+   * @param {array} rules The list of rules that appear at the top
    * level of the stylesheet.
    * @return {object} A Stylesheet node.
    */
-  stylesheet(declarations) {
-    return { type: nodeType.stylesheet, declarations };
+  stylesheet(rules) {
+    return { type: nodeType.stylesheet, rules };
   }
 
   /**
    * Creates an At Rule node.
    * @param {string} name The "name" of the At Rule (e.g., `charset`)
    * @param {string} parameters The "parameters" of the At Rule (e.g., `utf8`)
-   * @param {object=} block The Block node (if any) of the At Rule.
+   * @param {object=} ruleset The Ruleset node (if any) of the At Rule.
    * @return {object} An At Rule node.
    */
-  atRule(name, parameters, block) {
-    return { type: nodeType.atRule, name, parameters, block };
+  atRule(name, parameters, ruleset) {
+    return { type: nodeType.atRule, name, parameters, ruleset };
   }
 
   /**
@@ -38,45 +38,44 @@ class NodeFactory {
   }
 
   /**
-   * Creates a Block node.
-   * @param {array} declarations An array of the Declarations found withoin the
-   * Block.
-   * @return {object} A Block node.
+   * Creates a Ruleset node.
+   * @param {array} rules An array of the Rule nodes found within the Ruleset.
+   * @return {object} A Ruleset node.
    */
-  block(declarations) {
-    return { type: nodeType.block, declarations };
+  ruleset(rules) {
+    return { type: nodeType.ruleset, rules };
   }
 
   /**
    * Creates a Selector node.
    * @param {string} combinator The combinator that corresponds to the Selector
    * (e.g., `#foo > .bar`).
-   * @param {object} block The Block node that corresponds to the Selector.
+   * @param {object} ruleset The Ruleset node that corresponds to the Selector.
    * @return {object} A Selector node.
    */
-  selector(combinator, block) {
-    return { type: nodeType.selector, combinator, block };
+  selector(combinator, ruleset) {
+    return { type: nodeType.selector, combinator, ruleset };
   }
 
   /**
-   * Creates a Property node.
-   * @param {string} name The name of the Property (e.g., `color`).
-   * @param {object} value Either a Property Value node, or a Block node, that
-   * corresponds to the value of the property.
-   * @return {object} A Property node.
+   * Creates a Declaration node.
+   * @param {string} name The property name of the Declaration (e.g., `color`).
+   * @param {object} value Either an Expression node, or a Ruleset node, that
+   * corresponds to the value of the Declaration.
+   * @return {object} A Declaration node.
    */
-  property(name, value) {
-    return { type: nodeType.property, name, value };
+  declaration(name, value) {
+    return { type: nodeType.declaration, name, value };
   }
 
   /**
-   * Creates a Property Value node.
-   * @param {string} text The full text content of the property value (e.g.,
+   * Creates an Expression node.
+   * @param {string} text The full text content of the expression (e.g.,
    * `url(img.jpg)`)
-   * @return {object} A Property Value node.
+   * @return {object} An Expression node.
    */
-  propertyValue(text) {
-    return { type: nodeType.value, text };
+  expression(text) {
+    return { type: nodeType.expression, text };
   }
 
   /**

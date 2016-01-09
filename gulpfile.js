@@ -13,8 +13,8 @@ require('babel-core/register');
 var src = [
   'src/shady-css/common.js',
   'src/shady-css/node-factory.js',
+  'src/shady-css/token.js',
   'src/shady-css/tokenizer.js',
-  'src/shady-css/token-cursor.js',
   'src/shady-css/parser.js',
   'src/*.js'
 ];
