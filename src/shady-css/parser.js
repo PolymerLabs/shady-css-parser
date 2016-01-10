@@ -3,7 +3,7 @@ import { Token } from './token';
 import { NodeFactory } from './node-factory';
 
 /**
- * Class that implements a CSS parser.
+ * Class that implements a shady CSS parser.
  */
 class Parser {
   /**
@@ -35,11 +35,11 @@ class Parser {
   }
 
   /**
-   * Consumes tokens from a Tokenizer to parse rules.
+   * Consumes tokens from a Tokenizer to parse a sequence of rules.
    * @param {Tokenizer} tokenizer A Tokenizer instance.
-   * @return {array} A list of nodes corresponding to rules. Any of Comment,
-   * AtRule, Selector, Declaration and Discarded nodes may be present in the
-   * list.
+   * @return {array} A list of nodes corresponding to rules. For a parser
+   * configured with a basic NodeFactory, any of Comment, AtRule, Selector,
+   * Declaration and Discarded nodes may be present in the list.
    */
   parseRules(tokenizer) {
     let rules = [];
@@ -55,6 +55,12 @@ class Parser {
     return rules;
   }
 
+  /**
+   * Consumes tokens from a Tokenizer to parse a single rule.
+   * @param {Tokenizer} tokenizer A Tokenizer instance.
+   * @return {object} If the current token in the Tokenizer is whitespace,
+   * returns null. Otherwise, returns the next parseable node.
+   */
   parseRule(tokenizer) {
     // Trim leading whitespace:
     if (tokenizer.currentToken.is(Token.type.whitespace)) {
@@ -156,9 +162,9 @@ class Parser {
   }
 
   /**
-   * Consumes tokens from a Tokenizer to produce a Block node.
+   * Consumes tokens from a Tokenizer to produce a Ruleset node.
    * @param {Tokenizer} tokenizer A Tokenizer instance.
-   * @return {object} A Block node.
+   * @return {object} A Ruleset node.
    */
   parseRuleset(tokenizer) {
     let rules = [];
@@ -182,10 +188,10 @@ class Parser {
   }
 
   /**
-   * Consumes tokens from a Tokenizer instance to produce a Property node or
+   * Consumes tokens from a Tokenizer instance to produce a Declaration node or
    * a Selector node, as appropriate.
    * @param {Tokenizer} tokenizer A Tokenizer node.
-   * @return {object} One of a Property or Selector node.
+   * @return {object} One of a Declaration or Selector node.
    */
   parseDeclarationOrSelector(tokenizer) {
     let rule = '';

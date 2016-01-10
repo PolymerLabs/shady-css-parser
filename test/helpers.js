@@ -10,7 +10,7 @@ function expectTokenTypeOrder(lexer, types) {
   let _types = types.slice();
   let token;
 
-  while (token = lexer.nextToken()) {
+  while (token = lexer.advance()) {
     lexedTypes.push(token.type);
   }
 
