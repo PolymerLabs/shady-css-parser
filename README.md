@@ -16,6 +16,17 @@ Designer.
  -  Graceful error recovery. Malformed CSS will be parsed by this
 parser as closely as possible to the way a browser would parse it.
 
+### Building
+
+Run the following commands from the project root:
+
+```sh
+npm install
+gulp
+```
+
+This will create a `dist` directory containing distributable artifacts.
+
 ### Usage
 
 #### Basic parsing
