@@ -73,7 +73,7 @@ class Tokenizer {
    */
   slice(startToken, endToken) {
     endToken = endToken || startToken;
-    return this.cssText.substring(startToken.start, endToken.offset);
+    return this.cssText.substring(startToken.start, endToken.end);
   }
 
   /**
@@ -113,7 +113,7 @@ class Tokenizer {
       token = this.tokenizeWord(this.offset);
     }
 
-    this.offset = token.offset;
+    this.offset = token.end;
 
     return token;
   }

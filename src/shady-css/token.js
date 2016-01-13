@@ -17,13 +17,13 @@ class Token {
    * @param {number} type The lexical type of the Token.
    * @param {number} start The start index of the text corresponding to the
    * Token in the CSS text.
-   * @param {number} offset The end index of the text corresponding to the Token
+   * @param {number} end The end index of the text corresponding to the Token
    * in the CSS text.
    */
-  constructor(type, start, offset) {
+  constructor(type, start, end) {
     this.type = type;
     this.start = start;
-    this.offset = offset;
+    this.end = end;
   }
 
   /**
