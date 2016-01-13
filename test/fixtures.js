@@ -9,7 +9,7 @@
  */
 
 // CSS test fixtures:
-let basicSelector = `
+let basicRuleset = `
 body {
   margin: 0;
   padding: 0px
@@ -68,7 +68,7 @@ let pathologicalComments = `
 @gak wiz;`;
 
 export {
-  basicSelector,
+  basicRuleset,
   atRules,
   keyframes,
   customProperties,

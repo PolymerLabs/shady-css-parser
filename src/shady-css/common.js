@@ -32,10 +32,10 @@ const nodeType = {
   stylesheet: 1,
   comment: 2,
   atRule: 3,
-  selector: 4,
+  ruleset: 4,
   expression: 5,
   declaration: 6,
-  ruleset: 7,
+  rulelist: 7,
   discarded: 8
 };
 

@@ -24,10 +24,10 @@ describe('Parser', () => {
   });
 
   describe('when parsing css', () => {
-    it('can parse a basic selector', () => {
-      expect(parser.parse(fixtures.basicSelector))
+    it('can parse a basic ruleset', () => {
+      expect(parser.parse(fixtures.basicRuleset))
           .to.be.eql(nodeFactory.stylesheet([
-        nodeFactory.selector('body', nodeFactory.ruleset([
+        nodeFactory.ruleset('body', nodeFactory.rulelist([
           nodeFactory.declaration('margin', nodeFactory.expression('0')),
           nodeFactory.declaration('padding', nodeFactory.expression('0px'))
         ]))
@@ -37,7 +37,7 @@ describe('Parser', () => {
     it('can parse at rules', () => {
       expect(parser.parse(fixtures.atRules)).to.be.eql(nodeFactory.stylesheet([
         nodeFactory.atRule('import', 'url(\'foo.css\')', null),
-        nodeFactory.atRule('font-face', '', nodeFactory.ruleset([
+        nodeFactory.atRule('font-face', '', nodeFactory.rulelist([
           nodeFactory.declaration(
             'font-family',
             nodeFactory.expression('foo')
@@ -50,11 +50,11 @@ describe('Parser', () => {
     it('can parse keyframes', () => {
       expect(parser.parse(fixtures.keyframes))
           .to.be.eql(nodeFactory.stylesheet([
-        nodeFactory.atRule('keyframes', 'foo', nodeFactory.ruleset([
-          nodeFactory.selector('from', nodeFactory.ruleset([
+        nodeFactory.atRule('keyframes', 'foo', nodeFactory.rulelist([
+          nodeFactory.ruleset('from', nodeFactory.rulelist([
             nodeFactory.declaration('fiz', nodeFactory.expression('0%'))
           ])),
-          nodeFactory.selector('99.9%', nodeFactory.ruleset([
+          nodeFactory.ruleset('99.9%', nodeFactory.rulelist([
             nodeFactory.declaration('fiz', nodeFactory.expression('100px')),
             nodeFactory.declaration('buz', nodeFactory.expression('true'))
           ]))
@@ -65,40 +65,40 @@ describe('Parser', () => {
     it('can parse custom properties', () => {
       expect(parser.parse(fixtures.customProperties))
           .to.be.eql(nodeFactory.stylesheet([
-        nodeFactory.selector(':root', nodeFactory.ruleset([
+        nodeFactory.ruleset(':root', nodeFactory.rulelist([
           nodeFactory.declaration('--qux', nodeFactory.expression('vim')),
-          nodeFactory.declaration('--foo', nodeFactory.ruleset([
+          nodeFactory.declaration('--foo', nodeFactory.rulelist([
              nodeFactory.declaration('bar', nodeFactory.expression('baz'))
           ]))
         ]))
       ]))
     });
 
-    it('can parse minified rulesets', () => {
+    it('can parse minified rulelists', () => {
       expect(parser.parse(fixtures.minifiedRuleset))
           .to.be.eql(nodeFactory.stylesheet([
-        nodeFactory.selector('.foo', nodeFactory.ruleset([
+        nodeFactory.ruleset('.foo', nodeFactory.rulelist([
           nodeFactory.declaration('bar', nodeFactory.expression('baz'))
         ])),
-        nodeFactory.selector('div .qux', nodeFactory.ruleset([
+        nodeFactory.ruleset('div .qux', nodeFactory.rulelist([
           nodeFactory.declaration('vim', nodeFactory.expression('fet'))
         ]))
       ]));
     });
 
-    it('can parse psuedo selectors', () => {
+    it('can parse psuedo rulesets', () => {
       expect(parser.parse(fixtures.psuedoRuleset))
           .to.be.eql(nodeFactory.stylesheet([
-        nodeFactory.selector('.foo:bar:not(#rif)', nodeFactory.ruleset([
+        nodeFactory.ruleset('.foo:bar:not(#rif)', nodeFactory.rulelist([
           nodeFactory.declaration('baz', nodeFactory.expression('qux'))
         ]))
       ]));
     });
 
-    it('can parse rulesets with data URIs', () => {
+    it('can parse rulelists with data URIs', () => {
       expect(parser.parse(fixtures.dataUriRuleset))
           .to.be.eql(nodeFactory.stylesheet([
-        nodeFactory.selector('.foo', nodeFactory.ruleset([
+        nodeFactory.ruleset('.foo', nodeFactory.rulelist([
           nodeFactory.declaration('bar', nodeFactory.expression('url(qux;gib)'))
         ]))
       ]));
@@ -107,7 +107,7 @@ describe('Parser', () => {
     it('can parse pathological comments', () => {
       expect(parser.parse(fixtures.pathologicalComments))
           .to.be.eql(nodeFactory.stylesheet([
-        nodeFactory.selector('.foo', nodeFactory.ruleset([
+        nodeFactory.ruleset('.foo', nodeFactory.rulelist([
           nodeFactory.declaration('bar', nodeFactory.expression('/*baz*/vim'))
         ])),
         nodeFactory.comment('/* unclosed\n@fiz {\n  --huk: {\n    /* buz */'),

@@ -30,11 +30,11 @@ class NodeFactory {
    * Creates an At Rule node.
    * @param {string} name The "name" of the At Rule (e.g., `charset`)
    * @param {string} parameters The "parameters" of the At Rule (e.g., `utf8`)
-   * @param {object=} ruleset The Ruleset node (if any) of the At Rule.
+   * @param {object=} rulelist The Rulelist node (if any) of the At Rule.
    * @return {object} An At Rule node.
    */
-  atRule(name, parameters, ruleset) {
-    return { type: nodeType.atRule, name, parameters, ruleset };
+  atRule(name, parameters, rulelist) {
+    return { type: nodeType.atRule, name, parameters, rulelist };
   }
 
   /**
@@ -48,29 +48,29 @@ class NodeFactory {
   }
 
   /**
-   * Creates a Ruleset node.
+   * Creates a Rulelist node.
    * @param {array} rules An array of the Rule nodes found within the Ruleset.
-   * @return {object} A Ruleset node.
+   * @return {object} A Rulelist node.
    */
-  ruleset(rules) {
-    return { type: nodeType.ruleset, rules };
+  rulelist(rules) {
+    return { type: nodeType.rulelist, rules };
   }
 
   /**
-   * Creates a Selector node.
-   * @param {string} combinator The combinator that corresponds to the Selector
+   * Creates a Ruleset node.
+   * @param {string} selector The selector that corresponds to the Selector
    * (e.g., `#foo > .bar`).
-   * @param {object} ruleset The Ruleset node that corresponds to the Selector.
+   * @param {object} rulelist The Rulelist node that corresponds to the Selector.
    * @return {object} A Selector node.
    */
-  selector(combinator, ruleset) {
-    return { type: nodeType.selector, combinator, ruleset };
+  ruleset(selector, rulelist) {
+    return { type: nodeType.ruleset, selector, rulelist };
   }
 
   /**
    * Creates a Declaration node.
    * @param {string} name The property name of the Declaration (e.g., `color`).
-   * @param {object} value Either an Expression node, or a Ruleset node, that
+   * @param {object} value Either an Expression node, or a Rulelist node, that
    * corresponds to the value of the Declaration.
    * @return {object} A Declaration node.
    */

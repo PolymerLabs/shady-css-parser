@@ -29,15 +29,15 @@ describe('Stringifier', () => {
       expect(cssText).to.be.eql('');
     });
 
-    it('can stringify an At Rule without a Ruleset', () => {
+    it('can stringify an At Rule without a Rulelist', () => {
       let cssText = stringifier.stringify(nodeFactory.atRule('foo', '("bar")'));
 
       expect(cssText).to.be.eql('@foo ("bar");');
     });
 
-    it('can stringify an At Rule with a Ruleset', () => {
+    it('can stringify an At Rule with a Rulelist', () => {
       let cssText = stringifier.stringify(
-          nodeFactory.atRule('foo', '("bar")', nodeFactory.ruleset([])));
+          nodeFactory.atRule('foo', '("bar")', nodeFactory.rulelist([])));
 
       expect(cssText).to.be.eql('@foo ("bar"){}');
     });
@@ -47,9 +47,9 @@ describe('Stringifier', () => {
       expect(cssText).to.be.eql('/* hi */');
     });
 
-    it('can stringify Selectors', () => {
+    it('can stringify Rulesets', () => {
       let cssText = stringifier.stringify(
-          nodeFactory.selector('.fiz #buz', nodeFactory.ruleset([])));
+          nodeFactory.ruleset('.fiz #buz', nodeFactory.rulelist([])));
       expect(cssText).to.be.eql('.fiz #buz{}');
     });
 
@@ -59,9 +59,9 @@ describe('Stringifier', () => {
       expect(cssText).to.be.eql('color:red;');
     });
 
-    it('can stringify Declarations with Ruleset values', () => {
+    it('can stringify Declarations with Rulelist values', () => {
       let cssText = stringifier.stringify(
-          nodeFactory.declaration('--mixin', nodeFactory.ruleset([])));
+          nodeFactory.declaration('--mixin', nodeFactory.rulelist([])));
       expect(cssText).to.be.eql('--mixin:{};');
     });
   });
@@ -73,8 +73,8 @@ describe('Stringifier', () => {
       parser = new Parser();
     });
 
-    it('can stringify a basic selector', () => {
-      let cssText = stringifier.stringify(parser.parse(fixtures.basicSelector));
+    it('can stringify a basic ruleset', () => {
+      let cssText = stringifier.stringify(parser.parse(fixtures.basicRuleset));
       expect(cssText).to.be.eql('body{margin:0;padding:0px;}');
     });
 

@@ -116,10 +116,10 @@ var css = stringifier.stringify(ast);
   "type": 1, /* stylesheet */
   "rules": [
     {
-      "type": 4, /* selector */
+      "type": 4, /* ruleset */
       "combinator": ".container",
-      "ruleset": {
-        "type": 7, /* ruleset */
+      "rulelist": {
+        "type": 7, /* rulelist */
         "rules": [
           {
             "type": 6, /* declaration */
@@ -139,7 +139,7 @@ var css = stringifier.stringify(ast);
 #### Mixin declaration
 
 ```css
-selector {
+ruleset {
   --mixin-name: {
     /* rules */
   };
@@ -150,16 +150,16 @@ selector {
   "type": 1, /* stylesheet */
   "rules": [
     {
-      "type": 4, /* selector */
-      "combinator": "selector",
-      "ruleset": {
-        "type": 7, /* ruleset */
+      "type": 4, /* ruleset */
+      "combinator": "ruleset",
+      "rulelist": {
+        "type": 7, /* rulelist */
         "rules": [
           {
             "type": 6, /* declaration */
             "name": "--mixin-name",
             "value": {
-              "type": 7, /* ruleset */
+              "type": 7, /* rulelist */
               "rules": [
                 {
                   "type": 2, /* comment */
@@ -187,16 +187,16 @@ selector {
   "type": 1, /* stylesheet */
   "rules": [
     {
-      "type": 4, /* selector */
+      "type": 4, /* ruleset */
       "combinator": ".title",
-      "ruleset": {
-        "type": 7, /* ruleset */
+      "rulelist": {
+        "type": 7, /* rulelist */
         "rules": [
           {
             "type": 3, /* at rule */
             "name": "apply",
             "parameters": "(--my-toolbar-title-theme)",
-            "ruleset": null
+            "rulelist": null
           }
         ]
       }
@@ -246,7 +246,7 @@ selector {
 
 ### Example stringification
 
-#### Basic selector
+#### Basic ruleset
 
 ```css
 /* before */

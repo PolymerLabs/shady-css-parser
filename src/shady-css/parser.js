@@ -48,7 +48,7 @@ class Parser {
    * Consumes tokens from a Tokenizer to parse a sequence of rules.
    * @param {Tokenizer} tokenizer A Tokenizer instance.
    * @return {array} A list of nodes corresponding to rules. For a parser
-   * configured with a basic NodeFactory, any of Comment, AtRule, Selector,
+   * configured with a basic NodeFactory, any of Comment, AtRule, Ruleset,
    * Declaration and Discarded nodes may be present in the list.
    */
   parseRules(tokenizer) {
@@ -83,7 +83,7 @@ class Parser {
       return this.parseUnknown(tokenizer);
 
     } else if (tokenizer.currentToken.is(Token.type.word)) {
-      return this.parseDeclarationOrSelector(tokenizer);
+      return this.parseDeclarationOrRuleset(tokenizer);
 
     } else if (tokenizer.currentToken.is(Token.type.at)) {
       return this.parseAtRule(tokenizer);
@@ -132,7 +132,7 @@ class Parser {
    */
   parseAtRule(tokenizer) {
     let name = '';
-    let ruleset = null;
+    let rulelist = null;
     let parametersStart = null;
     let parametersEnd = null;
 
@@ -151,7 +151,7 @@ class Parser {
         }
         name = tokenizer.slice(start, end);
       } else if (tokenizer.currentToken.is(Token.type.openBrace)) {
-        ruleset = this.parseRuleset(tokenizer);
+        rulelist = this.parseRulelist(tokenizer);
         break;
       } else if (tokenizer.currentToken.is(Token.type.propertyBoundary)) {
         tokenizer.advance();
@@ -168,15 +168,15 @@ class Parser {
     return this.nodeFactory.atRule(
         name,
         parametersStart ? tokenizer.slice(parametersStart, parametersEnd) : '',
-        ruleset);
+        rulelist);
   }
 
   /**
-   * Consumes tokens from a Tokenizer to produce a Ruleset node.
+   * Consumes tokens from a Tokenizer to produce a Rulelist node.
    * @param {Tokenizer} tokenizer A Tokenizer instance.
-   * @return {object} A Ruleset node.
+   * @return {object} A Rulelist node.
    */
-  parseRuleset(tokenizer) {
+  parseRulelist(tokenizer) {
     let rules = [];
 
     // Take the opening { boundary:
@@ -194,16 +194,16 @@ class Parser {
       }
     }
 
-    return this.nodeFactory.ruleset(rules);
+    return this.nodeFactory.rulelist(rules);
   }
 
   /**
    * Consumes tokens from a Tokenizer instance to produce a Declaration node or
-   * a Selector node, as appropriate.
+   * a Ruleset node, as appropriate.
    * @param {Tokenizer} tokenizer A Tokenizer node.
-   * @return {object} One of a Declaration or Selector node.
+   * @return {object} One of a Declaration or Ruleset node.
    */
-  parseDeclarationOrSelector(tokenizer) {
+  parseDeclarationOrRuleset(tokenizer) {
     let rule = '';
     let ruleStart = null;
     let ruleEnd = null;
@@ -230,7 +230,7 @@ class Parser {
 
     rule = tokenizer.slice(ruleStart, ruleEnd);
 
-    // A selector never contains or ends with a semi-colon.
+    // A ruleset never contains or ends with a semi-colon.
     if (tokenizer.currentToken.is(Token.type.propertyBoundary)) {
       let colonIndex = rule.indexOf(':');
       // TODO(cdata): is .trim() bad for performance?
@@ -244,16 +244,16 @@ class Parser {
           rule.substr(0, colonIndex),
           this.nodeFactory.expression(value));
     } else if (rule[rule.length - 1] === ':') {
-      let ruleset = this.parseRuleset(tokenizer);
+      let rulelist = this.parseRulelist(tokenizer);
 
       if (tokenizer.currentToken.is(Token.type.semicolon)) {
         tokenizer.advance();
       }
 
       return this.nodeFactory.declaration(
-          rule.substr(0, rule.length - 1), ruleset);
+          rule.substr(0, rule.length - 1), rulelist);
     } else {
-      return this.nodeFactory.selector(rule.trim(), this.parseRuleset(tokenizer));
+      return this.nodeFactory.ruleset(rule.trim(), this.parseRulelist(tokenizer));
     }
   }
 }

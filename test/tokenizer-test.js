@@ -44,8 +44,8 @@ describe('Tokenizer', () => {
   });
 
   describe('when tokenizing standard CSS structures', () => {
-    it('can tokenize a basic selector', () => {
-      helpers.expectTokenTypeOrder(new Tokenizer(fixtures.basicSelector), [
+    it('can tokenize a basic ruleset', () => {
+      helpers.expectTokenTypeOrder(new Tokenizer(fixtures.basicRuleset), [
         Token.type.whitespace, // '\n'
         Token.type.word,       // 'body'
         Token.type.whitespace, // ' '

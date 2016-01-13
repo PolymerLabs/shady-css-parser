@@ -47,19 +47,19 @@ class Stringifier extends NodeVisitor {
   [nodeType.atRule](atRule) {
     return `@${atRule.name}` +
       (atRule.parameters ? ` ${atRule.parameters}` : '') +
-      (atRule.ruleset ? `${this.visit(atRule.ruleset)}` : ';');
+      (atRule.rulelist ? `${this.visit(atRule.rulelist)}` : ';');
   }
 
   /**
-   * Visit and stringify a Ruleset node.
-   * @param {object} ruleset A Ruleset node.
-   * @return {string} The stringified CSS of the Ruleset.
+   * Visit and stringify a Rulelist node.
+   * @param {object} rulelist A Rulelist node.
+   * @return {string} The stringified CSS of the Rulelist.
    */
-  [nodeType.ruleset](ruleset) {
+  [nodeType.rulelist](rulelist) {
     let rules = '{';
 
-    for (let i = 0; i < ruleset.rules.length; ++i) {
-      rules += this.visit(ruleset.rules[i]);
+    for (let i = 0; i < rulelist.rules.length; ++i) {
+      rules += this.visit(rulelist.rules[i]);
     }
 
     return rules + '}';
@@ -76,11 +76,11 @@ class Stringifier extends NodeVisitor {
 
   /**
    * Visit and stringify a Seletor node.
-   * @param {object} selector A Selector node.
-   * @return {string} The stringified CSS of the Selector.
+   * @param {object} ruleset A Ruleset node.
+   * @return {string} The stringified CSS of the Ruleset.
    */
-  [nodeType.selector](selector) {
-    return `${selector.combinator}${this.visit(selector.ruleset)}`;
+  [nodeType.ruleset](ruleset) {
+    return `${ruleset.selector}${this.visit(ruleset.rulelist)}`;
   }
 
   /**
