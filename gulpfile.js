@@ -26,11 +26,10 @@ gulp.task('default', ['clean', 'test', 'build', 'minify', 'measure']);
 
 gulp.task('build', ['test'], function() {
   return gulp.src(src)
-    .pipe(babel({
-      modules: 'umd',
-      loose: true,
-      blacklist: ['regenerator', 'es6.forOf']
-    }))
+    .pipe(babel())
+    .on('error', function(error) {
+      console.error(error);
+    })
     .pipe(concat('shady-css.js'))
     .pipe(gulp.dest(dest));
 });
