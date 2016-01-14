@@ -2,7 +2,7 @@
 
 The motivation for Shady CSS Parser is to provide a fast, small and flexible
 CSS parser suitable for facilitating runtime parsing and transformation of CSS.
-The Polymer framework and the Polymer Designer tool are both example cases where
+The Polymer library and the Polymer Designer tool are both example cases where
 fast and flexible CSS parsing and transformation is a critical feature.
 
 ### Goals
