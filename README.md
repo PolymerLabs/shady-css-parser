@@ -117,7 +117,7 @@ var css = stringifier.stringify(ast);
   "rules": [
     {
       "type": 4, /* ruleset */
-      "combinator": ".container",
+      "selector": ".container",
       "rulelist": {
         "type": 7, /* rulelist */
         "rules": [
@@ -151,7 +151,7 @@ ruleset {
   "rules": [
     {
       "type": 4, /* ruleset */
-      "combinator": "ruleset",
+      "selector": "ruleset",
       "rulelist": {
         "type": 7, /* rulelist */
         "rules": [
@@ -188,7 +188,7 @@ ruleset {
   "rules": [
     {
       "type": 4, /* ruleset */
-      "combinator": ".title",
+      "selector": ".title",
       "rulelist": {
         "type": 7, /* rulelist */
         "rules": [
