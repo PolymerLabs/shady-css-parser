@@ -16,6 +16,14 @@ Designer.
  -  Graceful error recovery. Malformed CSS will be parsed by this
 parser as closely as possible to the way a browser would parse it.
 
+### Installing
+
+With `node` and `npm` installed, run the following command:
+
+```sh
+npm install shady-css-parser
+```
+
 ### Building
 
 Run the following commands from the project root:
