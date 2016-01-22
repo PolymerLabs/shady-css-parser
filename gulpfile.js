@@ -10,42 +10,60 @@ var del = require('del');
 
 require('babel-core/register');
 
-var src = [
-  'src/shady-css/common.js',
-  'src/shady-css/node-factory.js',
-  'src/shady-css/node-visitor.js',
-  'src/shady-css/stringifier.js',
-  'src/shady-css/token.js',
-  'src/shady-css/tokenizer.js',
-  'src/shady-css/parser.js',
-  'src/*.js'
+var src = ['src/**/*.js'];
+var dist = 'dist';
+var concatOrder = [
+  '/shady-css/common.js',
+  '/shady-css/node-factory.js',
+  '/shady-css/node-visitor.js',
+  '/shady-css/stringifier.js',
+  '/shady-css/token.js',
+  '/shady-css/tokenizer.js',
+  '/shady-css/parser.js',
+  '/*.js'
+].map(function(path) {
+  return 'src' + path;
+});
+var measureable = [
+  dist + '/shady-css.concat.js',
+  dist + '/shady-css.min.js'
 ];
-var dest = 'dist/';
 
 gulp.task('default', ['clean', 'test', 'build', 'minify', 'measure']);
 
-gulp.task('build', ['test'], function() {
+gulp.task('build', ['test', 'transform', 'minify']);
+
+gulp.task('concat', ['test'], function() {
+  return gulp.src(concatOrder)
+    .pipe(babel())
+    .on('error', function(error) {
+      console.error(error);
+    })
+    .pipe(concat('shady-css.concat.js'))
+    .pipe(gulp.dest(dist));
+});
+
+gulp.task('transform', ['test'], function() {
   return gulp.src(src)
     .pipe(babel())
     .on('error', function(error) {
       console.error(error);
     })
-    .pipe(concat('shady-css.js'))
-    .pipe(gulp.dest(dest));
+    .pipe(gulp.dest(dist));
 });
 
-gulp.task('minify', ['build'], function() {
-  return gulp.src('dist/shady-css.js')
+gulp.task('minify', ['concat'], function() {
+  return gulp.src(dist + '/shady-css.concat.js')
     .pipe(uglify())
     .on('error', function(error) {
       console.error(error);
     })
     .pipe(rename('shady-css.min.js'))
-    .pipe(gulp.dest(dest));
+    .pipe(gulp.dest(dist));
 });
 
 gulp.task('measure', ['minify'], function() {
-  return gulp.src('dist/*.js')
+  return gulp.src(measureable)
     .pipe(size({
       showFiles: true
     }))
@@ -62,7 +80,7 @@ gulp.task('test', function() {
 });
 
 gulp.task('clean', function() {
-  del.sync([dest]);
+  del.sync([dist]);
 });
 
 gulp.task('watch', function(done) {

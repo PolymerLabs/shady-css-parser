@@ -8,5 +8,4 @@
  * subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
  */
 
-require('babel/register');
-module.exports = require('./src/shady-css');
+module.exports = require('./dist/shady-css');

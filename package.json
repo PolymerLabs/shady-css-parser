@@ -1,7 +1,7 @@
 {
   "name": "shady-css-parser",
-  "version": "0.0.1",
-  "description": "Shady CSS Parser",
+  "version": "0.0.4",
+  "description": "A fast, small and flexible CSS parser.",
   "main": "index.js",
   "devDependencies": {
     "babel-core": "^6.4.0",
@@ -28,6 +28,10 @@
     "gulp-uglify": "^1.4.2",
     "gulp-watch": "^4.3.5",
     "mocha": "^2.3.3"
+  },
+  "scripts": {
+    "prepublish": "gulp",
+    "test": "gulp test"
   },
   "repository": {
     "type": "git",
