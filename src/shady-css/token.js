@@ -59,6 +59,10 @@ Token.type = {
   // [};] are property boundaries:
   closeBrace: 1024 | 32 | 16,
   semicolon: 2048 | 32 | 16,
+  // : is a chimaeric abomination:
+  // foo:bar{}
+  // foo:bar;
+  colon: 4096 | 16 | 8
 };
 
 /**

@@ -18,7 +18,7 @@ const matcher = {
   whitespace: /\s/,
   whitespaceGreedy: /(\s+)/g,
   commentGreedy: /(\*\/)/g,
-  boundary: /[\(\)\{\}'"@;\s]/,
+  boundary: /[\(\)\{\}'"@;:\s]/,
   stringBoundary: /['"]/
 };
 

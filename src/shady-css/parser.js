@@ -76,14 +76,15 @@ class Parser {
     if (tokenizer.currentToken.is(Token.type.whitespace)) {
       tokenizer.advance();
       return null;
-    } else if (tokenizer.currentToken.is(Token.type.comment)) {
-      return this.parseComment(tokenizer)
 
-    } else if (tokenizer.currentToken.is(Token.type.propertyBoundary)) {
-      return this.parseUnknown(tokenizer);
+    } else if (tokenizer.currentToken.is(Token.type.comment)) {
+      return this.parseComment(tokenizer);
 
     } else if (tokenizer.currentToken.is(Token.type.word)) {
       return this.parseDeclarationOrRuleset(tokenizer);
+
+    } else if (tokenizer.currentToken.is(Token.type.propertyBoundary)) {
+      return this.parseUnknown(tokenizer);
 
     } else if (tokenizer.currentToken.is(Token.type.at)) {
       return this.parseAtRule(tokenizer);
@@ -113,12 +114,8 @@ class Parser {
     let start = tokenizer.advance();
     let end;
 
-    while (tokenizer.currentToken) {
-      if (tokenizer.currentToken.is(Token.type.boundary) &&
-          !tokenizer.currentToken.is(Token.type.semicolon)) {
-        break;
-      }
-
+    while (tokenizer.currentToken &&
+           tokenizer.currentToken.is(Token.type.boundary)) {
       end = tokenizer.advance();
     }
 

@@ -112,9 +112,24 @@ describe('Parser', () => {
         ])),
         nodeFactory.comment('/* unclosed\n@fiz {\n  --huk: {\n    /* buz */'),
         nodeFactory.declaration('baz', nodeFactory.expression('lur')),
-        nodeFactory.discarded('};\n'),
-        nodeFactory.discarded('}\n'),
+        nodeFactory.discarded('};'),
+        nodeFactory.discarded('}'),
         nodeFactory.atRule('gak', 'wiz', null)
+      ]));
+    });
+
+    it('disregards extra semi-colons', () => {
+      expect(parser.parse(fixtures.extraSemicolons))
+          .to.be.eql(nodeFactory.stylesheet([
+        nodeFactory.ruleset(':host', nodeFactory.rulelist([
+          nodeFactory.declaration('margin', nodeFactory.expression('0')),
+          nodeFactory.discarded(';;'),
+          nodeFactory.declaration('padding', nodeFactory.expression('0')),
+          nodeFactory.discarded(';'),
+          nodeFactory.discarded(';'),
+          nodeFactory.declaration('display', nodeFactory.expression('block')),
+        ])),
+        nodeFactory.discarded(';')
       ]));
     });
   });
