@@ -12,7 +12,8 @@ import { matcher } from './common';
 import { Token, boundaryTokenTypes } from './token';
 
 const currentToken = Symbol('currentToken');
-const nextToken = Symbol('nextToken');
+const cursorToken = Symbol('cursorToken');
+const findNextToken = Symbol('findNextToken');
 
 /**
  * Class that implements tokenization of significant lexical features of the
@@ -25,8 +26,12 @@ class Tokenizer {
    */
   constructor(cssText) {
     this.cssText = cssText;
-    this.offset = 0;
+    this[cursorToken] = new Token(Token.type.none, 0, 0);
     this[currentToken] = null;
+  }
+
+  get offset() {
+    return this[cursorToken].end;
   }
 
   /**
@@ -37,7 +42,7 @@ class Tokenizer {
    */
   get currentToken() {
     if (this[currentToken] == null) {
-      this[currentToken] = this[nextToken]();
+      this[currentToken] = this[findNextToken]();
     }
 
     return this[currentToken];
@@ -54,7 +59,7 @@ class Tokenizer {
       token = this[currentToken];
       this[currentToken] = null;
     } else {
-      token = this[nextToken]();
+      token = this[findNextToken]();
     }
     return token;
   }
@@ -93,7 +98,7 @@ class Tokenizer {
    * @return {Token} A Token instance, or null if the entire CSS text has beeen
    * tokenized.
    */
-  [nextToken]() {
+  [findNextToken]() {
     let character = this.cssText[this.offset];
     let token;
 
@@ -113,7 +118,9 @@ class Tokenizer {
       token = this.tokenizeWord(this.offset);
     }
 
-    this.offset = token.end;
+    token.previous = this[cursorToken];
+    this[cursorToken].next = token;
+    this[cursorToken] = token;
 
     return token;
   }

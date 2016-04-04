@@ -9,6 +9,7 @@
  */
 
 import { expect } from 'chai';
+import { Token } from '../src/shady-css/token';
 
 function expectTokenType(token, type) {
   expect(token).to.be.ok;
@@ -26,4 +27,24 @@ function expectTokenSequence(lexer, sequence) {
   expect(lexedSequence).to.be.eql(sequence);
 }
 
-export { expectTokenType, expectTokenSequence };
+function linkedTokens(tokens) {
+  tokens.reduce(function(l, r) {
+    if (l) {
+      l.next = r;
+    }
+
+    if (r) {
+      r.previous = l;
+    }
+
+    return r;
+  }, new Token(Token.type.none, 0, 0));
+
+  return tokens;
+}
+
+export {
+  expectTokenType,
+  expectTokenSequence,
+  linkedTokens
+};
