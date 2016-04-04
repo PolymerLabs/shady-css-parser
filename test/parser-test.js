@@ -10,17 +10,16 @@
 
 import { expect } from 'chai';
 import * as fixtures from './fixtures';
-import { DebugNodeFactory } from './debug-node-factory';
 import { Parser } from '../src/shady-css/parser';
 import { nodeType } from '../src/shady-css/common';
 
-const nodeFactory = new DebugNodeFactory();
-
 describe('Parser', () => {
   let parser;
+  let nodeFactory;
 
   beforeEach(() => {
-    parser = new Parser(nodeFactory);
+    parser = new Parser();
+    nodeFactory = parser.nodeFactory;
   });
 
   describe('when parsing css', () => {
