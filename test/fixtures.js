@@ -48,6 +48,14 @@ let customProperties = `
 }
 `;
 
+let extraSemicolons = `
+:host {
+  margin: 0;;;
+  padding: 0;;
+  ;display: block;
+};
+`
+
 let minifiedRuleset = '.foo{bar:baz}div .qux{vim:fet;}';
 
 let psuedoRuleset = '.foo:bar:not(#rif){baz:qux}';
@@ -72,6 +80,7 @@ export {
   atRules,
   keyframes,
   customProperties,
+  extraSemicolons,
   minifiedRuleset,
   psuedoRuleset,
   dataUriRuleset,

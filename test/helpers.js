@@ -15,16 +15,15 @@ function expectTokenType(token, type) {
   expect(token.type).to.be.equal(type);
 }
 
-function expectTokenTypeOrder(lexer, types) {
-  let lexedTypes = [];
-  let _types = types.slice();
+function expectTokenSequence(lexer, sequence) {
+  let lexedSequence = [];
   let token;
 
   while (token = lexer.advance()) {
-    lexedTypes.push(token.type);
+    lexedSequence.push(token.type, lexer.slice(token));
   }
 
-  expect(lexedTypes).to.be.eql(types);
+  expect(lexedSequence).to.be.eql(sequence);
 }
 
-export { expectTokenType, expectTokenTypeOrder };
+export { expectTokenType, expectTokenSequence };

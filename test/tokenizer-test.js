@@ -45,56 +45,95 @@ describe('Tokenizer', () => {
 
   describe('when tokenizing standard CSS structures', () => {
     it('can tokenize a basic ruleset', () => {
-      helpers.expectTokenTypeOrder(new Tokenizer(fixtures.basicRuleset), [
-        Token.type.whitespace, // '\n'
-        Token.type.word,       // 'body'
-        Token.type.whitespace, // ' '
-        Token.type.openBrace,  // '{'
-        Token.type.whitespace, // '\n  '
-        Token.type.word,       // 'margin'
-        Token.type.whitespace, // ' '
-        Token.type.word,       // '0'
-        Token.type.semicolon,  // ';'
-        Token.type.whitespace, // '\n  '
-        Token.type.word,       // 'padding'
-        Token.type.whitespace, // ' '
-        Token.type.word,       // '0px'
-        Token.type.whitespace, // '\n'
-        Token.type.closeBrace, // '}'
-        Token.type.whitespace  // '\n'
+      helpers.expectTokenSequence(new Tokenizer(fixtures.basicRuleset), [
+        Token.type.whitespace, '\n',
+        Token.type.word,       'body',
+        Token.type.whitespace, ' ',
+        Token.type.openBrace,  '{',
+        Token.type.whitespace, '\n  ',
+        Token.type.word,       'margin',
+        Token.type.colon,            ':',
+        Token.type.whitespace, ' ',
+        Token.type.word,       '0',
+        Token.type.semicolon,  ';',
+        Token.type.whitespace, '\n  ',
+        Token.type.word,       'padding',
+        Token.type.colon,            ':',
+        Token.type.whitespace, ' ',
+        Token.type.word,       '0px',
+        Token.type.whitespace, '\n',
+        Token.type.closeBrace, '}',
+        Token.type.whitespace, '\n'
       ]);
     });
 
     it('can tokenize @rules', () => {
-      helpers.expectTokenTypeOrder(new Tokenizer(fixtures.atRules), [
-        Token.type.whitespace,       // '\n'
-        Token.type.at,               // '@'
-        Token.type.word,             // 'import'
-        Token.type.whitespace,       // ' '
-        Token.type.word,             // 'url'
-        Token.type.openParenthesis,  // '('
-        Token.type.string,           // '\'foo.css\''
-        Token.type.closeParenthesis, // ')'
-        Token.type.semicolon,        // ';'
-        Token.type.whitespace,       // '\n\n',
-        Token.type.at,               // '@',
-        Token.type.word,             // 'font-face'
-        Token.type.whitespace,       // ' '
-        Token.type.openBrace,        // '{'
-        Token.type.whitespace,       // '\n  ',
-        Token.type.word,             // 'font-family'
-        Token.type.whitespace,       // ' '
-        Token.type.word,             // 'foo'
-        Token.type.semicolon,        // ';'
-        Token.type.whitespace,       // '\n'
-        Token.type.closeBrace,       // '}'
-        Token.type.whitespace,       // '\n\n'
-        Token.type.at,               // '@'
-        Token.type.word,             // 'word'
-        Token.type.whitespace,       // ' '
-        Token.type.string,           // '\'foo\''
-        Token.type.semicolon,        // ';'
-        Token.type.whitespace,       // '\n'
+      helpers.expectTokenSequence(new Tokenizer(fixtures.atRules), [
+        Token.type.whitespace,       '\n',
+        Token.type.at,               '@',
+        Token.type.word,             'import',
+        Token.type.whitespace,       ' ',
+        Token.type.word,             'url',
+        Token.type.openParenthesis,  '(',
+        Token.type.string,           '\'foo.css\'',
+        Token.type.closeParenthesis, ')',
+        Token.type.semicolon,        ';',
+        Token.type.whitespace,       '\n\n',
+        Token.type.at,               '@',
+        Token.type.word,             'font-face',
+        Token.type.whitespace,       ' ',
+        Token.type.openBrace,        '{',
+        Token.type.whitespace,       '\n  ',
+        Token.type.word,             'font-family',
+        Token.type.colon,            ':',
+        Token.type.whitespace,       ' ',
+        Token.type.word,             'foo',
+        Token.type.semicolon,        ';',
+        Token.type.whitespace,       '\n',
+        Token.type.closeBrace,       '}',
+        Token.type.whitespace,       '\n\n',
+        Token.type.at,               '@',
+        Token.type.word,             'charset',
+        Token.type.whitespace,       ' ',
+        Token.type.string,           '\'foo\'',
+        Token.type.semicolon,        ';',
+        Token.type.whitespace,       '\n'
+      ]);
+    });
+
+    it('navigates pathological boundary usage', () => {
+      helpers.expectTokenSequence(new Tokenizer(fixtures.extraSemicolons), [
+        Token.type.whitespace, '\n',
+        Token.type.colon,      ':',
+        Token.type.word,       'host',
+        Token.type.whitespace, ' ',
+        Token.type.openBrace,  '{',
+        Token.type.whitespace, '\n  ',
+        Token.type.word,       'margin',
+        Token.type.colon,      ':',
+        Token.type.whitespace, ' ',
+        Token.type.word,       '0',
+        Token.type.semicolon,  ';',
+        Token.type.semicolon,  ';',
+        Token.type.semicolon,  ';',
+        Token.type.whitespace, '\n  ',
+        Token.type.word,       'padding',
+        Token.type.colon,      ':',
+        Token.type.whitespace, ' ',
+        Token.type.word,       '0',
+        Token.type.semicolon,  ';',
+        Token.type.semicolon,  ';',
+        Token.type.whitespace, '\n  ',
+        Token.type.semicolon,  ';',
+        Token.type.word,       'display',
+        Token.type.colon,      ':',
+        Token.type.whitespace, ' ',
+        Token.type.word,       'block',
+        Token.type.semicolon,  ';',
+        Token.type.whitespace, '\n',
+        Token.type.closeBrace, '}',
+        Token.type.semicolon,  ';',
+        Token.type.whitespace, '\n'
       ]);
     });
   });

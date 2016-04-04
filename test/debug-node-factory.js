@@ -1,4 +1,5 @@
 import { NodeFactory } from '../src/shady-css/node-factory';
+import { nodeType } from '../src/shady-css/common';
 
 class DebugNodeFactory extends NodeFactory {}
 
