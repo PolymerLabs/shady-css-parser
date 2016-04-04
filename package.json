@@ -1,6 +1,6 @@
 {
   "name": "shady-css-parser",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A fast, small and flexible CSS parser.",
   "main": "index.js",
   "devDependencies": {
