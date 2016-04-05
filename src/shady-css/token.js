@@ -24,6 +24,8 @@ class Token {
     this.type = type;
     this.start = start;
     this.end = end;
+    this.previous = null;
+    this.next = null;
   }
 
   /**
@@ -45,6 +47,7 @@ class Token {
  * @static
  */
 Token.type = {
+  none: 0,
   whitespace: 1,
   string: 2,
   comment: 4,

@@ -12,7 +12,8 @@ import { matcher } from './common';
 import { Token, boundaryTokenTypes } from './token';
 
 const currentToken = Symbol('currentToken');
-const nextToken = Symbol('nextToken');
+const cursorToken = Symbol('cursorToken');
+const getNextToken = Symbol('getNextToken');
 
 /**
  * Class that implements tokenization of significant lexical features of the
@@ -22,11 +23,28 @@ class Tokenizer {
   /**
    * Create a Tokenizer instance.
    * @param {string} cssText The raw CSS string to be tokenized.
+   *
    */
   constructor(cssText) {
     this.cssText = cssText;
-    this.offset = 0;
+    /**
+     * Tracks the position of the tokenizer in the source string.
+     * Also the default head of the Token linked list.
+     * @type {!Token}
+     * @private
+     */
+    this[cursorToken] = new Token(Token.type.none, 0, 0);
+    /**
+     * Holds a reference to a Token that is "next" in the source string, often
+     * due to having been peeked at.
+     * @type {?Token}
+     * @readonly
+     */
     this[currentToken] = null;
+  }
+
+  get offset() {
+    return this[cursorToken].end;
   }
 
   /**
@@ -37,7 +55,7 @@ class Tokenizer {
    */
   get currentToken() {
     if (this[currentToken] == null) {
-      this[currentToken] = this[nextToken]();
+      this[currentToken] = this[getNextToken]();
     }
 
     return this[currentToken];
@@ -54,7 +72,7 @@ class Tokenizer {
       token = this[currentToken];
       this[currentToken] = null;
     } else {
-      token = this[nextToken]();
+      token = this[getNextToken]();
     }
     return token;
   }
@@ -93,7 +111,7 @@ class Tokenizer {
    * @return {Token} A Token instance, or null if the entire CSS text has beeen
    * tokenized.
    */
-  [nextToken]() {
+  [getNextToken]() {
     let character = this.cssText[this.offset];
     let token;
 
@@ -113,7 +131,9 @@ class Tokenizer {
       token = this.tokenizeWord(this.offset);
     }
 
-    this.offset = token.end;
+    token.previous = this[cursorToken];
+    this[cursorToken].next = token;
+    this[cursorToken] = token;
 
     return token;
   }

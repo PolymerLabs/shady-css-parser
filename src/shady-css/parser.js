@@ -201,9 +201,9 @@ class Parser {
    * @return {object} One of a Declaration or Ruleset node.
    */
   parseDeclarationOrRuleset(tokenizer) {
-    let rule = '';
     let ruleStart = null;
     let ruleEnd = null;
+    let colon = null;
 
     while (tokenizer.currentToken) {
       if (tokenizer.currentToken.is(Token.type.whitespace)) {
@@ -217,6 +217,10 @@ class Parser {
                  tokenizer.currentToken.is(Token.type.propertyBoundary)) {
         break;
       } else {
+        if (tokenizer.currentToken.is(Token.type.colon)) {
+          colon = tokenizer.currentToken;
+        }
+
         if (!ruleStart) {
           ruleStart = tokenizer.advance();
         } else {
@@ -225,22 +229,21 @@ class Parser {
       }
     }
 
-    rule = tokenizer.slice(ruleStart, ruleEnd);
-
     // A ruleset never contains or ends with a semi-colon.
     if (tokenizer.currentToken.is(Token.type.propertyBoundary)) {
-      let colonIndex = rule.indexOf(':');
+      let declarationName = tokenizer.slice(ruleStart, colon.previous);
       // TODO(cdata): is .trim() bad for performance?
-      let value = rule.substr(colonIndex + 1).trim();
+      let expressionValue = tokenizer.slice(colon.next, ruleEnd).trim();
 
       if (tokenizer.currentToken.is(Token.type.semicolon)) {
         tokenizer.advance();
       }
 
       return this.nodeFactory.declaration(
-          rule.substr(0, colonIndex),
-          this.nodeFactory.expression(value));
-    } else if (rule[rule.length - 1] === ':') {
+          declarationName,
+          this.nodeFactory.expression(expressionValue));
+    // This is the case for a mixin-like structure:
+    } else if (colon && colon === ruleEnd) {
       let rulelist = this.parseRulelist(tokenizer);
 
       if (tokenizer.currentToken.is(Token.type.semicolon)) {
@@ -248,9 +251,12 @@ class Parser {
       }
 
       return this.nodeFactory.declaration(
-          rule.substr(0, rule.length - 1), rulelist);
+          tokenizer.slice(ruleStart, ruleEnd.previous), rulelist);
+    // Otherwise, this is a ruleset:kkkkk
     } else {
-      return this.nodeFactory.ruleset(rule.trim(), this.parseRulelist(tokenizer));
+      return this.nodeFactory.ruleset(
+          tokenizer.slice(ruleStart, ruleEnd),
+          this.parseRulelist(tokenizer));
     }
   }
 }

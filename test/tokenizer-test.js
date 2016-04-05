@@ -17,29 +17,29 @@ import { Token } from '../src/shady-css/token';
 describe('Tokenizer', () => {
   describe('when tokenizing basic structures', () => {
     it('can identify strings', () => {
-      expect(new Tokenizer('"foo"').advance()).to.be.eql(
-          new Token(Token.type.string, 0, 5));
+      expect(new Tokenizer('"foo"').flush()).to.be.eql(
+          helpers.linkedTokens([new Token(Token.type.string, 0, 5)]));
     });
 
     it('can identify comments', () => {
-      expect(new Tokenizer('/*foo*/').advance()).to.be.eql(
-          new Token(Token.type.comment, 0, 7));
+      expect(new Tokenizer('/*foo*/').flush()).to.be.eql(
+          helpers.linkedTokens([new Token(Token.type.comment, 0, 7)]));
     });
 
     it('can identify words', () => {
-      expect(new Tokenizer('font-family').advance()).to.be.eql(
-          new Token(Token.type.word, 0, 11));
+      expect(new Tokenizer('font-family').flush()).to.be.eql(
+          helpers.linkedTokens([new Token(Token.type.word, 0, 11)]));
     });
 
     it('can identify boundaries', () => {
-      expect(new Tokenizer('@{};()').flush()).to.be.eql([
+      expect(new Tokenizer('@{};()').flush()).to.be.eql(helpers.linkedTokens([
         new Token(Token.type.at, 0, 1),
         new Token(Token.type.openBrace, 1, 2),
         new Token(Token.type.closeBrace, 2, 3),
         new Token(Token.type.semicolon, 3, 4),
         new Token(Token.type.openParenthesis, 4, 5),
         new Token(Token.type.closeParenthesis, 5, 6)
-      ]);
+      ]));
     });
   });
 

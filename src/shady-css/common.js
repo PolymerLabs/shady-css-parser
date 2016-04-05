@@ -29,14 +29,14 @@ const matcher = {
  * @default
  */
 const nodeType = {
-  stylesheet: 1,
-  comment: 2,
-  atRule: 3,
-  ruleset: 4,
-  expression: 5,
-  declaration: 6,
-  rulelist: 7,
-  discarded: 8
+  stylesheet: 'stylesheet',
+  comment: 'comment',
+  atRule: 'atRule',
+  ruleset: 'ruleset',
+  expression: 'expression',
+  declaration: 'declaration',
+  rulelist: 'rulelist',
+  discarded: 'discarded'
 };
 
 export { matcher, nodeType };
