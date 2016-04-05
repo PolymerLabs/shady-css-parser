@@ -23,10 +23,23 @@ class Tokenizer {
   /**
    * Create a Tokenizer instance.
    * @param {string} cssText The raw CSS string to be tokenized.
+   *
    */
   constructor(cssText) {
     this.cssText = cssText;
+    /**
+     * Tracks the position of the tokenizer in the source string.
+     * Also the default head of the Token linked list.
+     * @type {!Token}
+     * @private
+     */
     this[cursorToken] = new Token(Token.type.none, 0, 0);
+    /**
+     * Holds a reference to a Token that is "next" in the source string, often
+     * due to having been peeked at.
+     * @type {?Token}
+     * @readonly
+     */
     this[currentToken] = null;
   }
 
