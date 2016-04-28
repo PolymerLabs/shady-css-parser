@@ -1,6 +1,6 @@
 {
   "name": "shady-css-parser",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "A fast, small and flexible CSS parser.",
   "main": "index.js",
   "devDependencies": {
@@ -40,7 +40,7 @@
   "author": [
     "The Polymer Authors"
   ],
-  "license": "http://polymer.github.io/LICENSE.txt",
+  "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/PolymerLabs/shady-css-parser/issues"
   },
