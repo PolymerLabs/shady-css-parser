@@ -90,6 +90,12 @@ describe('Stringifier', () => {
           '@keyframes foo{from{fiz:0%;}99.9%{fiz:100px;buz:true;}}');
     });
 
+    it('can stringify declarations without value', () => {
+      let cssText =
+          stringifier.stringify(parser.parse(fixtures.declarationsWithNoValue));
+      expect(cssText).to.be.eql('foo;bar 20px;div{baz;}');
+    });
+
     it('can stringify custom properties', () => {
       let cssText = stringifier.stringify(
           parser.parse(fixtures.customProperties));
