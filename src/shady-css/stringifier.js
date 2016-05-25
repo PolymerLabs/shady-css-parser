@@ -89,7 +89,9 @@ class Stringifier extends NodeVisitor {
    * @return {string} The stringified CSS of the Declaration.
    */
   [nodeType.declaration](declaration) {
-    return `${declaration.name}:${this.visit(declaration.value)};`;
+    return declaration.value != null ?
+      `${declaration.name}:${this.visit(declaration.value)};` :
+      `${declaration.name};`;
   }
 
   /**

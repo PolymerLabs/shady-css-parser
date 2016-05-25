@@ -223,6 +223,7 @@ class Parser {
 
         if (!ruleStart) {
           ruleStart = tokenizer.advance();
+          ruleEnd = ruleStart;
         } else {
           ruleEnd = tokenizer.advance();
         }
@@ -231,9 +232,11 @@ class Parser {
 
     // A ruleset never contains or ends with a semi-colon.
     if (tokenizer.currentToken.is(Token.type.propertyBoundary)) {
-      let declarationName = tokenizer.slice(ruleStart, colon.previous);
+      let declarationName = tokenizer.slice(
+          ruleStart, colon ? colon.previous : ruleEnd);
       // TODO(cdata): is .trim() bad for performance?
-      let expressionValue = tokenizer.slice(colon.next, ruleEnd).trim();
+      let expressionValue =
+          colon && tokenizer.slice(colon.next, ruleEnd).trim();
 
       if (tokenizer.currentToken.is(Token.type.semicolon)) {
         tokenizer.advance();
@@ -241,7 +244,7 @@ class Parser {
 
       return this.nodeFactory.declaration(
           declarationName,
-          this.nodeFactory.expression(expressionValue));
+          expressionValue && this.nodeFactory.expression(expressionValue));
     // This is the case for a mixin-like structure:
     } else if (colon && colon === ruleEnd) {
       let rulelist = this.parseRulelist(tokenizer);
@@ -252,7 +255,7 @@ class Parser {
 
       return this.nodeFactory.declaration(
           tokenizer.slice(ruleStart, ruleEnd.previous), rulelist);
-    // Otherwise, this is a ruleset:kkkkk
+    // Otherwise, this is a ruleset:
     } else {
       return this.nodeFactory.ruleset(
           tokenizer.slice(ruleStart, ruleEnd),

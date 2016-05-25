@@ -73,6 +73,17 @@ describe('Parser', () => {
       ]))
     });
 
+    it('can parse declarations with no value', () => {
+      expect(parser.parse(fixtures.declarationsWithNoValue))
+          .to.be.eql(nodeFactory.stylesheet([
+        nodeFactory.declaration('foo', null),
+        nodeFactory.declaration('bar 20px', null),
+        nodeFactory.ruleset('div', nodeFactory.rulelist([
+          nodeFactory.declaration('baz', null)
+        ]))
+      ]));
+    });
+
     it('can parse minified rulelists', () => {
       expect(parser.parse(fixtures.minifiedRuleset))
           .to.be.eql(nodeFactory.stylesheet([

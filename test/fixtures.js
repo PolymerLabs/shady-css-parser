@@ -54,7 +54,16 @@ let extraSemicolons = `
   padding: 0;;
   ;display: block;
 };
-`
+`;
+
+let declarationsWithNoValue = `
+foo;
+bar 20px;
+
+div {
+  baz;
+}
+`;
 
 let minifiedRuleset = '.foo{bar:baz}div .qux{vim:fet;}';
 
@@ -81,6 +90,7 @@ export {
   keyframes,
   customProperties,
   extraSemicolons,
+  declarationsWithNoValue,
   minifiedRuleset,
   psuedoRuleset,
   dataUriRuleset,
