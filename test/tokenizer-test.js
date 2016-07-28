@@ -27,8 +27,8 @@ describe('Tokenizer', () => {
     });
 
     it('can identify words', () => {
-      expect(new Tokenizer('font-family').flush()).to.be.eql(
-          helpers.linkedTokens([new Token(Token.type.word, 0, 11)]));
+      expect(new Tokenizer('visibility').flush()).to.be.eql(
+          helpers.linkedTokens([new Token(Token.type.word, 0, 10)]));
     });
 
     it('can identify boundaries', () => {
@@ -80,11 +80,15 @@ describe('Tokenizer', () => {
         Token.type.semicolon,        ';',
         Token.type.whitespace,       '\n\n',
         Token.type.at,               '@',
-        Token.type.word,             'font-face',
+        Token.type.word,             'font',
+        Token.type.additiveOperator, '-',
+        Token.type.word,             'face',
         Token.type.whitespace,       ' ',
         Token.type.openBrace,        '{',
         Token.type.whitespace,       '\n  ',
-        Token.type.word,             'font-family',
+        Token.type.word,             'font',
+        Token.type.additiveOperator, '-',
+        Token.type.word,             'family',
         Token.type.colon,            ':',
         Token.type.whitespace,       ' ',
         Token.type.word,             'foo',
@@ -136,6 +140,55 @@ describe('Tokenizer', () => {
         Token.type.whitespace, '\n'
       ]);
     });
+  });
+
+  it('identifies operator tokens', () => {
+    helpers.expectTokenSequence(new Tokenizer(fixtures.nestedFunctions), [
+      Token.type.whitespace,       '\n',
+      Token.type.word,             'div',
+      Token.type.whitespace,       ' ',
+      Token.type.openBrace,        '{',
+      Token.type.whitespace,       '\n  ',
+      Token.type.word,             'background',
+      Token.type.colon,            ':',
+      Token.type.whitespace,       ' ',
+      Token.type.word,             'linear',
+      Token.type.additiveOperator, '-',
+      Token.type.word,             'gradient',
+      Token.type.openParenthesis,  '(',
+      Token.type.word,             'var',
+      Token.type.openParenthesis,  '(',
+      Token.type.additiveOperator, '-',
+      Token.type.additiveOperator, '-',
+      Token.type.word,             'color1',
+      Token.type.closeParenthesis, ')',
+      Token.type.operator,         ',',
+      Token.type.whitespace,       ' ',
+      Token.type.word,             'var',
+      Token.type.openParenthesis,  '(',
+      Token.type.additiveOperator, '-',
+      Token.type.additiveOperator, '-',
+      Token.type.word,             'color2',
+      Token.type.closeParenthesis, ')',
+      Token.type.whitespace,       ' ',
+      Token.type.word,             'calc',
+      Token.type.openParenthesis,  '(',
+      Token.type.word,             'var',
+      Token.type.openParenthesis,  '(',
+      Token.type.additiveOperator, '-',
+      Token.type.additiveOperator, '-',
+      Token.type.word,             'length1',
+      Token.type.closeParenthesis, ')',
+      Token.type.operator,         '*',
+      Token.type.word,             '1px',
+      Token.type.closeParenthesis, ')',
+      Token.type.closeParenthesis, ')',
+      Token.type.whitespace,       ' ',
+      Token.type.word,             '0',
+      Token.type.semicolon,        ';',
+      Token.type.whitespace,       '\n',
+      Token.type.closeBrace,       '}'
+    ]);
   });
 
   describe('when extracting substrings', () => {

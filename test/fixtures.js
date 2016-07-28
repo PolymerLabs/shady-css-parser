@@ -69,7 +69,7 @@ let minifiedRuleset = '.foo{bar:baz}div .qux{vim:fet;}';
 
 let psuedoRuleset = '.foo:bar:not(#rif){baz:qux}';
 
-let dataUriRuleset = '.foo{bar:url(qux;gib)}';
+let dataUriRuleset = '.foo{bar:url(qux;gib )}';
 
 let pathologicalComments = `
 .foo {
@@ -82,7 +82,22 @@ let pathologicalComments = `
     baz: lur;
   };
 }
-@gak wiz;`;
+@gak wiz;{}
+div { display: block }`;
+
+let nestedFunctions = `
+div {
+  background: linear-gradient(var(--color1), var(--color2) calc(var(--length1)*1px)) 0;
+}`;
+
+let malformedMixin = `
+:host {
+  --missing-semicolon: {
+    foo: bar;
+  }
+  baz: qux;
+}
+`;
 
 export {
   basicRuleset,
@@ -94,5 +109,7 @@ export {
   minifiedRuleset,
   psuedoRuleset,
   dataUriRuleset,
-  pathologicalComments
+  pathologicalComments,
+  nestedFunctions,
+  malformedMixin
 };

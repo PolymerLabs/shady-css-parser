@@ -13,7 +13,7 @@ import * as fixtures from './fixtures';
 import { Parser } from '../src/shady-css/parser';
 import { nodeType } from '../src/shady-css/common';
 
-describe('Parser', () => {
+describe.only('Parser', () => {
   let parser;
   let nodeFactory;
 
@@ -26,9 +26,13 @@ describe('Parser', () => {
     it('can parse a basic ruleset', () => {
       expect(parser.parse(fixtures.basicRuleset))
           .to.be.eql(nodeFactory.stylesheet([
-        nodeFactory.ruleset('body', nodeFactory.rulelist([
-          nodeFactory.declaration('margin', nodeFactory.expression('0')),
-          nodeFactory.declaration('padding', nodeFactory.expression('0px'))
+        nodeFactory.ruleset('body ', nodeFactory.rulelist([
+          nodeFactory.declaration('margin', nodeFactory.expression([
+            nodeFactory.term('0')
+          ])),
+          nodeFactory.declaration('padding', nodeFactory.expression([
+            nodeFactory.term('0px\n')
+          ]))
         ]))
       ]));
     });
@@ -36,11 +40,12 @@ describe('Parser', () => {
     it('can parse at rules', () => {
       expect(parser.parse(fixtures.atRules)).to.be.eql(nodeFactory.stylesheet([
         nodeFactory.atRule('import', 'url(\'foo.css\')', null),
-        nodeFactory.atRule('font-face', '', nodeFactory.rulelist([
+        nodeFactory.atRule('font-face', null, nodeFactory.rulelist([
           nodeFactory.declaration(
-            'font-family',
-            nodeFactory.expression('foo')
-          )
+              'font-family',
+              nodeFactory.expression([
+                nodeFactory.term('foo')
+              ]))
         ])),
         nodeFactory.atRule('charset', '\'foo\'', null)
       ]));
@@ -48,14 +53,20 @@ describe('Parser', () => {
 
     it('can parse keyframes', () => {
       expect(parser.parse(fixtures.keyframes))
-          .to.be.eql(nodeFactory.stylesheet([
+            .to.be.eql(nodeFactory.stylesheet([
         nodeFactory.atRule('keyframes', 'foo', nodeFactory.rulelist([
-          nodeFactory.ruleset('from', nodeFactory.rulelist([
-            nodeFactory.declaration('fiz', nodeFactory.expression('0%'))
+          nodeFactory.ruleset('from ', nodeFactory.rulelist([
+            nodeFactory.declaration('fiz', nodeFactory.expression([
+              nodeFactory.term('0%')
+            ]))
           ])),
-          nodeFactory.ruleset('99.9%', nodeFactory.rulelist([
-            nodeFactory.declaration('fiz', nodeFactory.expression('100px')),
-            nodeFactory.declaration('buz', nodeFactory.expression('true'))
+          nodeFactory.ruleset('99.9% ', nodeFactory.rulelist([
+            nodeFactory.declaration('fiz', nodeFactory.expression([
+              nodeFactory.term('100px')
+            ])),
+            nodeFactory.declaration('buz', nodeFactory.expression([
+              nodeFactory.term('true')
+            ]))
           ]))
         ]))
       ]));
@@ -64,10 +75,14 @@ describe('Parser', () => {
     it('can parse custom properties', () => {
       expect(parser.parse(fixtures.customProperties))
           .to.be.eql(nodeFactory.stylesheet([
-        nodeFactory.ruleset(':root', nodeFactory.rulelist([
-          nodeFactory.declaration('--qux', nodeFactory.expression('vim')),
+        nodeFactory.ruleset(':root ', nodeFactory.rulelist([
+          nodeFactory.declaration('--qux', nodeFactory.expression([
+            nodeFactory.term('vim')
+          ])),
           nodeFactory.declaration('--foo', nodeFactory.rulelist([
-             nodeFactory.declaration('bar', nodeFactory.expression('baz'))
+             nodeFactory.declaration('bar', nodeFactory.expression([
+               nodeFactory.term('baz')
+             ]))
           ]))
         ]))
       ]))
@@ -76,9 +91,7 @@ describe('Parser', () => {
     it('can parse declarations with no value', () => {
       expect(parser.parse(fixtures.declarationsWithNoValue))
           .to.be.eql(nodeFactory.stylesheet([
-        nodeFactory.declaration('foo', null),
-        nodeFactory.declaration('bar 20px', null),
-        nodeFactory.ruleset('div', nodeFactory.rulelist([
+        nodeFactory.ruleset('foo;\nbar 20px;\n\ndiv ', nodeFactory.rulelist([
           nodeFactory.declaration('baz', null)
         ]))
       ]));
@@ -88,10 +101,14 @@ describe('Parser', () => {
       expect(parser.parse(fixtures.minifiedRuleset))
           .to.be.eql(nodeFactory.stylesheet([
         nodeFactory.ruleset('.foo', nodeFactory.rulelist([
-          nodeFactory.declaration('bar', nodeFactory.expression('baz'))
+          nodeFactory.declaration('bar', nodeFactory.expression([
+            nodeFactory.term('baz')
+          ]))
         ])),
         nodeFactory.ruleset('div .qux', nodeFactory.rulelist([
-          nodeFactory.declaration('vim', nodeFactory.expression('fet'))
+          nodeFactory.declaration('vim', nodeFactory.expression([
+            nodeFactory.term('fet')
+          ]))
         ]))
       ]));
     });
@@ -100,7 +117,9 @@ describe('Parser', () => {
       expect(parser.parse(fixtures.psuedoRuleset))
           .to.be.eql(nodeFactory.stylesheet([
         nodeFactory.ruleset('.foo:bar:not(#rif)', nodeFactory.rulelist([
-          nodeFactory.declaration('baz', nodeFactory.expression('qux'))
+          nodeFactory.declaration('baz', nodeFactory.expression([
+            nodeFactory.term('qux')
+          ]))
         ]))
       ]));
     });
@@ -109,7 +128,11 @@ describe('Parser', () => {
       expect(parser.parse(fixtures.dataUriRuleset))
           .to.be.eql(nodeFactory.stylesheet([
         nodeFactory.ruleset('.foo', nodeFactory.rulelist([
-          nodeFactory.declaration('bar', nodeFactory.expression('url(qux;gib)'))
+          nodeFactory.declaration('bar', nodeFactory.expression([
+            nodeFactory.function('url', nodeFactory.expression([
+              nodeFactory.term('qux;gib ')
+            ]))
+          ]))
         ]))
       ]));
     });
@@ -117,30 +140,85 @@ describe('Parser', () => {
     it('can parse pathological comments', () => {
       expect(parser.parse(fixtures.pathologicalComments))
           .to.be.eql(nodeFactory.stylesheet([
-        nodeFactory.ruleset('.foo', nodeFactory.rulelist([
-          nodeFactory.declaration('bar', nodeFactory.expression('/*baz*/vim'))
+        nodeFactory.ruleset('.foo ', nodeFactory.rulelist([
+          nodeFactory.declaration('bar', nodeFactory.expression([
+            nodeFactory.term('/*baz*/vim')
+          ]))
         ])),
         nodeFactory.comment('/* unclosed\n@fiz {\n  --huk: {\n    /* buz */'),
-        nodeFactory.declaration('baz', nodeFactory.expression('lur')),
-        nodeFactory.discarded('};'),
-        nodeFactory.discarded('}'),
-        nodeFactory.atRule('gak', 'wiz', null)
+        nodeFactory.ruleset(
+            'baz: lur;\n  };\n}\n@gak wiz;', nodeFactory.rulelist([])),
+        nodeFactory.ruleset('div ', nodeFactory.rulelist([
+          nodeFactory.declaration('display', nodeFactory.expression([
+            nodeFactory.term('block ')
+          ]))
+        ]))
       ]));
     });
 
     it('disregards extra semi-colons', () => {
       expect(parser.parse(fixtures.extraSemicolons))
           .to.be.eql(nodeFactory.stylesheet([
-        nodeFactory.ruleset(':host', nodeFactory.rulelist([
-          nodeFactory.declaration('margin', nodeFactory.expression('0')),
+        nodeFactory.ruleset(':host ', nodeFactory.rulelist([
+          nodeFactory.declaration('margin', nodeFactory.expression([
+            nodeFactory.term('0')
+          ])),
           nodeFactory.discarded(';;'),
-          nodeFactory.declaration('padding', nodeFactory.expression('0')),
+          nodeFactory.declaration('padding', nodeFactory.expression([
+            nodeFactory.term('0')
+          ])),
           nodeFactory.discarded(';'),
           nodeFactory.discarded(';'),
-          nodeFactory.declaration('display', nodeFactory.expression('block')),
+          nodeFactory.declaration('display', nodeFactory.expression([
+            nodeFactory.term('block')
+          ])),
         ])),
         nodeFactory.discarded(';')
       ]));
+    });
+
+    it('can parse malformed mixin declarations', () => {
+      expect(parser.parse(fixtures.malformedMixin))
+          .to.be.eql(nodeFactory.stylesheet([
+        nodeFactory.ruleset(':host ', nodeFactory.rulelist([
+          nodeFactory.declaration('--missing-semicolon', nodeFactory.rulelist([
+            nodeFactory.declaration('foo', nodeFactory.expression([
+              nodeFactory.term('bar')
+            ]))
+          ])),
+          nodeFactory.declaration('baz', nodeFactory.expression([
+            nodeFactory.term('qux')
+          ]))
+        ]))
+      ]));
+    });
+
+    it('can parse complex nested CSS functions', () => {
+      console.log(JSON.stringify(parser.parse(fixtures.nestedFunctions), null, 2));
+      expect(parser.parse(fixtures.nestedFunctions))
+          .to.be.eql(nodeFactory.stylesheet([
+        nodeFactory.ruleset('div ', nodeFactory.rulelist([
+          nodeFactory.declaration('background', nodeFactory.expression([
+            nodeFactory.function('linear-gradient', nodeFactory.expression([
+              nodeFactory.function('var', nodeFactory.expression([
+                nodeFactory.term('--color1')
+              ])),
+              nodeFactory.operator(','),
+              nodeFactory.function('var', nodeFactory.expression([
+                nodeFactory.term('--color2')
+              ])),
+              nodeFactory.function('calc', nodeFactory.expression([
+                nodeFactory.function('var', nodeFactory.expression([
+                  nodeFactory.term('--length1')
+                ])),
+                nodeFactory.operator('*'),
+                nodeFactory.term('1px')
+              ]))
+            ])),
+            nodeFactory.term('0')
+          ]))
+        ]))
+      ]))
     });
   });
 });

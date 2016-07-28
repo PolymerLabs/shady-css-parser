@@ -55,7 +55,9 @@ describe('Stringifier', () => {
 
     it('can stringify Declarations with Expression values', () => {
       let cssText = stringifier.stringify(
-          nodeFactory.declaration('color', nodeFactory.expression('red')));
+          nodeFactory.declaration(
+              'color',
+              nodeFactory.expression([nodeFactory.term('red')])));
       expect(cssText).to.be.eql('color:red;');
     });
 
@@ -75,7 +77,7 @@ describe('Stringifier', () => {
 
     it('can stringify a basic ruleset', () => {
       let cssText = stringifier.stringify(parser.parse(fixtures.basicRuleset));
-      expect(cssText).to.be.eql('body{margin:0;padding:0px;}');
+      expect(cssText).to.be.eql('body {margin:0;padding:0px\n;}');
     });
 
     it('can stringify at rules', () => {
@@ -87,19 +89,19 @@ describe('Stringifier', () => {
     it('can stringify keyframes', () => {
       let cssText = stringifier.stringify(parser.parse(fixtures.keyframes));
       expect(cssText).to.be.eql(
-          '@keyframes foo{from{fiz:0%;}99.9%{fiz:100px;buz:true;}}');
+          '@keyframes foo{from {fiz:0%;}99.9% {fiz:100px;buz:true;}}');
     });
 
     it('can stringify declarations without value', () => {
       let cssText =
           stringifier.stringify(parser.parse(fixtures.declarationsWithNoValue));
-      expect(cssText).to.be.eql('foo;bar 20px;div{baz;}');
+      expect(cssText).to.be.eql('foo;\nbar 20px;\n\ndiv {baz;}');
     });
 
     it('can stringify custom properties', () => {
       let cssText = stringifier.stringify(
           parser.parse(fixtures.customProperties));
-      expect(cssText).to.be.eql(':root{--qux:vim;--foo:{bar:baz;};}');
+      expect(cssText).to.be.eql(':root {--qux:vim;--foo:{bar:baz;};}');
     });
 
     describe('with discarded nodes', () => {
@@ -107,7 +109,8 @@ describe('Stringifier', () => {
         let cssText = stringifier.stringify(
             parser.parse(fixtures.pathologicalComments));
         expect(cssText).to.be.eql(
-            '.foo{bar:/*baz*/vim;}/* unclosed\n@fiz {\n  --huk: {\n    /* buz */baz:lur;@gak wiz;');
+            '.foo {bar:/*baz*/vim;}/* unclosed\n@fiz {\n  --huk: {\n    /* buz \
+*/baz: lur;\n  };\n}\n@gak wiz;{}div {display:block ;}');
       });
     });
   });

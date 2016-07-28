@@ -15,10 +15,10 @@
  * @default
  */
 const matcher = {
-  whitespace: /\s/,
+  whitespace: /^\s$/,
   whitespaceGreedy: /(\s+)/g,
   commentGreedy: /(\*\/)/g,
-  boundary: /[\(\)\{\}'"@;:\s]/,
+  boundary: /^[\(\)\{\}'"@;:\s+\-\\/*,]$/,
   stringBoundary: /['"]/
 };
 
@@ -34,6 +34,9 @@ const nodeType = {
   atRule: 'atRule',
   ruleset: 'ruleset',
   expression: 'expression',
+  term: 'term',
+  operator: 'operator',
+  function: 'function',
   declaration: 'declaration',
   rulelist: 'rulelist',
   discarded: 'discarded'
