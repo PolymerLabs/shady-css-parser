@@ -3,6 +3,7 @@
   "version": "0.0.8",
   "description": "A fast, small and flexible CSS parser.",
   "main": "index.js",
+  "typings": "index.d.ts",
   "devDependencies": {
     "babel-core": "^6.4.0",
     "babel-runtime": "^6.3.19",
@@ -37,9 +38,9 @@
     "type": "git",
     "url": "git+https://github.com/PolymerLabs/shady-css-parser.git"
   },
-  "author": [
-    "The Polymer Authors"
-  ],
+  "author": {
+    "name": "The Polymer Authors"
+  },
   "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/PolymerLabs/shady-css-parser/issues"
