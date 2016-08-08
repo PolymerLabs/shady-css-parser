@@ -51,6 +51,15 @@ class Stringifier extends NodeVisitor {
   }
 
   /**
+   * Visit and stringify a Comment node.
+   * @param {object} comment A Comment node.
+   * @return {string} The stringified CSS of the Comment.
+   */
+  [nodeType.comment](comment) {
+    return `${comment.value}`;
+  }
+
+  /**
    * Visit and stringify a Rulelist node.
    * @param {object} rulelist A Rulelist node.
    * @return {string} The stringified CSS of the Rulelist.
@@ -63,15 +72,6 @@ class Stringifier extends NodeVisitor {
     }
 
     return rules + '}';
-  }
-
-  /**
-   * Visit and stringify a Comment node.
-   * @param {object} comment A Comment node.
-   * @return {string} The stringified CSS of the Comment.
-   */
-  [nodeType.comment](comment) {
-    return `${comment.value}`;
   }
 
   /**
@@ -100,7 +100,28 @@ class Stringifier extends NodeVisitor {
    * @return {string} The stringified CSS of the Expression.
    */
   [nodeType.expression](expression) {
-    return `${expression.text}`;
+    let terms = [];
+    for (let i = 0; i < expression.terms.length; ++i) {
+      terms.push(this.visit(expression.terms[i]));
+    }
+    return terms.join(' ');
+  }
+
+  /**
+   * Visit and stringify a Function node.
+   * @param {object} func A Function node.
+   * @return {string} The stringified CSS of the Function.
+   */
+  [nodeType.function](func) {
+    return `${func.name}(${this.visit(func.terms)})`;
+  }
+
+  [nodeType.term](term) {
+    return term.value;
+  }
+
+  [nodeType.operator](operator) {
+    return operator.symbol;
   }
 
   /**

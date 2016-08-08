@@ -56,16 +56,19 @@ Token.type = {
   propertyBoundary: 32,
   // Special cases for boundary:
   openParenthesis: 64 | 16,
-  closeParenthesis: 128 | 16,
+  closeParenthesis: 32768 | 128 | 16,
   at: 256 | 16,
   openBrace: 512 | 16,
   // [};] are property boundaries:
-  closeBrace: 1024 | 32 | 16,
+  closeBrace: 32768 | 1024 | 32 | 16,
   semicolon: 2048 | 32 | 16,
   // : is a chimaeric abomination:
   // foo:bar{}
   // foo:bar;
-  colon: 4096 | 16 | 8
+  colon: 4096 | 16 | 8,
+  operator: 8192 | 16 | 8,
+  additiveOperator: 16384 | 8192 | 16 | 8,
+  functionBoundary: 32768
 };
 
 /**
@@ -82,8 +85,12 @@ const boundaryTokenTypes = {
   '{': Token.type.openBrace,
   '}': Token.type.closeBrace,
   ';': Token.type.semicolon,
-  '-': Token.type.hyphen,
-  '_': Token.type.underscore
+  '_': Token.type.underscore,
+  '-': Token.type.additiveOperator,
+  '+': Token.type.additiveOperator,
+  ',': Token.type.operator,
+  '/': Token.type.operator,
+  '*': Token.type.operator
 };
 
 export { Token, boundaryTokenTypes };

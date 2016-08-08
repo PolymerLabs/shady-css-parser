@@ -68,10 +68,12 @@ class Parser {
   /**
    * Consumes tokens from a Tokenizer to parse a single rule.
    * @param {Tokenizer} tokenizer A Tokenizer instance.
+   * @param {boolean=false} allowDeclarations Set to true if a declaration is
+   * a valid rule to be parsed in this call.
    * @return {object} If the current token in the Tokenizer is whitespace,
    * returns null. Otherwise, returns the next parseable node.
    */
-  parseRule(tokenizer) {
+  parseRule(tokenizer, allowDeclarations = false) {
     // Trim leading whitespace:
     if (tokenizer.currentToken.is(Token.type.whitespace)) {
       tokenizer.advance();
@@ -81,11 +83,11 @@ class Parser {
       return this.parseComment(tokenizer);
 
     } else if (tokenizer.currentToken.is(Token.type.word)) {
-      return this.parseDeclarationOrRuleset(tokenizer);
-
-    } else if (tokenizer.currentToken.is(Token.type.propertyBoundary)) {
-      return this.parseUnknown(tokenizer);
-
+      if (allowDeclarations) {
+        return this.parseDeclaration(tokenizer);
+      } else {
+        return this.parseRuleset(tokenizer);
+      }
     } else if (tokenizer.currentToken.is(Token.type.at)) {
       return this.parseAtRule(tokenizer);
 
@@ -141,14 +143,24 @@ class Parser {
         tokenizer.advance();
         let start = tokenizer.currentToken;
         let end;
-
+        
         while (tokenizer.currentToken &&
                tokenizer.currentToken.is(Token.type.word)) {
           end = tokenizer.advance();
         }
         name = tokenizer.slice(start, end);
       } else if (tokenizer.currentToken.is(Token.type.openBrace)) {
-        rulelist = this.parseRulelist(tokenizer);
+        // NOTE(cdata): We allow declarations as children of this at-rule iff
+        // there are no parameters in this at-rule. This is an attempt at
+        // generalizing the format of several standard at-rules (@media,
+        // @font-face, @import, @apply etc.), but is not part of the standard
+        // grammar and holds no guarantee of being future proof. Examples:
+        // @font-face { src: foo; } has no parameters, so allows declarations.
+        // @keyframes foo { 0% { bar: baz; } } has parameters (foo), so only
+        // allows rulesets (also applies to @media).
+        // @apply --foo; technically allows declarations, but won't have an
+        // associated rulelist in the common case (also applies to @import).
+        rulelist = this.parseRulelist(tokenizer, parametersStart === null);
         break;
       } else if (tokenizer.currentToken.is(Token.type.propertyBoundary)) {
         tokenizer.advance();
@@ -164,16 +176,19 @@ class Parser {
 
     return this.nodeFactory.atRule(
         name,
-        parametersStart ? tokenizer.slice(parametersStart, parametersEnd) : '',
+        parametersStart ?
+            tokenizer.slice(parametersStart, parametersEnd) : null,
         rulelist);
   }
 
   /**
    * Consumes tokens from a Tokenizer to produce a Rulelist node.
    * @param {Tokenizer} tokenizer A Tokenizer instance.
+   * @param {boolean=false} allowDeclarations Set to true if declarations are
+   * valid rules for this rule list to contain.
    * @return {object} A Rulelist node.
    */
-  parseRulelist(tokenizer) {
+  parseRulelist(tokenizer, allowDeclarations = false) {
     let rules = [];
 
     // Take the opening { boundary:
@@ -184,7 +199,7 @@ class Parser {
         tokenizer.advance();
         break;
       } else {
-        let rule = this.parseRule(tokenizer);
+        let rule = this.parseRule(tokenizer, allowDeclarations);
         if (rule) {
           rules.push(rule);
         }
@@ -195,72 +210,141 @@ class Parser {
   }
 
   /**
-   * Consumes tokens from a Tokenizer instance to produce a Declaration node or
-   * a Ruleset node, as appropriate.
-   * @param {Tokenizer} tokenizer A Tokenizer node.
-   * @return {object} One of a Declaration or Ruleset node.
+   * Consumes tokens from a Tokenizer to produce a Declaration node.
+   * @param {Tokenizer} tokenizer A Tokenizer instance.
+   * @return {object} A Declaration node.
    */
-  parseDeclarationOrRuleset(tokenizer) {
-    let ruleStart = null;
-    let ruleEnd = null;
-    let colon = null;
+  parseDeclaration(tokenizer) {
+    let nameStart = tokenizer.advance();
+    let nameEnd = nameStart;
+    let value = null;
+
+    while (tokenizer.currentToken) {
+      if (tokenizer.currentToken.is(Token.type.colon)) {
+        tokenizer.advance();
+
+        if (tokenizer.currentToken.is(Token.type.whitespace)) {
+          tokenizer.advance();
+        }
+
+        if (tokenizer.currentToken.is(Token.type.openBrace)) {
+          value = this.parseRulelist(tokenizer, true);
+        } else {
+          value = this.parseExpression(tokenizer);
+        }
+      } else if (tokenizer.currentToken.is(Token.type.propertyBoundary)) {
+        if (tokenizer.currentToken.is(Token.type.semicolon)) {
+          tokenizer.advance();
+        }
+        break;
+      } else if (!value) {
+        nameEnd = tokenizer.advance();
+      } else {
+        break;
+      }
+    }
+
+    return this.nodeFactory.declaration(
+        tokenizer.slice(nameStart, nameEnd), value);
+  }
+
+  /**
+   * Consumes tokens from a Tokenizer to produce a Ruleset node.
+   * @param {Tokenizer} tokenizer A Tokenizer instance.
+   * @return {object} A Ruleset node.
+   */
+  parseRuleset(tokenizer) {
+    let selectorStart = tokenizer.advance();
+    let selectorEnd = selectorStart;
+
+    while (tokenizer.currentToken) {
+      if (tokenizer.currentToken.is(Token.type.openBrace)) {
+        break;
+      }
+
+      selectorEnd = tokenizer.advance();
+    }
+
+    return this.nodeFactory.ruleset(
+        tokenizer.slice(selectorStart, selectorEnd),
+        this.parseRulelist(tokenizer, true));
+  }
+
+  parseExpression(
+      tokenizer, terminatingBoundaryType = Token.type.propertyBoundary) {
+    let terms = [];
 
     while (tokenizer.currentToken) {
       if (tokenizer.currentToken.is(Token.type.whitespace)) {
         tokenizer.advance();
-      } else if (tokenizer.currentToken.is(Token.type.openParenthesis)) {
-        while (tokenizer.currentToken &&
-               !tokenizer.currentToken.is(Token.type.closeParenthesis)) {
-          tokenizer.advance();
-        }
-      } else if (tokenizer.currentToken.is(Token.type.openBrace) ||
-                 tokenizer.currentToken.is(Token.type.propertyBoundary)) {
+        continue;
+      }
+
+      if (tokenizer.currentToken.is(terminatingBoundaryType)) {
         break;
-      } else {
-        if (tokenizer.currentToken.is(Token.type.colon)) {
-          colon = tokenizer.currentToken;
+      }
+
+      terms.push(this.parseTerm(tokenizer, terminatingBoundaryType));
+    }
+
+    return this.nodeFactory.expression(terms);
+  }
+
+  parseTerm(tokenizer, terminatingBoundaryType = Token.type.propertyBoundary) {
+    let termStart = tokenizer.currentToken;
+    let termEnd = termStart;
+
+    while (tokenizer.currentToken) {
+      if (tokenizer.currentToken.is(terminatingBoundaryType)) {
+        break;
+      }
+
+      if (tokenizer.currentToken.is(Token.type.operator)) {
+        if (termEnd !== termStart) {
+          break;
         }
 
-        if (!ruleStart) {
-          ruleStart = tokenizer.advance();
-          ruleEnd = ruleStart;
+        let token = tokenizer.advance();
+
+        // NOTE(cdata): + and - operators are required to have whitespace on
+        // both sides in order to disambiguate them from idents-with-hyphens and
+        // positive or negative dimensions, which are expressed with an
+        // explicit + or - prefix.
+        if (!token.is(Token.type.additiveOperator) ||
+            (tokenizer.currentToken &&
+             tokenizer.currentToken.is(Token.type.whitespace))) {
+          return this.nodeFactory.operator(tokenizer.slice(token));
         } else {
-          ruleEnd = tokenizer.advance();
+          termEnd = token;
+          continue;
         }
+      } else if (tokenizer.currentToken.is(Token.type.openParenthesis)) {
+          return this.nodeFactory.function(
+              tokenizer.slice(termStart, termEnd),
+              this.parseFunctionExpression(tokenizer));
+      }
+
+      if (tokenizer.currentToken) {
+        termEnd = tokenizer.advance();
       }
     }
 
-    // A ruleset never contains or ends with a semi-colon.
-    if (tokenizer.currentToken.is(Token.type.propertyBoundary)) {
-      let declarationName = tokenizer.slice(
-          ruleStart, colon ? colon.previous : ruleEnd);
-      // TODO(cdata): is .trim() bad for performance?
-      let expressionValue =
-          colon && tokenizer.slice(colon.next, ruleEnd).trim();
+    return this.nodeFactory.term(tokenizer.slice(termStart, termEnd));
+  }
 
-      if (tokenizer.currentToken.is(Token.type.semicolon)) {
-        tokenizer.advance();
-      }
+  parseFunctionExpression(tokenizer) {
+    // Take the open parenthesis:
+    tokenizer.advance();
 
-      return this.nodeFactory.declaration(
-          declarationName,
-          expressionValue && this.nodeFactory.expression(expressionValue));
-    // This is the case for a mixin-like structure:
-    } else if (colon && colon === ruleEnd) {
-      let rulelist = this.parseRulelist(tokenizer);
+    // The call internals are treated as an expression, but semicolons can be
+    // ignored:
+    let expression = this.parseExpression(tokenizer, Token.type.functionBoundary);
 
-      if (tokenizer.currentToken.is(Token.type.semicolon)) {
-        tokenizer.advance();
-      }
-
-      return this.nodeFactory.declaration(
-          tokenizer.slice(ruleStart, ruleEnd.previous), rulelist);
-    // Otherwise, this is a ruleset:
-    } else {
-      return this.nodeFactory.ruleset(
-          tokenizer.slice(ruleStart, ruleEnd),
-          this.parseRulelist(tokenizer));
+    if (tokenizer.currentToken.is(Token.type.closeParenthesis)) {
+      tokenizer.advance();
     }
+
+    return expression;
   }
 }
 

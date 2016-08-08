@@ -23,6 +23,7 @@ class NodeFactory {
    * @return {object} A Stylesheet node.
    */
   stylesheet(rules) {
+    // console.log(JSON.stringify(rules, null, 2));
     return { type: nodeType.stylesheet, rules };
   }
 
@@ -79,13 +80,42 @@ class NodeFactory {
   }
 
   /**
-   * Creates an Expression node.
-   * @param {string} text The full text content of the expression (e.g.,
-   * `url(img.jpg)`)
+   * Creates an Expression Terms node.
+   * @param {Array} terms An ordered list of terms and operators in the
+   * expression.
    * @return {object} An Expression node.
    */
-  expression(text) {
-    return { type: nodeType.expression, text };
+  expression(terms) {
+    return { type: nodeType.expression, terms };
+  }
+
+  /**
+   * Creates a Term node.
+   * @param {string} value The value of the expression (e.g., `block`)
+   * @return {object} An Expression node.
+   */
+  term(value) {
+    return { type: nodeType.term, value };
+  }
+
+  /**
+   * Creates a Function node.
+   * @param {string} name The name of the function.
+   * @param {object} terms The Expression Terms node that represents the
+   * function arguments.
+   * @return {object} A Function node.
+   */
+  function(name, terms) {
+    return { type: nodeType.function, name, terms };
+  }
+
+  /**
+   * Creates an Operator node.
+   * @param {string} symbol The symbol of the operator.
+   * @return {object} An Operator node.
+   */
+  operator(symbol) {
+    return { type: nodeType.operator, symbol };
   }
 
   /**

@@ -2,7 +2,8 @@
 var gulp = require('gulp');
 var babel = require('gulp-babel');
 var concat = require('gulp-concat');
-var uglify = require('gulp-uglify');
+var uglifyjs = require('uglify-js-harmony');
+var minify = require('gulp-uglify/minifier');
 var size = require('gulp-size');
 var rename = require('gulp-rename');
 var mocha = require('gulp-mocha');
@@ -54,7 +55,7 @@ gulp.task('transform', ['test'], function() {
 
 gulp.task('minify', ['concat'], function() {
   return gulp.src(dist + '/shady-css.concat.js')
-    .pipe(uglify())
+    .pipe(minify({}, uglifyjs))
     .on('error', function(error) {
       console.error(error);
     })
