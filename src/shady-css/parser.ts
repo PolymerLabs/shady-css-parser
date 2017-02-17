@@ -16,6 +16,8 @@ import { NodeFactory } from './node-factory';
  * Class that implements a shady CSS parser.
  */
 class Parser {
+  nodeFactory: NodeFactory;
+
   /**
    * Create a Parser instance. When creating a Parser instance, a specialized
    * NodeFactory can be supplied to implement streaming analysis and

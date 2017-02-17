@@ -9,9 +9,50 @@
  */
 
 /**
+ * An enumeration of Token types.
+ * @type {object}
+ * @default
+ * @static
+ */
+enum TokenType {
+  none =  0,
+  whitespace =  (2 ** 0),
+  string =  (2 ** 1),
+  comment =  (2 ** 2),
+  word =  (2 ** 3),
+  boundary =  (2 ** 4),
+  propertyBoundary =  (2 ** 5),
+  // Special cases for boundary:
+  openParenthesis =  (2 ** 6) | TokenType.boundary,
+  closeParenthesis =  (2 ** 7) | TokenType.boundary,
+  at =  (2 ** 8) | TokenType.boundary,
+  openBrace =  (2 ** 9) | TokenType.boundary,
+  // [};] are property boundaries:
+  closeBrace =  (2 ** 10) | TokenType.propertyBoundary | TokenType.boundary,
+  semicolon =  (2 ** 11) | TokenType.propertyBoundary | TokenType.boundary,
+  // : is a chimaeric abomination:
+  // foo:bar{}
+  // foo:bar;
+  colon =  (2 ** 12) | TokenType.boundary | TokenType.word,
+
+  // TODO: are these two boundaries? I mean, sometimes they are I guess? Or
+  //       maybe they shouldn't exist in the boundaryTokenTypes map.
+  hyphen = (2 ** 13),
+  underscore = (2 ** 14)
+};
+
+/**
  * Class that describes individual tokens as produced by the Tokenizer.
  */
 class Token {
+  static type = TokenType;
+
+  type: TokenType;
+  start: number | undefined;
+  end: number | undefined;
+  previous: Token | null;
+  next: Token | null;
+
   /**
    * Create a Token instance.
    * @param {number} type The lexical type of the Token.
@@ -20,7 +61,7 @@ class Token {
    * @param {number} end The end index of the text corresponding to the Token
    * in the CSS text.
    */
-  constructor(type, start, end) {
+  constructor(type, start=undefined, end=undefined) {
     this.type = type;
     this.start = start;
     this.end = end;
@@ -39,34 +80,6 @@ class Token {
     return (this.type & type) === type;
   }
 }
-
-/**
- * An enumeration of Token types.
- * @type {object}
- * @default
- * @static
- */
-Token.type = {
-  none: 0,
-  whitespace: 1,
-  string: 2,
-  comment: 4,
-  word: 8,
-  boundary: 16,
-  propertyBoundary: 32,
-  // Special cases for boundary:
-  openParenthesis: 64 | 16,
-  closeParenthesis: 128 | 16,
-  at: 256 | 16,
-  openBrace: 512 | 16,
-  // [};] are property boundaries:
-  closeBrace: 1024 | 32 | 16,
-  semicolon: 2048 | 32 | 16,
-  // : is a chimaeric abomination:
-  // foo:bar{}
-  // foo:bar;
-  colon: 4096 | 16 | 8
-};
 
 /**
  * A mapping of boundary token text to their corresponding types.

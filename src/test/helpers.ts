@@ -9,7 +9,7 @@
  */
 
 import { expect } from 'chai';
-import { Token } from '../src/shady-css/token';
+import { Token } from '../shady-css/token';
 
 function expectTokenType(token, type) {
   expect(token).to.be.ok;

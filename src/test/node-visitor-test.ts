@@ -9,9 +9,12 @@
  */
 
 import { expect } from 'chai';
-import { NodeVisitor } from '../src/shady-css/node-visitor';
+import { NodeVisitor } from '../shady-css/node-visitor';
 
 class TestNodeVisitor extends NodeVisitor {
+  aCallCount: number;
+  bCallCount: number;
+
   constructor() {
     super();
 

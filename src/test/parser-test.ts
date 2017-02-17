@@ -10,8 +10,8 @@
 
 import { expect } from 'chai';
 import * as fixtures from './fixtures';
-import { Parser } from '../src/shady-css/parser';
-import { nodeType } from '../src/shady-css/common';
+import { Parser } from '../shady-css/parser';
+import { nodeType } from '../shady-css/common';
 
 describe('Parser', () => {
   let parser;

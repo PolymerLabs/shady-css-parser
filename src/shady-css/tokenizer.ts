@@ -20,6 +20,8 @@ const getNextToken = Symbol('getNextToken');
  * CSS syntax.
  */
 class Tokenizer {
+  cssText: string;
+
   /**
    * Create a Tokenizer instance.
    * @param {string} cssText The raw CSS string to be tokenized.

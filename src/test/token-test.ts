@@ -9,7 +9,7 @@
  */
 
 import { expect } from 'chai';
-import { Token } from '../src/shady-css/token';
+import { Token } from '../shady-css/token';
 
 describe('Token', () => {
   it('supports bitfield type comparison', () => {

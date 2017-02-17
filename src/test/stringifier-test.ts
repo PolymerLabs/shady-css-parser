@@ -10,9 +10,9 @@
 
 import { expect } from 'chai';
 import * as fixtures from './fixtures';
-import { Stringifier } from '../src/shady-css/stringifier';
-import { Parser } from '../src/shady-css/parser';
-import { NodeFactory } from '../src/shady-css/node-factory';
+import { Stringifier } from '../shady-css/stringifier';
+import { Parser } from '../shady-css/parser';
+import { NodeFactory } from '../shady-css/node-factory';
 
 describe('Stringifier', () => {
   let nodeFactory;
