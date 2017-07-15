@@ -1,8 +1,0 @@
-{
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "outFile": "dist/shady-css.concat.js",
-    "module": "amd"
-  },
-  "exclude": ["src/test/**/*.ts"]
-}
