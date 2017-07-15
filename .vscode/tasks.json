@@ -1,35 +1,39 @@
 {
-  "version": "0.1.0",
-  "command": "npm",
-  "isShellCommand": true,
-  "showOutput": "always",
-  "suppressTaskName": true,
+  "version": "2.0.0",
   "tasks": [
     {
-      "taskName": "test",
-      "args": [
-        "run",
-        "test:watch"
-      ],
-      "isTestCommand": true,
+      "type": "npm",
+      "script": "test:watch",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "isBackground": true,
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "promptOnClose": false,
       "problemMatcher": {
-        "fileLocation": [
-          "relative",
-          "${workspaceRoot}/src"
-        ],
-        "watchedTaskBeginsRegExp": "\\[npm\\] INFO Spawning\\.\\.\\.",
-        "watchedTaskEndsRegExp": "\\[npm\\] (ERROR Exited with code \\d+|SUCCESS Exited cleanly|INFO Killed with SIGTERM)",
+        "background": {
+          "activeOnStart": false,
+          "beginsPattern": "\\[npm\\] INFO Spawning\\.\\.\\.",
+          "endsPattern": "\\[npm\\] (ERROR Exited with code \\d+|SUCCESS Exited cleanly|INFO Killed with SIGTERM)"
+        },
+        "severity": "error",
+        "applyTo": "allDocuments",
         "pattern": [
           {
-            "regexp": "^  (\\d+)\\) ((\\w+).*)",
-            "message": 2,
-            "file": 3,
-            "line": 1,
-            "column": 1
+            "regexp": "\\.*?at (.*?)\\((.*?):(\\d+):(\\d+)\\)",
+            "message": 1,
+            "file": 2,
+            "line": 3,
+            "column": 4
           }
         ]
-      },
-      "isWatching": true
+      }
     }
   ]
 }

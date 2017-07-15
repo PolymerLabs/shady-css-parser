@@ -31,12 +31,13 @@
     "gulp-uglify": "^1.4.2",
     "gulp-watch": "^4.3.5",
     "mocha": "^2.3.3",
+    "source-map-support": "^0.4.15",
     "typescript": "^2.4.1",
     "watchy": "^0.6.7"
   },
   "scripts": {
     "prepublish": "gulp",
-    "test": "tsc && mocha dist/test/*.js",
+    "test": "tsc && mocha --require source-map-support/register dist/test/*.js",
     "test:watch": "watchy -w src/ -- npm test --loglevel=silent"
   },
   "repository": {
