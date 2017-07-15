@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es6",
     "lib": [
       "es2016"
     ],
@@ -8,17 +8,15 @@
     "moduleResolution": "node",
     "isolatedModules": false,
     "declaration": false,
-    "strictNullChecks": true,
-    "noImplicitAny": true,
+    "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
+    "suppressImplicitAnyIndexErrors": false,
     "removeComments": false,
     "preserveConstEnums": true,
-    "suppressImplicitAnyIndexErrors": false,
     "outDir": "dist",
     "rootDir": "src",
-    "sourceMap": true,
-    "skipLibCheck": true
+    "sourceMap": true
   },
   "include": [
     "src/**/*.ts"
