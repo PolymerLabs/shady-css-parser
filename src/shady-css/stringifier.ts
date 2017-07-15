@@ -108,7 +108,7 @@ class Stringifier extends NodeVisitor<Node, string> {
    * @param {object} discarded A Discarded node.
    * @return {string} An empty string, since Discarded nodes are discarded.
    */
-  [nodeType.discarded](discarded: Discarded) {
+  [nodeType.discarded](_discarded: Discarded) {
     return '';
   }
 }

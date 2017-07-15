@@ -8,8 +8,6 @@
  * subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
  */
 
-import {Token, TokenType} from './token';
-
 /**
  * Class that implements a visitor pattern for ASTs produced by the Parser.
  * Extend the NodeVisitor class to implement useful tree traversal operations

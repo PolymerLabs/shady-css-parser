@@ -10,7 +10,7 @@
 
 import {expect} from 'chai';
 
-import {NodeFactory, nodeType, Parser} from '../shady-css';
+import {NodeFactory, Parser} from '../shady-css';
 
 import * as fixtures from './fixtures';
 
