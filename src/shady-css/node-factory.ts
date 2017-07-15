@@ -8,7 +8,7 @@
  * subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
  */
 
-import { nodeType } from './common';
+import { nodeType, Rule, Stylesheet, Rulelist, Comment, Expression, Declaration, Discarded, AtRule, Ruleset } from './common';
 
 /**
  * Class used for generating nodes in a CSS AST. Extend this class to implement
@@ -22,7 +22,7 @@ class NodeFactory {
    * level of the stylesheet.
    * @return {object} A Stylesheet node.
    */
-  stylesheet(rules) {
+  stylesheet(rules: Rule[]): Stylesheet {
     return { type: nodeType.stylesheet, rules };
   }
 
@@ -33,7 +33,8 @@ class NodeFactory {
    * @param {object=} rulelist The Rulelist node (if any) of the At Rule.
    * @return {object} An At Rule node.
    */
-  atRule(name, parameters, rulelist) {
+  atRule(name: string, parameters: string, rulelist: Rulelist|
+        undefined=undefined): AtRule {
     return { type: nodeType.atRule, name, parameters, rulelist };
   }
 
@@ -43,7 +44,7 @@ class NodeFactory {
    * opening and closing comment signature.
    * @return {object} A Comment node.
    */
-  comment(value) {
+  comment(value: string): Comment {
     return { type: nodeType.comment, value };
   }
 
@@ -52,7 +53,7 @@ class NodeFactory {
    * @param {array} rules An array of the Rule nodes found within the Ruleset.
    * @return {object} A Rulelist node.
    */
-  rulelist(rules) {
+  rulelist(rules: Rule[]): Rulelist {
     return { type: nodeType.rulelist, rules };
   }
 
@@ -63,7 +64,7 @@ class NodeFactory {
    * @param {object} rulelist The Rulelist node that corresponds to the Selector.
    * @return {object} A Selector node.
    */
-  ruleset(selector, rulelist) {
+  ruleset(selector: string, rulelist: Rulelist): Ruleset {
     return { type: nodeType.ruleset, selector, rulelist };
   }
 
@@ -74,7 +75,7 @@ class NodeFactory {
    * corresponds to the value of the Declaration.
    * @return {object} A Declaration node.
    */
-  declaration(name, value) {
+  declaration(name: string, value: Expression|Rulelist): Declaration {
     return { type: nodeType.declaration, name, value };
   }
 
@@ -84,7 +85,7 @@ class NodeFactory {
    * `url(img.jpg)`)
    * @return {object} An Expression node.
    */
-  expression(text) {
+  expression(text: string): Expression {
     return { type: nodeType.expression, text };
   }
 
@@ -94,7 +95,7 @@ class NodeFactory {
    * @param {string} text The text content that is discarded.
    * @return {object} A Discarded node.
    */
-  discarded(text) {
+  discarded(text: string): Discarded {
     return { type: nodeType.discarded, text };
   }
 }

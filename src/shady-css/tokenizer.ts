@@ -11,10 +11,6 @@
 import { matcher } from './common';
 import { Token, boundaryTokenTypes } from './token';
 
-const currentToken = Symbol('currentToken');
-const cursorToken = Symbol('cursorToken');
-const getNextToken = Symbol('getNextToken');
-
 /**
  * Class that implements tokenization of significant lexical features of the
  * CSS syntax.
@@ -23,44 +19,41 @@ class Tokenizer {
   cssText: string;
 
   /**
+   * Tracks the position of the tokenizer in the source string.
+   * Also the default head of the Token linked list.
+   */
+  private cursorToken_ = new Token(Token.type.none, 0, 0);
+
+  /**
+   * Holds a reference to a Token that is "next" in the source string, often
+   * due to having been peeked at.
+   */
+  private currentToken_: null|Token = null;
+
+  /**
    * Create a Tokenizer instance.
    * @param {string} cssText The raw CSS string to be tokenized.
    *
    */
-  constructor(cssText) {
+  constructor(cssText: string) {
     this.cssText = cssText;
-    /**
-     * Tracks the position of the tokenizer in the source string.
-     * Also the default head of the Token linked list.
-     * @type {!Token}
-     * @private
-     */
-    this[cursorToken] = new Token(Token.type.none, 0, 0);
-    /**
-     * Holds a reference to a Token that is "next" in the source string, often
-     * due to having been peeked at.
-     * @type {?Token}
-     * @readonly
-     */
-    this[currentToken] = null;
   }
 
   get offset() {
-    return this[cursorToken].end;
+    return this.cursorToken_.end;
   }
 
   /**
    * The current token that will be returned by a call to `advance`. This
    * reference is useful for "peeking" at the next token ahead in the sequence.
    * If the entire CSS text has been tokenized, the `currentToken` will be null.
-   * @type {Token}
    */
-  get currentToken() {
-    if (this[currentToken] == null) {
-      this[currentToken] = this[getNextToken]();
+  get currentToken(): Token {
+    if (this.currentToken_ == null) {
+      this.currentToken_ = this.getNextToken_();
     }
 
-    return this[currentToken];
+    return this.currentToken_;
   }
 
   /**
@@ -68,13 +61,13 @@ class Tokenizer {
    * @return {Token} The current token prior to the call to `advance`, or null
    * if the entire CSS text has been tokenized.
    */
-  advance() {
+  advance(): Token {
     let token;
-    if (this[currentToken] != null) {
-      token = this[currentToken];
-      this[currentToken] = null;
+    if (this.currentToken_ != null) {
+      token = this.currentToken_;
+      this.currentToken_ = null;
     } else {
-      token = this[getNextToken]();
+      token = this.getNextToken_();
     }
     return token;
   }
@@ -91,7 +84,7 @@ class Tokenizer {
    * @return {string} The substring of the CSS text corresponding to the
    * startToken and endToken.
    */
-  slice(startToken, endToken) {
+  slice(startToken: Token, endToken: Token|undefined = undefined): string {
     endToken = endToken || startToken;
     return this.cssText.substring(startToken.start, endToken.end);
   }
@@ -113,11 +106,11 @@ class Tokenizer {
    * @return {Token} A Token instance, or null if the entire CSS text has beeen
    * tokenized.
    */
-  [getNextToken]() {
+  private getNextToken_(): Token {
     let character = this.cssText[this.offset];
     let token;
 
-    this[currentToken] = null;
+    this.currentToken_ = null;
 
     if (this.offset >= this.cssText.length) {
       return null;
@@ -133,9 +126,9 @@ class Tokenizer {
       token = this.tokenizeWord(this.offset);
     }
 
-    token.previous = this[cursorToken];
-    this[cursorToken].next = token;
-    this[cursorToken] = token;
+    token.previous = this.cursorToken_;
+    this.cursorToken_.next = token;
+    this.cursorToken_ = token;
 
     return token;
   }
@@ -147,7 +140,7 @@ class Tokenizer {
    * @param {number} offset An offset in the CSS text.
    * @return {Token} A string Token instance.
    */
-  tokenizeString(offset) {
+  tokenizeString(offset: number) {
     let quotation = this.cssText[offset];
     let escaped = false;
     let start = offset;
@@ -179,7 +172,7 @@ class Tokenizer {
    * @param {offset} number An offset in the CSS text.
    * @return {Token} A word Token instance.
    */
-  tokenizeWord(offset) {
+  tokenizeWord(offset: number): Token {
     let start = offset;
     let character;
     // TODO(cdata): change to greedy regex match?
@@ -198,7 +191,7 @@ class Tokenizer {
    * @param {offset} number An offset in the CSS text.
    * @return {Token} A whitespace Token instance.
    */
-  tokenizeWhitespace(offset) {
+  tokenizeWhitespace(offset: number) {
     let start = offset;
 
     matcher.whitespaceGreedy.lastIndex = offset;
@@ -218,7 +211,7 @@ class Tokenizer {
    * @param {offset} number An offset in the CSS text.
    * @return {Token} A comment Token instance.
    */
-  tokenizeComment(offset) {
+  tokenizeComment(offset: number) {
     let start = offset;
 
     matcher.commentGreedy.lastIndex = offset;
@@ -240,7 +233,7 @@ class Tokenizer {
    * @param {offset} number An offset in the CSS text.
    * @return {Token} A boundary Token instance.
    */
-  tokenizeBoundary(offset) {
+  tokenizeBoundary(offset: number): Token {
     // TODO(cdata): Evaluate if this is faster than a switch statement:
     let type = boundaryTokenTypes[this.cssText[offset]] || Token.type.boundary;
 

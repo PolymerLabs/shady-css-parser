@@ -14,7 +14,7 @@
  * @default
  * @static
  */
-enum TokenType {
+export enum TokenType {
   none =  0,
   whitespace =  (2 ** 0),
   string =  (2 ** 1),
@@ -61,7 +61,7 @@ class Token {
    * @param {number} end The end index of the text corresponding to the Token
    * in the CSS text.
    */
-  constructor(type, start=undefined, end=undefined) {
+  constructor(type: TokenType, start: number|undefined=undefined, end: number|undefined=undefined) {
     this.type = type;
     this.start = start;
     this.end = end;
@@ -76,7 +76,7 @@ class Token {
    * @param {number} type The numeric type to test for equivalency with the
    * Token.
    */
-  is(type) {
+  is(type: TokenType) {
     return (this.type & type) === type;
   }
 }
@@ -87,7 +87,7 @@ class Token {
  * @default
  * @const
  */
-const boundaryTokenTypes = {
+const boundaryTokenTypes: {[boundaryText: string]: TokenType|undefined} = {
   '(': Token.type.openParenthesis,
   ')': Token.type.closeParenthesis,
   ':': Token.type.colon,

@@ -9,7 +9,7 @@
     "isolatedModules": false,
     "declaration": false,
     // "strictNullChecks": true,
-    // "noImplicitAny": true,
+    "noImplicitAny": true,
     // "noUnusedLocals": true,
     // "noUnusedParameters": true,
     "removeComments": false,

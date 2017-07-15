@@ -5,6 +5,7 @@
   "main": "dist/shady-css.js",
   "typings": "dist/shady-css.d.ts",
   "devDependencies": {
+    "@types/chai": "^4.0.1",
     "@types/mocha": "^2.2.39",
     "@types/node": "^8.0.13",
     "babel-core": "^6.4.0",
@@ -37,7 +38,7 @@
   },
   "scripts": {
     "prepublish": "gulp",
-    "test": "tsc && mocha --require source-map-support/register dist/test/*.js",
+    "test": "tsc || echo '' && mocha --require source-map-support/register dist/test/*.js",
     "test:watch": "watchy -w src/ -- npm test --loglevel=silent"
   },
   "repository": {

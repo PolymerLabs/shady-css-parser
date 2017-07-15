@@ -8,14 +8,15 @@
  * subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
  */
 
-import { expect } from 'chai';
+import {expect} from 'chai';
+
+import {NodeFactory, nodeType, Parser} from '../shady-css';
+
 import * as fixtures from './fixtures';
-import { Parser } from '../shady-css/parser';
-import { nodeType } from '../shady-css/common';
 
 describe('Parser', () => {
-  let parser;
-  let nodeFactory;
+  let parser: Parser;
+  let nodeFactory: NodeFactory;
 
   beforeEach(() => {
     parser = new Parser();

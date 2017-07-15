@@ -28,15 +28,61 @@ const matcher = {
  * @type {object}
  * @default
  */
-const nodeType = {
-  stylesheet: 'stylesheet',
-  comment: 'comment',
-  atRule: 'atRule',
-  ruleset: 'ruleset',
-  expression: 'expression',
-  declaration: 'declaration',
-  rulelist: 'rulelist',
-  discarded: 'discarded'
+enum nodeType {
+  stylesheet= 'stylesheet',
+  comment= 'comment',
+  atRule= 'atRule',
+  ruleset= 'ruleset',
+  expression= 'expression',
+  declaration= 'declaration',
+  rulelist= 'rulelist',
+  discarded= 'discarded'
 };
+
+export type Node = Stylesheet | AtRule | Comment | Rulelist | Ruleset | Expression | Declaration | Discarded;
+export type Rule = Ruleset | Declaration | AtRule | Discarded | Comment;
+export interface Stylesheet {
+  type: nodeType.stylesheet,
+  rules: Rule[]
+}
+
+export interface AtRule {
+  type: nodeType.atRule;
+  name: string;
+  parameters: string;
+  rulelist: Rulelist|undefined;
+}
+
+export interface Comment {
+  type: nodeType.comment;
+  value: string;
+}
+
+export interface Rulelist {
+  type: nodeType.rulelist;
+  rules: Rule[];
+}
+
+export interface Ruleset {
+  type: nodeType.ruleset;
+  rulelist: Rulelist;
+  selector: string;
+}
+
+export interface Expression {
+  type: nodeType.expression;
+  text: string;
+}
+
+export interface Declaration {
+  type: nodeType.declaration
+  name: string;
+  value: Rulelist | Expression;
+}
+
+export interface Discarded {
+  type: nodeType.discarded;
+  text: string;
+}
 
 export { matcher, nodeType };

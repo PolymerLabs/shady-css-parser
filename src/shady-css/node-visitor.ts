@@ -8,19 +8,20 @@
  * subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
  */
 
-const path = Symbol('path');
+import {Token, TokenType} from './token';
 
 /**
  * Class that implements a visitor pattern for ASTs produced by the Parser.
  * Extend the NodeVisitor class to implement useful tree traversal operations
  * such as stringification.
  */
-class NodeVisitor {
+class NodeVisitor<Node extends {type: any}, ReturnValue> {
+  private path_: Node[];
   /**
    * Create a NodeVisitor instance.
    */
   constructor() {
-    this[path] = [];
+    this.path_ = [];
   }
 
   /**
@@ -29,7 +30,7 @@ class NodeVisitor {
    * @type {array}
    */
   get path() {
-    return this[path];
+    return this.path_;
   }
 
   /**
@@ -40,12 +41,13 @@ class NodeVisitor {
    * @param {object} node The node to be visited.
    * @return The return value of the method visiting the node, if any.
    */
-  visit(node) {
-    let result;
-    if (this[node.type]) {
-      this[path].push(node);
-      result = this[node.type](node);
-      this[path].pop();
+  visit(node: Node) {
+    let result: ReturnValue|undefined;
+    const callback: ((token: Node)=>ReturnValue) | undefined = (this as any)[node.type];
+    if (callback) {
+      this.path_.push(node);
+      result = (this as any)[node.type](node);
+      this.path_.pop();
     }
     return result;
   }
