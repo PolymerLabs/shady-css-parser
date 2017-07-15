@@ -76,20 +76,21 @@ class Parser {
    */
   parseRule(tokenizer: Tokenizer): Rule|null {
     // Trim leading whitespace:
-    if (tokenizer.currentToken.is(Token.type.whitespace)) {
+    const token = tokenizer.currentToken!;
+    if (token.is(Token.type.whitespace)) {
       tokenizer.advance();
       return null;
 
-    } else if (tokenizer.currentToken.is(Token.type.comment)) {
+    } else if (token.is(Token.type.comment)) {
       return this.parseComment(tokenizer);
 
-    } else if (tokenizer.currentToken.is(Token.type.word)) {
+    } else if (token.is(Token.type.word)) {
       return this.parseDeclarationOrRuleset(tokenizer);
 
-    } else if (tokenizer.currentToken.is(Token.type.propertyBoundary)) {
+    } else if (token.is(Token.type.propertyBoundary)) {
       return this.parseUnknown(tokenizer);
 
-    } else if (tokenizer.currentToken.is(Token.type.at)) {
+    } else if (token.is(Token.type.at)) {
       return this.parseAtRule(tokenizer);
 
     } else {
@@ -103,7 +104,7 @@ class Parser {
    * @return {object} A Comment node.
    */
   parseComment(tokenizer: Tokenizer) {
-    return this.nodeFactory.comment(tokenizer.slice(tokenizer.advance()));
+    return this.nodeFactory.comment(tokenizer.slice(tokenizer.advance()!));
   }
 
   /**
@@ -122,7 +123,7 @@ class Parser {
       end = tokenizer.advance();
     }
 
-    return this.nodeFactory.discarded(tokenizer.slice(start, end));
+    return this.nodeFactory.discarded(tokenizer.slice(start!, end));
   }
 
   /**
@@ -132,9 +133,9 @@ class Parser {
    */
   parseAtRule(tokenizer: Tokenizer) {
     let name = '';
-    let rulelist = null;
-    let parametersStart = null;
-    let parametersEnd = null;
+    let rulelist = undefined;
+    let parametersStart = undefined;
+    let parametersEnd = undefined;
 
     while (tokenizer.currentToken) {
       if (tokenizer.currentToken.is(Token.type.whitespace)) {
@@ -234,34 +235,34 @@ class Parser {
     }
 
     // A ruleset never contains or ends with a semi-colon.
-    if (tokenizer.currentToken.is(Token.type.propertyBoundary)) {
+    if (tokenizer.currentToken!.is(Token.type.propertyBoundary)) {
       let declarationName = tokenizer.slice(
-          ruleStart, colon ? colon.previous : ruleEnd);
+          ruleStart!, colon ? colon.previous : ruleEnd);
       // TODO(cdata): is .trim() bad for performance?
       let expressionValue =
-          colon && tokenizer.slice(colon.next, ruleEnd).trim();
+          colon && tokenizer.slice(colon.next!, ruleEnd).trim();
 
-      if (tokenizer.currentToken.is(Token.type.semicolon)) {
+      if (tokenizer.currentToken!.is(Token.type.semicolon)) {
         tokenizer.advance();
       }
 
       return this.nodeFactory.declaration(
           declarationName,
-          expressionValue && this.nodeFactory.expression(expressionValue));
+          expressionValue && this.nodeFactory.expression(expressionValue) || undefined);
     // This is the case for a mixin-like structure:
     } else if (colon && colon === ruleEnd) {
       let rulelist = this.parseRulelist(tokenizer);
 
-      if (tokenizer.currentToken.is(Token.type.semicolon)) {
+      if (tokenizer.currentToken!.is(Token.type.semicolon)) {
         tokenizer.advance();
       }
 
       return this.nodeFactory.declaration(
-          tokenizer.slice(ruleStart, ruleEnd.previous), rulelist);
+          tokenizer.slice(ruleStart!, ruleEnd.previous), rulelist);
     // Otherwise, this is a ruleset:
     } else {
       return this.nodeFactory.ruleset(
-          tokenizer.slice(ruleStart, ruleEnd),
+          tokenizer.slice(ruleStart!, ruleEnd),
           this.parseRulelist(tokenizer));
     }
   }

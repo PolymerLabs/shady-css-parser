@@ -77,7 +77,7 @@ export interface Expression {
 export interface Declaration {
   type: nodeType.declaration
   name: string;
-  value: Rulelist | Expression;
+  value: Rulelist | Expression | undefined;
 }
 
 export interface Discarded {

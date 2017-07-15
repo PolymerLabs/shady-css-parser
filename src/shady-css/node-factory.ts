@@ -75,7 +75,7 @@ class NodeFactory {
    * corresponds to the value of the Declaration.
    * @return {object} A Declaration node.
    */
-  declaration(name: string, value: Expression|Rulelist): Declaration {
+  declaration(name: string, value: Expression|Rulelist|undefined): Declaration {
     return { type: nodeType.declaration, name, value };
   }
 

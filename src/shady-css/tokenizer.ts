@@ -48,7 +48,7 @@ class Tokenizer {
    * reference is useful for "peeking" at the next token ahead in the sequence.
    * If the entire CSS text has been tokenized, the `currentToken` will be null.
    */
-  get currentToken(): Token {
+  get currentToken(): Token|null {
     if (this.currentToken_ == null) {
       this.currentToken_ = this.getNextToken_();
     }
@@ -61,7 +61,7 @@ class Tokenizer {
    * @return {Token} The current token prior to the call to `advance`, or null
    * if the entire CSS text has been tokenized.
    */
-  advance(): Token {
+  advance(): Token|null {
     let token;
     if (this.currentToken_ != null) {
       token = this.currentToken_;
@@ -84,9 +84,9 @@ class Tokenizer {
    * @return {string} The substring of the CSS text corresponding to the
    * startToken and endToken.
    */
-  slice(startToken: Token, endToken: Token|undefined = undefined): string {
+  slice(startToken: Token, endToken: Token|undefined|null = undefined): string {
     endToken = endToken || startToken;
-    return this.cssText.substring(startToken.start, endToken.end);
+    return this.cssText.substring(startToken.start!, endToken.end);
   }
 
   /**
@@ -106,24 +106,24 @@ class Tokenizer {
    * @return {Token} A Token instance, or null if the entire CSS text has beeen
    * tokenized.
    */
-  private getNextToken_(): Token {
-    let character = this.cssText[this.offset];
+  private getNextToken_(): Token|null {
+    let character = this.cssText[this.offset!];
     let token;
 
     this.currentToken_ = null;
 
-    if (this.offset >= this.cssText.length) {
+    if (this.offset! >= this.cssText.length) {
       return null;
     } else if (matcher.whitespace.test(character)) {
-      token = this.tokenizeWhitespace(this.offset);
+      token = this.tokenizeWhitespace(this.offset!);
     } else if (matcher.stringBoundary.test(character)) {
-      token = this.tokenizeString(this.offset);
-    } else if (character === '/' && this.cssText[this.offset + 1] === '*') {
-      token = this.tokenizeComment(this.offset);
+      token = this.tokenizeString(this.offset!);
+    } else if (character === '/' && this.cssText[this.offset! + 1] === '*') {
+      token = this.tokenizeComment(this.offset!);
     } else if (matcher.boundary.test(character)) {
-      token = this.tokenizeBoundary(this.offset);
+      token = this.tokenizeBoundary(this.offset!);
     } else {
-      token = this.tokenizeWord(this.offset);
+      token = this.tokenizeWord(this.offset!);
     }
 
     token.previous = this.cursorToken_;

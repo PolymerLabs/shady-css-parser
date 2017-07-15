@@ -36,14 +36,14 @@ describe('Parser', () => {
 
     it('can parse at rules', () => {
       expect(parser.parse(fixtures.atRules)).to.be.eql(nodeFactory.stylesheet([
-        nodeFactory.atRule('import', 'url(\'foo.css\')', null),
+        nodeFactory.atRule('import', 'url(\'foo.css\')', undefined),
         nodeFactory.atRule('font-face', '', nodeFactory.rulelist([
           nodeFactory.declaration(
             'font-family',
             nodeFactory.expression('foo')
           )
         ])),
-        nodeFactory.atRule('charset', '\'foo\'', null)
+        nodeFactory.atRule('charset', '\'foo\'', undefined)
       ]));
     });
 
@@ -77,10 +77,10 @@ describe('Parser', () => {
     it('can parse declarations with no value', () => {
       expect(parser.parse(fixtures.declarationsWithNoValue))
           .to.be.eql(nodeFactory.stylesheet([
-        nodeFactory.declaration('foo', null),
-        nodeFactory.declaration('bar 20px', null),
+        nodeFactory.declaration('foo', undefined),
+        nodeFactory.declaration('bar 20px', undefined),
         nodeFactory.ruleset('div', nodeFactory.rulelist([
-          nodeFactory.declaration('baz', null)
+          nodeFactory.declaration('baz', undefined)
         ]))
       ]));
     });
@@ -125,7 +125,7 @@ describe('Parser', () => {
         nodeFactory.declaration('baz', nodeFactory.expression('lur')),
         nodeFactory.discarded('};'),
         nodeFactory.discarded('}'),
-        nodeFactory.atRule('gak', 'wiz', null)
+        nodeFactory.atRule('gak', 'wiz', undefined)
       ]));
     });
 
