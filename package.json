@@ -6,6 +6,7 @@
   "typings": "dist/shady-css.d.ts",
   "devDependencies": {
     "@types/mocha": "^2.2.39",
+    "@types/node": "^8.0.13",
     "babel-core": "^6.4.0",
     "babel-plugin-check-es2015-constants": "^6.3.13",
     "babel-plugin-transform-es2015-arrow-functions": "^6.4.0",
@@ -29,11 +30,14 @@
     "gulp-typescript": "^3.1.4",
     "gulp-uglify": "^1.4.2",
     "gulp-watch": "^4.3.5",
-    "mocha": "^2.3.3"
+    "mocha": "^2.3.3",
+    "typescript": "^2.4.1",
+    "watchy": "^0.6.7"
   },
   "scripts": {
     "prepublish": "gulp",
-    "test": "gulp test"
+    "test": "tsc && mocha dist/test/*.js",
+    "test:watch": "watchy -w src/ -- npm test --loglevel=silent"
   },
   "repository": {
     "type": "git",
