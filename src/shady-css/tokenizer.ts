@@ -1,11 +1,12 @@
 /**
  * @license
  * Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
- * This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
- * The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
- * The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
- * Code distributed by Google as part of the polymer project is also
- * subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt The complete set of authors may be found
+ * at http://polymer.github.io/AUTHORS.txt The complete set of contributors may
+ * be found at http://polymer.github.io/CONTRIBUTORS.txt Code distributed by
+ * Google as part of the polymer project is also subject to an additional IP
+ * rights grant found at http://polymer.github.io/PATENTS.txt
  */
 
 import {matcher, Range} from './common';
@@ -93,7 +94,7 @@ class Tokenizer {
    * Like `slice`, but returns the offsets into the source, rather than the
    * substring itself.
    */
-  getRange(startToken: Token, endToken: Token|undefined|null=undefined) {
+  getRange(startToken: Token, endToken: Token|undefined|null = undefined) {
     return {start: startToken.start, end: (endToken || startToken).end};
   }
 
@@ -101,7 +102,7 @@ class Tokenizer {
     while (start <= end && /\s/.test(this.cssText.charAt(start))) {
       start++;
     }
-    while (start <= end && end > 0 && /\s/.test(this.cssText.charAt(end-1))) {
+    while (start <= end && end > 0 && /\s/.test(this.cssText.charAt(end - 1))) {
       end--;
     }
     return {start, end};
@@ -259,4 +260,4 @@ class Tokenizer {
   }
 }
 
-export { Tokenizer };
+export {Tokenizer};

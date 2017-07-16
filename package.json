@@ -11,6 +11,7 @@
     "@types/node": "^8.0.13",
     "chai": "^4.1.0",
     "chai-subset": "^1.5.0",
+    "clang-format": "^1.0.53",
     "mocha": "^3.0.0",
     "source-map-support": "^0.4.15",
     "typescript": "^2.4.1",
@@ -20,7 +21,8 @@
     "prepublishOnly": "npm run build",
     "build": "tsc",
     "test": "npm run build && mocha --require source-map-support/register dist/test/*.js",
-    "test:watch": "watchy -w src/ -- npm test --loglevel=silent"
+    "test:watch": "watchy -w src/ -- npm test --loglevel=silent",
+    "format": "find src | grep '\\.js$\\|\\.ts$' | xargs clang-format --style=file -i"
   },
   "repository": {
     "type": "git",
