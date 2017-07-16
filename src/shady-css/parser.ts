@@ -131,7 +131,8 @@ class Parser {
       end = tokenizer.advance();
     }
 
-    return this.nodeFactory.discarded(tokenizer.slice(start!, end));
+    return this.nodeFactory.discarded(
+        tokenizer.slice(start, end), tokenizer.getRange(start, end));
   }
 
   /**

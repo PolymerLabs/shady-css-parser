@@ -8,11 +8,15 @@
  * subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
  */
 
-import {expect} from 'chai';
+import {expect, use} from 'chai';
+import * as util from 'util';
 
-import {NodeFactory, Parser} from '../shady-css';
+import {NodeFactory, nodeType, Parser} from '../shady-css';
+import {Node, NodeTypeMap} from '../shady-css/common';
 
 import * as fixtures from './fixtures';
+
+use(require('chai-subset'));
 
 describe('Parser', () => {
   let parser: Parser;
@@ -117,31 +121,78 @@ describe('Parser', () => {
 
     it('can parse pathological comments', () => {
       expect(parser.parse(fixtures.pathologicalComments))
-          .to.be.eql(nodeFactory.stylesheet([
+          .to.containSubset(nodeFactory.stylesheet([
         nodeFactory.ruleset('.foo', nodeFactory.rulelist([
           nodeFactory.declaration('bar', nodeFactory.expression('/*baz*/vim'))
         ])),
         nodeFactory.comment('/* unclosed\n@fiz {\n  --huk: {\n    /* buz */'),
         nodeFactory.declaration('baz', nodeFactory.expression('lur')),
-        nodeFactory.discarded('};'),
-        nodeFactory.discarded('}'),
+        {type: 'discarded', text: '};'} as any,
+        {type: 'discarded', text: '}'},
         nodeFactory.atRule('gak', 'wiz', undefined)
       ]));
     });
 
     it('disregards extra semi-colons', () => {
       expect(parser.parse(fixtures.extraSemicolons))
-          .to.be.eql(nodeFactory.stylesheet([
+          .to.containSubset(nodeFactory.stylesheet([
         nodeFactory.ruleset(':host', nodeFactory.rulelist([
           nodeFactory.declaration('margin', nodeFactory.expression('0')),
-          nodeFactory.discarded(';;'),
+          {type: 'discarded', text: ';;'} as any,
           nodeFactory.declaration('padding', nodeFactory.expression('0')),
-          nodeFactory.discarded(';'),
-          nodeFactory.discarded(';'),
+          {type: 'discarded', text: ';'},
+          {type: 'discarded', text: ';'},
           nodeFactory.declaration('display', nodeFactory.expression('block')),
         ])),
-        nodeFactory.discarded(';')
+        {type: 'discarded', text: ';'} as any
       ]));
     });
   });
+
+  describe('when extracting ranges', () => {
+    it('extracts the correct ranges for discarded nodes', () => {
+      const ast = parser.parse(fixtures.extraSemicolons);
+      const discardedNodes = getNodesOfType(ast, 'discarded');
+      const rangeSubStrings = Array.from(discardedNodes).map(d => {
+        return fixtures.extraSemicolons.substring(d.range.start, d.range.end);
+      });
+      expect(rangeSubStrings).to.be.deep.equal([';;', ';', ';', ';']);
+    });
+  });
 });
+
+
+function *getNodesOfType<K extends keyof NodeTypeMap>(node: Node, type: K): Iterable<NodeTypeMap[K]> {
+  for (const n of iterAst(node)) {
+    if (n.type === type as any as nodeType) {
+      yield n;
+    }
+  }
+}
+
+function *iterAst(node: Node): Iterable<Node> {
+  yield node;
+  switch (node.type) {
+    case nodeType.stylesheet:
+      for (const rule of node.rules) {
+        yield* iterAst(rule)
+      }
+      return;
+    case nodeType.ruleset:
+      return yield* iterAst(node.rulelist);
+    case nodeType.rulelist:
+      for (const rule of node.rules) {
+        yield* iterAst(rule);
+      }
+      return;
+    case nodeType.expression:
+    case nodeType.atRule:
+    case nodeType.comment:
+    case nodeType.declaration:
+    case nodeType.discarded:
+      return; // no child nodes
+    default:
+      const never: never = node;
+      console.error(`Got a node of unknown type: ${util.inspect(never)}`);
+  }
+}

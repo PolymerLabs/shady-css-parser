@@ -8,7 +8,7 @@
  * subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
  */
 
-import { nodeType, Rule, Stylesheet, Rulelist, Comment, Expression, Declaration, Discarded, AtRule, Ruleset } from './common';
+import {AtRule, Comment, Declaration, Discarded, Expression, nodeType, Range, Rule, Rulelist, Ruleset, Stylesheet} from './common';
 
 /**
  * Class used for generating nodes in a CSS AST. Extend this class to implement
@@ -87,8 +87,8 @@ class NodeFactory {
    * parseable (usually due to typos, or otherwise unrecognized syntax).
    * @param text The text content that is discarded.
    */
-  discarded(text: string): Discarded {
-    return { type: nodeType.discarded, text };
+  discarded(text: string, range: Range): Discarded {
+    return { type: nodeType.discarded, text, range};
   }
 }
 

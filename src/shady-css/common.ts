@@ -128,6 +128,26 @@ export interface Discarded {
 
   /** The text content that is discarded. */
   text: string;
+
+  range: Range;
 }
+
+export interface Range {
+  start: number;
+  end: number;
+}
+
+export interface NodeTypeMap {
+  'stylesheet': Stylesheet;
+  'atRule': AtRule;
+  'comment': Comment;
+  'rulelist': Rulelist;
+  'ruleset': Ruleset;
+  'declaration': Declaration;
+  'expression': Expression;
+  'discarded': Discarded;
+}
+
+
 
 export { matcher };

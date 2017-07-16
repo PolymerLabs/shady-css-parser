@@ -85,8 +85,16 @@ class Tokenizer {
    * startToken and endToken.
    */
   slice(startToken: Token, endToken: Token|undefined|null = undefined): string {
-    endToken = endToken || startToken;
-    return this.cssText.substring(startToken.start, endToken.end);
+    const {start, end} = this.getRange(startToken, endToken);
+    return this.cssText.substring(start, end);
+  }
+
+  /**
+   * Like `slice`, but returns the offsets into the source, rather than the
+   * substring itself.
+   */
+  getRange(startToken: Token, endToken: Token|undefined|null=undefined) {
+    return {start: startToken.start, end: (endToken || startToken).end};
   }
 
   /**
