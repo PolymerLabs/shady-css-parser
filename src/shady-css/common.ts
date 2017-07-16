@@ -87,9 +87,12 @@ export interface Ruleset {
   /** The selector that corresponds to the Ruleset (e.g., `#foo > .bar`). */
   selector: string;
 
+  selectorRange: Range;
+
   /** The Rulelist node that corresponds to the Selector. */
   rulelist: Rulelist;
 
+  range: Range;
 }
 
 /**

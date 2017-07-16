@@ -296,9 +296,21 @@ class Parser {
           declarationName, rulelist, nameRange, range);
     // Otherwise, this is a ruleset:
     } else {
+      const selectorRange = tokenizer.getRange(ruleStart!, ruleEnd);
+      const selector = tokenizer.cssText.slice(
+          selectorRange.start, selectorRange.end);
+      const rulelist = this.parseRulelist(tokenizer);
+      const start = ruleStart!.start;
+      let end;
+      if (tokenizer.currentToken) {
+        end = tokenizer.currentToken.previous ? tokenizer.currentToken.previous.end : ruleStart!.end;
+      } else {
+        // no current token? must have reached the end of input, so go up
+        // until there
+        end = tokenizer.cssText.length;
+      }
       return this.nodeFactory.ruleset(
-          tokenizer.slice(ruleStart!, ruleEnd),
-          this.parseRulelist(tokenizer));
+          selector, rulelist, selectorRange, {start, end});
     }
   }
 }

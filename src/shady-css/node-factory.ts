@@ -59,8 +59,8 @@ class NodeFactory {
    * (e.g., `#foo > .bar`).
    * @param rulelist The Rulelist node that corresponds to the Selector.
    */
-  ruleset(selector: string, rulelist: Rulelist): Ruleset {
-    return { type: nodeType.ruleset, selector, rulelist };
+  ruleset(selector: string, rulelist: Rulelist, selectorRange: Range, range: Range): Ruleset {
+    return { type: nodeType.ruleset, selector, rulelist, selectorRange, range };
   }
 
   /**

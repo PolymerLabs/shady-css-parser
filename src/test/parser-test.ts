@@ -247,6 +247,79 @@ describe('Parser', () => {
       )
     });
 
+    it('extracts the correct ranges for rulesets', () => {
+      const expectRulesetRanges = (
+            cssText: string,
+            expectedRangeStrings: string[],
+            expectedSelectorRangeStrings: string[]) => {
+        const ast = parser.parse(cssText);
+        const nodes = Array.from(getNodesOfType(ast, 'ruleset'));
+        const rangeStrings = nodes.map(n => {
+          return cssText.substring(n.range.start, n.range.end);
+        });
+        const rangeNameString = nodes.map(n => {
+          return cssText.substring(n.selectorRange.start, n.selectorRange.end);
+        });
+
+        expect(rangeStrings).to.be.deep.equal(expectedRangeStrings);
+        expect(rangeNameString).to.be.deep.equal(expectedSelectorRangeStrings);
+      };
+
+      expectRulesetRanges(
+        fixtures.basicRuleset,
+        [`body {\n  margin: 0;\n  padding: 0px\n}`],
+        ['body']
+      )
+      expectRulesetRanges(
+        fixtures.atRules,
+        [],
+        []
+      )
+      expectRulesetRanges(
+        fixtures.keyframes,
+        [
+          'from {\n    fiz: 0%;\n  }',
+          '99.9% {\n    fiz: 100px;\n    buz: true;\n  }'
+        ],
+        ['from', '99.9%']
+      )
+      expectRulesetRanges(
+        fixtures.customProperties,
+        [':root {\n  --qux: vim;\n  --foo: {\n    bar: baz;\n  };\n}'],
+        [':root']
+      )
+      expectRulesetRanges(
+        fixtures.extraSemicolons,
+        [':host {\n  margin: 0;;;\n  padding: 0;;\n  ;display: block;\n}'],
+        [':host']
+      )
+      expectRulesetRanges(
+        fixtures.declarationsWithNoValue,
+        ['div {\n  baz;\n}'],
+        ['div']
+      )
+      expectRulesetRanges(
+        fixtures.minifiedRuleset,
+        ['.foo{bar:baz}','div .qux{vim:fet;}'],
+        ['.foo', 'div .qux']
+      )
+      expectRulesetRanges(
+        fixtures.psuedoRuleset,
+        ['.foo:bar:not(#rif){baz:qux}'],
+        ['.foo:bar:not(#rif)'],
+      )
+      expectRulesetRanges(
+        fixtures.dataUriRuleset,
+        ['.foo{bar:url(qux;gib)}'],
+        ['.foo']
+      )
+      expectRulesetRanges(
+        fixtures.pathologicalComments,
+        ['.foo {\n  bar: /*baz*/vim;\n}'],
+        ['.foo']
+      )
+    });
+
   });
 });
 
