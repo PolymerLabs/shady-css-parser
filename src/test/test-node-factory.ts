@@ -14,35 +14,35 @@
 import {nodeType} from '../shady-css';
 
 export class TestNodeFactory {
-  stylesheet(rules: any[]) {
+  stylesheet(rules: any[]): any {
     return { type: nodeType.stylesheet, rules };
   }
 
   atRule(name: string, parameters: string, rulelist: any|
-        undefined=undefined) {
+        undefined=undefined): any {
     return { type: nodeType.atRule, name, parameters, rulelist };
   }
 
-  comment(value: string) {
+  comment(value: string): any {
     return { type: nodeType.comment, value };
   }
 
-  rulelist(rules: any[]) {
+  rulelist(rules: any[]): any {
     return { type: nodeType.rulelist, rules };
   }
 
-  ruleset(selector: string, rulelist: any) {
+  ruleset(selector: string, rulelist: any): any {
     return { type: nodeType.ruleset, selector, rulelist };
   }
 
-  declaration(name: string, value: any|undefined) {
+  declaration(name: string, value: any|undefined): any {
     return { type: nodeType.declaration, name, value };
   }
-  expression(text: string) {
+  expression(text: string): any {
     return { type: nodeType.expression, text};
   }
 
-  discarded(text: string) {
+  discarded(text: string): any {
     return { type: nodeType.discarded, text};
   }
 }

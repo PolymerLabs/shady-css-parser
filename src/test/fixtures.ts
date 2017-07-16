@@ -9,14 +9,14 @@
  */
 
 // CSS test fixtures:
-let basicRuleset = `
+export const basicRuleset = `
 body {
   margin: 0;
   padding: 0px
 }
 `;
 
-let atRules = `
+export const atRules = `
 @import url('foo.css');
 
 @font-face {
@@ -26,7 +26,7 @@ let atRules = `
 @charset 'foo';
 `;
 
-let keyframes = `
+export const keyframes = `
 @keyframes foo {
   from {
     fiz: 0%;
@@ -39,7 +39,7 @@ let keyframes = `
 }
 `;
 
-let customProperties = `
+export const customProperties = `
 :root {
   --qux: vim;
   --foo: {
@@ -48,7 +48,7 @@ let customProperties = `
 }
 `;
 
-let extraSemicolons = `
+export const extraSemicolons = `
 :host {
   margin: 0;;;
   padding: 0;;
@@ -56,7 +56,7 @@ let extraSemicolons = `
 };
 `;
 
-let declarationsWithNoValue = `
+export const declarationsWithNoValue = `
 foo;
 bar 20px;
 
@@ -65,13 +65,13 @@ div {
 }
 `;
 
-let minifiedRuleset = '.foo{bar:baz}div .qux{vim:fet;}';
+export const minifiedRuleset = '.foo{bar:baz}div .qux{vim:fet;}';
 
-let psuedoRuleset = '.foo:bar:not(#rif){baz:qux}';
+export const psuedoRuleset = '.foo:bar:not(#rif){baz:qux}';
 
-let dataUriRuleset = '.foo{bar:url(qux;gib)}';
+export const dataUriRuleset = '.foo{bar:url(qux;gib)}';
 
-let pathologicalComments = `
+export const pathologicalComments = `
 .foo {
   bar: /*baz*/vim;
 }
@@ -83,16 +83,3 @@ let pathologicalComments = `
   };
 }
 @gak wiz;`;
-
-export {
-  basicRuleset,
-  atRules,
-  keyframes,
-  customProperties,
-  extraSemicolons,
-  declarationsWithNoValue,
-  minifiedRuleset,
-  psuedoRuleset,
-  dataUriRuleset,
-  pathologicalComments
-};

@@ -69,8 +69,8 @@ class NodeFactory {
    * @param value Either an Expression node, or a Rulelist node, that
    * corresponds to the value of the Declaration.
    */
-  declaration(name: string, value: Expression|Rulelist|undefined): Declaration {
-    return { type: nodeType.declaration, name, value };
+  declaration(name: string, value: Expression|Rulelist|undefined, nameRange: Range, range: Range): Declaration {
+    return { type: nodeType.declaration, name, value, nameRange, range};
   }
 
   /**

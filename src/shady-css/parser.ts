@@ -249,10 +249,13 @@ class Parser {
       // terminated early
       return null;
     }
+
     // A ruleset never contains or ends with a semi-colon.
     if (tokenizer.currentToken.is(Token.type.propertyBoundary)) {
-      let declarationName = tokenizer.slice(
+      const nameRange = tokenizer.getRange(
           ruleStart!, colon ? colon.previous : ruleEnd);
+      const declarationName = tokenizer.cssText.slice(
+          nameRange.start, nameRange.end);
 
       let expression = undefined;
       if (colon && colon.next) {
@@ -267,7 +270,11 @@ class Parser {
         tokenizer.advance();
       }
 
-      return this.nodeFactory.declaration(declarationName, expression);
+      const range = tokenizer.trimRange(tokenizer.getRange(
+          ruleStart!,
+          tokenizer.currentToken && tokenizer.currentToken.previous || ruleEnd));
+
+      return this.nodeFactory.declaration(declarationName, expression, nameRange, range);
     // This is the case for a mixin-like structure:
     } else if (colon && colon === ruleEnd) {
       let rulelist = this.parseRulelist(tokenizer);
@@ -276,8 +283,17 @@ class Parser {
         tokenizer.advance();
       }
 
+      const nameRange = tokenizer.getRange(
+        ruleStart!, ruleEnd.previous);
+      const declarationName = tokenizer.cssText.slice(
+          nameRange.start, nameRange.end);
+
+      const range = tokenizer.trimRange(tokenizer.getRange(
+          ruleStart!,
+          tokenizer.currentToken && tokenizer.currentToken.previous || ruleEnd));
+
       return this.nodeFactory.declaration(
-          tokenizer.slice(ruleStart!, ruleEnd.previous), rulelist);
+          declarationName, rulelist, nameRange, range);
     // Otherwise, this is a ruleset:
     } else {
       return this.nodeFactory.ruleset(

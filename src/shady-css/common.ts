@@ -101,11 +101,16 @@ export interface Declaration {
   /** The property name of the Declaration (e.g., `color`). */
   name: string;
 
+  /** The range in the original sourcetext where the name can be found. */
+  nameRange: Range;
+
   /**
    * Either an Expression node, or a Rulelist node, that
    * corresponds to the value of the Declaration.
    */
   value:  Expression | Rulelist | undefined;
+
+  range: Range;
 }
 
 /**

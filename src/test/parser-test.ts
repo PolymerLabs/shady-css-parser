@@ -154,21 +154,99 @@ describe('Parser', () => {
   describe('when extracting ranges', () => {
     it('extracts the correct ranges for discarded nodes', () => {
       const ast = parser.parse(fixtures.extraSemicolons);
-      const discardedNodes = getNodesOfType(ast, 'discarded');
-      const rangeSubStrings = Array.from(discardedNodes).map(d => {
-        return fixtures.extraSemicolons.substring(d.range.start, d.range.end);
+      const nodes = getNodesOfType(ast, 'discarded');
+      const rangeSubStrings = Array.from(nodes).map(n => {
+        return fixtures.extraSemicolons.substring(n.range.start, n.range.end);
       });
       expect(rangeSubStrings).to.be.deep.equal([';;', ';', ';', ';']);
     });
 
     it('extracts the correct ranges for expression nodes', () => {
       const ast = parser.parse(fixtures.basicRuleset);
-      const expressionNodes = getNodesOfType(ast, 'expression');
-      const rangeSubStrings = Array.from(expressionNodes).map(d => {
-        return fixtures.basicRuleset.substring(d.range.start, d.range.end);
+      const nodes = getNodesOfType(ast, 'expression');
+      const rangeSubStrings = Array.from(nodes).map(n => {
+        return fixtures.basicRuleset.substring(n.range.start, n.range.end);
       });
       expect(rangeSubStrings).to.be.deep.equal(['0', '0px']);
     });
+
+    it('extracts the correct ranges for declarations', () => {
+      const expectDeclarationRanges = (
+            cssText: string,
+            expectedRangeStrings: string[],
+            expectedNameRangeStrings: string[]) => {
+        const ast = parser.parse(cssText);
+        const nodes = Array.from(getNodesOfType(ast, 'declaration'));
+        const rangeStrings = nodes.map(n => {
+          return cssText.substring(n.range.start, n.range.end);
+        });
+        const rangeNameString = nodes.map(n => {
+          return cssText.substring(n.nameRange.start, n.nameRange.end);
+        });
+
+        expect(rangeStrings).to.be.deep.equal(expectedRangeStrings);
+        expect(rangeNameString).to.be.deep.equal(expectedNameRangeStrings);
+      };
+
+      expectDeclarationRanges(
+        fixtures.basicRuleset,
+        ['margin: 0;', 'padding: 0px'],
+        ['margin', 'padding']
+      )
+      expectDeclarationRanges(
+        fixtures.atRules,
+        ['font-family: foo;'],
+        ['font-family']
+      )
+      expectDeclarationRanges(
+        fixtures.keyframes,
+        ['fiz: 0%;', 'fiz: 100px;', 'buz: true;'],
+        ['fiz', 'fiz', 'buz']
+      )
+      expectDeclarationRanges(
+        fixtures.customProperties,
+        [
+          '--qux: vim;',
+          '--foo: {\n    bar: baz;\n  };',
+          'bar: baz;'],
+        ['--qux', '--foo', 'bar']
+      )
+      expectDeclarationRanges(
+        fixtures.extraSemicolons,
+        [
+          'margin: 0;',
+          'padding: 0;',
+          'display: block;',
+        ],
+        ['margin', 'padding', 'display']
+      )
+      expectDeclarationRanges(
+        fixtures.declarationsWithNoValue,
+        ['foo;', 'bar 20px;', 'baz;'],
+        ['foo', 'bar 20px', 'baz']
+      )
+      expectDeclarationRanges(
+        fixtures.minifiedRuleset,
+        ['bar:baz', 'vim:fet;'],
+        ['bar', 'vim']
+      )
+      expectDeclarationRanges(
+        fixtures.psuedoRuleset,
+        ['baz:qux'],
+        ['baz'],
+      )
+      expectDeclarationRanges(
+        fixtures.dataUriRuleset,
+        ['bar:url(qux;gib)'],
+        ['bar']
+      )
+      expectDeclarationRanges(
+        fixtures.pathologicalComments,
+        ['bar: /*baz*/vim;', 'baz: lur;'],
+        ['bar', 'baz']
+      )
+    });
+
   });
 });
 
