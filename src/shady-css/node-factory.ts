@@ -49,8 +49,8 @@ class NodeFactory {
    * Creates a Rulelist node.
    * @param rules An array of the Rule nodes found within the Ruleset.
    */
-  rulelist(rules: Rule[]): Rulelist {
-    return { type: nodeType.rulelist, rules };
+  rulelist(rules: Rule[], range: Range): Rulelist {
+    return { type: nodeType.rulelist, rules, range };
   }
 
   /**

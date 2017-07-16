@@ -187,11 +187,14 @@ class Parser {
   parseRulelist(tokenizer: Tokenizer): Rulelist {
     let rules = [];
 
+    const start = tokenizer.currentToken!.start;
+    let endToken;
     // Take the opening { boundary:
     tokenizer.advance();
 
     while (tokenizer.currentToken) {
       if (tokenizer.currentToken.is(Token.type.closeBrace)) {
+        endToken = tokenizer.currentToken;
         tokenizer.advance();
         break;
       } else {
@@ -202,7 +205,10 @@ class Parser {
       }
     }
 
-    return this.nodeFactory.rulelist(rules);
+    // If we don't have an end token it's because we reached the end of input.
+    const end = endToken ? endToken.end : tokenizer.cssText.length;
+
+    return this.nodeFactory.rulelist(rules, {start, end});
   }
 
   /**

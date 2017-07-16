@@ -320,6 +320,68 @@ describe('Parser', () => {
       )
     });
 
+    it('extracts the correct ranges for rulelists', () => {
+      const expectRulelistRanges = (
+            cssText: string,
+            expectedRangeStrings: string[]) => {
+        const ast = parser.parse(cssText);
+        const nodes = Array.from(getNodesOfType(ast, 'rulelist'));
+        const rangeStrings = nodes.map(n => {
+          return cssText.substring(n.range.start, n.range.end);
+        });
+
+        expect(rangeStrings).to.be.deep.equal(expectedRangeStrings);
+      };
+
+      expectRulelistRanges(
+        fixtures.basicRuleset,
+        [`{\n  margin: 0;\n  padding: 0px\n}`]
+      )
+      expectRulelistRanges(
+        fixtures.atRules,
+        ['{\n  font-family: foo;\n}'],
+      )
+      expectRulelistRanges(
+        fixtures.keyframes,
+        [
+          '{\n  from {\n    fiz: 0%;\n  }\n\n  99.9% ' +
+              '{\n    fiz: 100px;\n    buz: true;\n  }\n}',
+          '{\n    fiz: 0%;\n  }',
+          '{\n    fiz: 100px;\n    buz: true;\n  }'
+        ]
+      )
+      expectRulelistRanges(
+        fixtures.customProperties,
+        [
+          '{\n  --qux: vim;\n  --foo: {\n    bar: baz;\n  };\n}',
+          '{\n    bar: baz;\n  }'
+        ]
+      )
+      expectRulelistRanges(
+        fixtures.extraSemicolons,
+        ['{\n  margin: 0;;;\n  padding: 0;;\n  ;display: block;\n}']
+      )
+      expectRulelistRanges(
+        fixtures.declarationsWithNoValue,
+        ['{\n  baz;\n}']
+      )
+      expectRulelistRanges(
+        fixtures.minifiedRuleset,
+        ['{bar:baz}','{vim:fet;}']
+      )
+      expectRulelistRanges(
+        fixtures.psuedoRuleset,
+        ['{baz:qux}']
+      )
+      expectRulelistRanges(
+        fixtures.dataUriRuleset,
+        ['{bar:url(qux;gib)}']
+      )
+      expectRulelistRanges(
+        fixtures.pathologicalComments,
+        ['{\n  bar: /*baz*/vim;\n}']
+      )
+    });
   });
 });
 

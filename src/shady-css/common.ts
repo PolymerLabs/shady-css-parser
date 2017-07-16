@@ -76,6 +76,8 @@ export interface Rulelist {
 
   /** An array of the Rule nodes found within the Ruleset. */
   rules: Rule[];
+
+  range: Range;
 }
 
 /**
