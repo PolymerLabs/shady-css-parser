@@ -66,6 +66,7 @@ export interface Comment {
    * comment signature.
    */
   value: string;
+  range: Range;
 }
 
 /**

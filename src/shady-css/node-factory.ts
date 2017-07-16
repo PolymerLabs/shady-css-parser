@@ -41,8 +41,8 @@ class NodeFactory {
    * @param value The full text content of the comment, including
    * opening and closing comment signature.
    */
-  comment(value: string): Comment {
-    return { type: nodeType.comment, value };
+  comment(value: string, range: Range): Comment {
+    return { type: nodeType.comment, value, range };
   }
 
   /**

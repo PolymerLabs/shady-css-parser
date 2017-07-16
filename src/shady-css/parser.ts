@@ -109,7 +109,8 @@ class Parser {
     if (token === null) {
       return null;
     }
-    return this.nodeFactory.comment(tokenizer.slice(token));
+    return this.nodeFactory.comment(
+        tokenizer.slice(token), {start: token.start, end: token.end});
   }
 
   /**
