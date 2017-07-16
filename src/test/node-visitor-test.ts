@@ -14,13 +14,15 @@ import {NodeVisitor} from '../shady-css/node-visitor';
 
 type TestNode = TestNodeA|TestNodeB;
 interface TestNodeA {
-  type: 'a', callback?: () => void
+  type: 'a';
+  callback?: () => void;
 }
-;
+
 interface TestNodeB {
-  type: 'b', child?: TestNode
+  type: 'b';
+  child?: TestNode;
 }
-;
+
 class TestNodeVisitor extends NodeVisitor<TestNode, string> {
   aCallCount: number;
   bCallCount: number;
@@ -66,19 +68,19 @@ describe('NodeVisitor', () => {
   });
 
   it('reveals the path of the recursive visitation of nodes', () => {
-    let a1 = {
+    const a1 = {
       type: 'a' as 'a',
       callback: function() {
         expect(nodeVisitor.path).to.be.eql([a1]);
       }
     };
-    let a2: TestNodeA = {
+    const a2: TestNodeA = {
       type: 'a' as 'a',
       callback: function() {
         expect(nodeVisitor.path).to.be.eql([b, a2]);
       }
     };
-    let b = {type: 'b' as 'b', child: a2};
+    const b = {type: 'b' as 'b', child: a2};
 
     nodeVisitor.visit(a1);
     expect(nodeVisitor.aCallCount).to.be.eql(1);

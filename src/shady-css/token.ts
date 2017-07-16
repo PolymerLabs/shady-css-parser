@@ -38,7 +38,7 @@ export enum TokenType {
   hyphen = (2 ** 13),
   underscore = (2 ** 14)
 }
-;
+
 
 /**
  * Class that describes individual tokens as produced by the Tokenizer.

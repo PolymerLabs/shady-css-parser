@@ -21,7 +21,7 @@ function expectTokenType(token: Token, type: TokenType) {
 
 function expectTokenSequence(
     lexer: Tokenizer, sequence: Array<TokenType|string>) {
-  let lexedSequence = [];
+  const lexedSequence = [];
   let token;
 
   while (token = lexer.advance()) {

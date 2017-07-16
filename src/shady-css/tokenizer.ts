@@ -113,7 +113,7 @@ class Tokenizer {
    * @return An array of all tokens corresponding to the CSS text.
    */
   flush() {
-    let tokens = [];
+    const tokens = [];
     while (this.currentToken) {
       tokens.push(this.advance());
     }
@@ -126,7 +126,7 @@ class Tokenizer {
    * tokenized.
    */
   private getNextToken_(): Token|null {
-    let character = this.cssText[this.offset];
+    const character = this.cssText[this.offset];
     let token;
 
     this.currentToken_ = null;
@@ -160,9 +160,9 @@ class Tokenizer {
    * @return A string Token instance.
    */
   tokenizeString(offset: number) {
-    let quotation = this.cssText[offset];
+    const quotation = this.cssText[offset];
     let escaped = false;
-    let start = offset;
+    const start = offset;
     let character;
 
     while (character = this.cssText[++offset]) {
@@ -192,7 +192,7 @@ class Tokenizer {
    * @return A word Token instance.
    */
   tokenizeWord(offset: number): Token {
-    let start = offset;
+    const start = offset;
     let character;
     // TODO(cdata): change to greedy regex match?
     while ((character = this.cssText[offset]) &&
@@ -211,10 +211,10 @@ class Tokenizer {
    * @return A whitespace Token instance.
    */
   tokenizeWhitespace(offset: number) {
-    let start = offset;
+    const start = offset;
 
     matcher.whitespaceGreedy.lastIndex = offset;
-    let match = matcher.whitespaceGreedy.exec(this.cssText);
+    const match = matcher.whitespaceGreedy.exec(this.cssText);
 
     if (match != null && match.index === offset) {
       offset = matcher.whitespaceGreedy.lastIndex;
@@ -231,10 +231,10 @@ class Tokenizer {
    * @return A comment Token instance.
    */
   tokenizeComment(offset: number) {
-    let start = offset;
+    const start = offset;
 
     matcher.commentGreedy.lastIndex = offset;
-    let match = matcher.commentGreedy.exec(this.cssText);
+    const match = matcher.commentGreedy.exec(this.cssText);
 
     if (match == null) {
       offset = this.cssText.length;
@@ -254,7 +254,8 @@ class Tokenizer {
    */
   tokenizeBoundary(offset: number): Token {
     // TODO(cdata): Evaluate if this is faster than a switch statement:
-    let type = boundaryTokenTypes[this.cssText[offset]] || Token.type.boundary;
+    const type =
+        boundaryTokenTypes[this.cssText[offset]] || Token.type.boundary;
 
     return new Token(type, offset, offset + 1);
   }

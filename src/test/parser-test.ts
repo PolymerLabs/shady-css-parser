@@ -68,17 +68,16 @@ describe('Parser', () => {
           ]));
     });
 
-    it('can parse custom properties',
-       () => {
-           expect(parser.parse(fixtures.customProperties))
-               .to.containSubset(nodeFactory.stylesheet(
-                   [nodeFactory.ruleset(':root', nodeFactory.rulelist([
-                     nodeFactory.declaration(
-                         '--qux', nodeFactory.expression('vim')),
-                     nodeFactory.declaration(
-                         '--foo', nodeFactory.rulelist([nodeFactory.declaration(
-                                      'bar', nodeFactory.expression('baz'))]))
-                   ]))]))});
+    it('can parse custom properties', () => {
+      expect(parser.parse(fixtures.customProperties))
+          .to.containSubset(nodeFactory.stylesheet(
+              [nodeFactory.ruleset(':root', nodeFactory.rulelist([
+                nodeFactory.declaration('--qux', nodeFactory.expression('vim')),
+                nodeFactory.declaration(
+                    '--foo', nodeFactory.rulelist([nodeFactory.declaration(
+                                 'bar', nodeFactory.expression('baz'))]))
+              ]))]));
+    });
 
     it('can parse declarations with no value', () => {
       expect(parser.parse(fixtures.declarationsWithNoValue))
@@ -154,7 +153,7 @@ describe('Parser', () => {
     it('extracts the correct ranges for discarded nodes', () => {
       const ast = parser.parse(fixtures.extraSemicolons);
       const nodes = getNodesOfType(ast, 'discarded');
-      const rangeSubStrings = Array.from(nodes).map(n => {
+      const rangeSubStrings = Array.from(nodes).map((n) => {
         return fixtures.extraSemicolons.substring(n.range.start, n.range.end);
       });
       expect(rangeSubStrings).to.be.deep.equal([';;', ';', ';', ';']);
@@ -163,7 +162,7 @@ describe('Parser', () => {
     it('extracts the correct ranges for expression nodes', () => {
       const ast = parser.parse(fixtures.basicRuleset);
       const nodes = getNodesOfType(ast, 'expression');
-      const rangeSubStrings = Array.from(nodes).map(n => {
+      const rangeSubStrings = Array.from(nodes).map((n) => {
         return fixtures.basicRuleset.substring(n.range.start, n.range.end);
       });
       expect(rangeSubStrings).to.be.deep.equal(['0', '0px']);
@@ -176,10 +175,10 @@ describe('Parser', () => {
            expectedNameRangeStrings: string[]) => {
             const ast = parser.parse(cssText);
             const nodes = Array.from(getNodesOfType(ast, 'declaration'));
-            const rangeStrings = nodes.map(n => {
+            const rangeStrings = nodes.map((n) => {
               return cssText.substring(n.range.start, n.range.end);
             });
-            const nameRangeStrings = nodes.map(n => {
+            const nameRangeStrings = nodes.map((n) => {
               return cssText.substring(n.nameRange.start, n.nameRange.end);
             });
 
@@ -190,17 +189,17 @@ describe('Parser', () => {
       expectDeclarationRanges(
           fixtures.basicRuleset,
           ['margin: 0;', 'padding: 0px'],
-          ['margin', 'padding'])
+          ['margin', 'padding']);
       expectDeclarationRanges(
-          fixtures.atRules, ['font-family: foo;'], ['font-family'])
+          fixtures.atRules, ['font-family: foo;'], ['font-family']);
       expectDeclarationRanges(
           fixtures.keyframes,
           ['fiz: 0%;', 'fiz: 100px;', 'buz: true;'],
-          ['fiz', 'fiz', 'buz'])
+          ['fiz', 'fiz', 'buz']);
       expectDeclarationRanges(
           fixtures.customProperties,
           ['--qux: vim;', '--foo: {\n    bar: baz;\n  };', 'bar: baz;'],
-          ['--qux', '--foo', 'bar'])
+          ['--qux', '--foo', 'bar']);
       expectDeclarationRanges(
           fixtures.extraSemicolons,
           [
@@ -208,24 +207,24 @@ describe('Parser', () => {
             'padding: 0;',
             'display: block;',
           ],
-          ['margin', 'padding', 'display'])
+          ['margin', 'padding', 'display']);
       expectDeclarationRanges(
           fixtures.declarationsWithNoValue,
           ['foo;', 'bar 20px;', 'baz;'],
-          ['foo', 'bar 20px', 'baz'])
+          ['foo', 'bar 20px', 'baz']);
       expectDeclarationRanges(
-          fixtures.minifiedRuleset, ['bar:baz', 'vim:fet;'], ['bar', 'vim'])
+          fixtures.minifiedRuleset, ['bar:baz', 'vim:fet;'], ['bar', 'vim']);
       expectDeclarationRanges(
           fixtures.psuedoRuleset,
           ['baz:qux'],
           ['baz'],
-      )
+      );
       expectDeclarationRanges(
-          fixtures.dataUriRuleset, ['bar:url(qux;gib)'], ['bar'])
+          fixtures.dataUriRuleset, ['bar:url(qux;gib)'], ['bar']);
       expectDeclarationRanges(
           fixtures.pathologicalComments,
           ['bar: /*baz*/vim;', 'baz: lur;'],
-          ['bar', 'baz'])
+          ['bar', 'baz']);
     });
 
     it('extracts the correct ranges for rulesets', () => {
@@ -235,10 +234,10 @@ describe('Parser', () => {
            expectedSelectorRangeStrings: string[]) => {
             const ast = parser.parse(cssText);
             const nodes = Array.from(getNodesOfType(ast, 'ruleset'));
-            const rangeStrings = nodes.map(n => {
+            const rangeStrings = nodes.map((n) => {
               return cssText.substring(n.range.start, n.range.end);
             });
-            const selectorRangeStrings = nodes.map(n => {
+            const selectorRangeStrings = nodes.map((n) => {
               return cssText.substring(
                   n.selectorRange.start, n.selectorRange.end);
             });
@@ -251,40 +250,40 @@ describe('Parser', () => {
       expectRulesetRanges(
           fixtures.basicRuleset,
           [`body {\n  margin: 0;\n  padding: 0px\n}`],
-          ['body'])
-      expectRulesetRanges(fixtures.atRules, [], [])
+          ['body']);
+      expectRulesetRanges(fixtures.atRules, [], []);
       expectRulesetRanges(
           fixtures.keyframes,
           [
             'from {\n    fiz: 0%;\n  }',
             '99.9% {\n    fiz: 100px;\n    buz: true;\n  }'
           ],
-          ['from', '99.9%'])
+          ['from', '99.9%']);
       expectRulesetRanges(
           fixtures.customProperties,
           [':root {\n  --qux: vim;\n  --foo: {\n    bar: baz;\n  };\n}'],
-          [':root'])
+          [':root']);
       expectRulesetRanges(
           fixtures.extraSemicolons,
           [':host {\n  margin: 0;;;\n  padding: 0;;\n  ;display: block;\n}'],
-          [':host'])
+          [':host']);
       expectRulesetRanges(
-          fixtures.declarationsWithNoValue, ['div {\n  baz;\n}'], ['div'])
+          fixtures.declarationsWithNoValue, ['div {\n  baz;\n}'], ['div']);
       expectRulesetRanges(
           fixtures.minifiedRuleset,
           ['.foo{bar:baz}', 'div .qux{vim:fet;}'],
-          ['.foo', 'div .qux'])
+          ['.foo', 'div .qux']);
       expectRulesetRanges(
           fixtures.psuedoRuleset,
           ['.foo:bar:not(#rif){baz:qux}'],
           ['.foo:bar:not(#rif)'],
-      )
+      );
       expectRulesetRanges(
-          fixtures.dataUriRuleset, ['.foo{bar:url(qux;gib)}'], ['.foo'])
+          fixtures.dataUriRuleset, ['.foo{bar:url(qux;gib)}'], ['.foo']);
       expectRulesetRanges(
           fixtures.pathologicalComments,
           ['.foo {\n  bar: /*baz*/vim;\n}'],
-          ['.foo'])
+          ['.foo']);
     });
 
     it('extracts the correct ranges for rulelists', () => {
@@ -292,7 +291,7 @@ describe('Parser', () => {
           (cssText: string, expectedRangeStrings: string[]) => {
             const ast = parser.parse(cssText);
             const nodes = Array.from(getNodesOfType(ast, 'rulelist'));
-            const rangeStrings = nodes.map(n => {
+            const rangeStrings = nodes.map((n) => {
               return cssText.substring(n.range.start, n.range.end);
             });
 
@@ -300,31 +299,31 @@ describe('Parser', () => {
           };
 
       expectRulelistRanges(
-          fixtures.basicRuleset, [`{\n  margin: 0;\n  padding: 0px\n}`])
+          fixtures.basicRuleset, [`{\n  margin: 0;\n  padding: 0px\n}`]);
       expectRulelistRanges(
           fixtures.atRules,
           ['{\n  font-family: foo;\n}'],
-      )
+      );
       expectRulelistRanges(fixtures.keyframes, [
         '{\n  from {\n    fiz: 0%;\n  }\n\n  99.9% ' +
             '{\n    fiz: 100px;\n    buz: true;\n  }\n}',
         '{\n    fiz: 0%;\n  }',
         '{\n    fiz: 100px;\n    buz: true;\n  }'
-      ])
+      ]);
       expectRulelistRanges(fixtures.customProperties, [
         '{\n  --qux: vim;\n  --foo: {\n    bar: baz;\n  };\n}',
         '{\n    bar: baz;\n  }'
-      ])
+      ]);
       expectRulelistRanges(
           fixtures.extraSemicolons,
-          ['{\n  margin: 0;;;\n  padding: 0;;\n  ;display: block;\n}'])
-      expectRulelistRanges(fixtures.declarationsWithNoValue, ['{\n  baz;\n}'])
+          ['{\n  margin: 0;;;\n  padding: 0;;\n  ;display: block;\n}']);
+      expectRulelistRanges(fixtures.declarationsWithNoValue, ['{\n  baz;\n}']);
       expectRulelistRanges(
-          fixtures.minifiedRuleset, ['{bar:baz}', '{vim:fet;}'])
-      expectRulelistRanges(fixtures.psuedoRuleset, ['{baz:qux}'])
-      expectRulelistRanges(fixtures.dataUriRuleset, ['{bar:url(qux;gib)}'])
+          fixtures.minifiedRuleset, ['{bar:baz}', '{vim:fet;}']);
+      expectRulelistRanges(fixtures.psuedoRuleset, ['{baz:qux}']);
+      expectRulelistRanges(fixtures.dataUriRuleset, ['{bar:url(qux;gib)}']);
       expectRulelistRanges(
-          fixtures.pathologicalComments, ['{\n  bar: /*baz*/vim;\n}'])
+          fixtures.pathologicalComments, ['{\n  bar: /*baz*/vim;\n}']);
     });
 
     it('extracts the correct ranges for atRules', () => {
@@ -335,13 +334,13 @@ describe('Parser', () => {
            expectedParameterRangeStrings: string[]) => {
             const ast = parser.parse(cssText);
             const nodes = Array.from(getNodesOfType(ast, 'atRule'));
-            const rangeStrings = nodes.map(n => {
+            const rangeStrings = nodes.map((n) => {
               return cssText.substring(n.range.start, n.range.end);
             });
-            const rangeNameStrings = nodes.map(n => {
+            const rangeNameStrings = nodes.map((n) => {
               return cssText.substring(n.nameRange.start, n.nameRange.end);
             });
-            const rangeParametersStrings = nodes.map(n => {
+            const rangeParametersStrings = nodes.map((n) => {
               if (!n.parametersRange) {
                 return '[no parameters]';
               }
@@ -357,7 +356,7 @@ describe('Parser', () => {
                 .to.be.deep.equal(expectedParameterRangeStrings);
           };
 
-      expectAtRuleRanges(fixtures.basicRuleset, [], [], [])
+      expectAtRuleRanges(fixtures.basicRuleset, [], [], []);
       expectAtRuleRanges(
           fixtures.atRules,
           [
@@ -366,7 +365,7 @@ describe('Parser', () => {
             `@charset 'foo';`
           ],
           ['import', 'font-face', 'charset'],
-          [`url('foo.css')`, `[no parameters]`, `'foo'`])
+          [`url('foo.css')`, `[no parameters]`, `'foo'`]);
       expectAtRuleRanges(
           fixtures.keyframes,
           [
@@ -374,15 +373,15 @@ describe('Parser', () => {
                 '{\n    fiz: 100px;\n    buz: true;\n  }\n}',
           ],
           ['keyframes'],
-          ['foo'])
-      expectAtRuleRanges(fixtures.customProperties, [], [], [])
-      expectAtRuleRanges(fixtures.extraSemicolons, [], [], [])
-      expectAtRuleRanges(fixtures.declarationsWithNoValue, [], [], [])
-      expectAtRuleRanges(fixtures.minifiedRuleset, [], [], [])
-      expectAtRuleRanges(fixtures.psuedoRuleset, [], [], [])
-      expectAtRuleRanges(fixtures.dataUriRuleset, [], [], [])
+          ['foo']);
+      expectAtRuleRanges(fixtures.customProperties, [], [], []);
+      expectAtRuleRanges(fixtures.extraSemicolons, [], [], []);
+      expectAtRuleRanges(fixtures.declarationsWithNoValue, [], [], []);
+      expectAtRuleRanges(fixtures.minifiedRuleset, [], [], []);
+      expectAtRuleRanges(fixtures.psuedoRuleset, [], [], []);
+      expectAtRuleRanges(fixtures.dataUriRuleset, [], [], []);
       expectAtRuleRanges(
-          fixtures.pathologicalComments, ['@gak wiz;'], ['gak'], ['wiz'])
+          fixtures.pathologicalComments, ['@gak wiz;'], ['gak'], ['wiz']);
     });
   });
 });
@@ -402,7 +401,7 @@ function* iterAst(node: Node): Iterable<Node> {
   switch (node.type) {
     case nodeType.stylesheet:
       for (const rule of node.rules) {
-        yield* iterAst(rule)
+        yield* iterAst(rule);
       }
       return;
     case nodeType.ruleset:

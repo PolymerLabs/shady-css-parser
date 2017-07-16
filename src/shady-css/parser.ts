@@ -56,10 +56,10 @@ class Parser {
    *   Declaration and Discarded nodes may be present in the list.
    */
   parseRules(tokenizer: Tokenizer): Rule[] {
-    let rules = [];
+    const rules = [];
 
     while (tokenizer.currentToken) {
-      let rule = this.parseRule(tokenizer);
+      const rule = this.parseRule(tokenizer);
 
       if (rule) {
         rules.push(rule);
@@ -122,7 +122,7 @@ class Parser {
    * @param tokenizer A Tokenizer instance.
    */
   parseUnknown(tokenizer: Tokenizer): Discarded|null {
-    let start = tokenizer.advance();
+    const start = tokenizer.advance();
     let end;
 
     if (start === null) {
@@ -160,7 +160,7 @@ class Parser {
       } else if (!name && tokenizer.currentToken.is(Token.type.at)) {
         // Discard the @:
         tokenizer.advance();
-        let start = tokenizer.currentToken;
+        const start = tokenizer.currentToken;
         let end;
 
         while (tokenizer.currentToken &&
@@ -206,7 +206,7 @@ class Parser {
    * @param tokenizer A Tokenizer instance.
    */
   parseRulelist(tokenizer: Tokenizer): Rulelist {
-    let rules = [];
+    const rules = [];
 
     const start = tokenizer.currentToken!.start;
     let endToken;
@@ -219,7 +219,7 @@ class Parser {
         tokenizer.advance();
         break;
       } else {
-        let rule = this.parseRule(tokenizer);
+        const rule = this.parseRule(tokenizer);
         if (rule) {
           rules.push(rule);
         }
@@ -308,7 +308,7 @@ class Parser {
           declarationName, expression, nameRange, range);
       // This is the case for a mixin-like structure:
     } else if (colon && colon === ruleEnd) {
-      let rulelist = this.parseRulelist(tokenizer);
+      const rulelist = this.parseRulelist(tokenizer);
 
       if (tokenizer.currentToken.is(Token.type.semicolon)) {
         tokenizer.advance();

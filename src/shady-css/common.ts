@@ -33,7 +33,7 @@ export enum nodeType {
   rulelist = 'rulelist',
   discarded = 'discarded'
 }
-;
+
 
 export type Node = Stylesheet | AtRule | Comment | Rulelist | Ruleset |
     Expression | Declaration | Discarded;
@@ -41,12 +41,12 @@ export type Rule = Ruleset | Declaration | AtRule | Discarded | Comment;
 
 /** A Stylesheet node. */
 export interface Stylesheet {
-  type: nodeType.stylesheet,
+  type: nodeType.stylesheet;
 
-      /**
-       * The list of rules that appear at the top level of the stylesheet.
-       */
-      rules: Rule[];
+  /**
+   * The list of rules that appear at the top level of the stylesheet.
+   */
+  rules: Rule[];
 
   range: Range;
 }
@@ -111,7 +111,7 @@ export interface Ruleset {
  * A Declaration node.
  */
 export interface Declaration {
-  type: nodeType.declaration
+  type: nodeType.declaration;
 
   /** The property name of the Declaration (e.g., `color`). */
   name: string;

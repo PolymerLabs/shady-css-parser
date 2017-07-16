@@ -150,8 +150,8 @@ describe('Tokenizer', () => {
 
   describe('when extracting substrings', () => {
     it('can slice the string using tokens', () => {
-      let tokenizer = new Tokenizer('foo bar');
-      let substring = tokenizer.slice(
+      const tokenizer = new Tokenizer('foo bar');
+      const substring = tokenizer.slice(
           new Token(Token.type.word, 2, 3), new Token(Token.type.word, 5, 6));
       expect(substring).to.be.eql('o ba');
     });
