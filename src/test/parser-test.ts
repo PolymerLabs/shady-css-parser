@@ -11,26 +11,28 @@
 import {expect, use} from 'chai';
 import * as util from 'util';
 
-import {NodeFactory, nodeType, Parser} from '../shady-css';
+import {nodeType, Parser} from '../shady-css';
 import {Node, NodeTypeMap} from '../shady-css/common';
 
 import * as fixtures from './fixtures';
+import {TestNodeFactory} from './test-node-factory';
 
 use(require('chai-subset'));
 
+
 describe('Parser', () => {
   let parser: Parser;
-  let nodeFactory: NodeFactory;
+  let nodeFactory: TestNodeFactory;
 
   beforeEach(() => {
     parser = new Parser();
-    nodeFactory = parser.nodeFactory;
+    nodeFactory = new TestNodeFactory();
   });
 
   describe('when parsing css', () => {
     it('can parse a basic ruleset', () => {
       expect(parser.parse(fixtures.basicRuleset))
-          .to.be.eql(nodeFactory.stylesheet([
+          .to.be.containSubset(nodeFactory.stylesheet([
         nodeFactory.ruleset('body', nodeFactory.rulelist([
           nodeFactory.declaration('margin', nodeFactory.expression('0')),
           nodeFactory.declaration('padding', nodeFactory.expression('0px'))
@@ -39,7 +41,7 @@ describe('Parser', () => {
     });
 
     it('can parse at rules', () => {
-      expect(parser.parse(fixtures.atRules)).to.be.eql(nodeFactory.stylesheet([
+      expect(parser.parse(fixtures.atRules)).to.containSubset(nodeFactory.stylesheet([
         nodeFactory.atRule('import', 'url(\'foo.css\')', undefined),
         nodeFactory.atRule('font-face', '', nodeFactory.rulelist([
           nodeFactory.declaration(
@@ -53,14 +55,14 @@ describe('Parser', () => {
 
     it('can parse keyframes', () => {
       expect(parser.parse(fixtures.keyframes))
-          .to.be.eql(nodeFactory.stylesheet([
+          .to.containSubset(nodeFactory.stylesheet([
         nodeFactory.atRule('keyframes', 'foo', nodeFactory.rulelist([
           nodeFactory.ruleset('from', nodeFactory.rulelist([
             nodeFactory.declaration('fiz', nodeFactory.expression('0%'))
           ])),
           nodeFactory.ruleset('99.9%', nodeFactory.rulelist([
             nodeFactory.declaration('fiz', nodeFactory.expression('100px')),
-            nodeFactory.declaration('buz', nodeFactory.expression('true'))
+            nodeFactory.declaration('buz',nodeFactory.expression('true'))
           ]))
         ]))
       ]));
@@ -68,7 +70,7 @@ describe('Parser', () => {
 
     it('can parse custom properties', () => {
       expect(parser.parse(fixtures.customProperties))
-          .to.be.eql(nodeFactory.stylesheet([
+          .to.containSubset(nodeFactory.stylesheet([
         nodeFactory.ruleset(':root', nodeFactory.rulelist([
           nodeFactory.declaration('--qux', nodeFactory.expression('vim')),
           nodeFactory.declaration('--foo', nodeFactory.rulelist([
@@ -80,7 +82,7 @@ describe('Parser', () => {
 
     it('can parse declarations with no value', () => {
       expect(parser.parse(fixtures.declarationsWithNoValue))
-          .to.be.eql(nodeFactory.stylesheet([
+          .to.containSubset(nodeFactory.stylesheet([
         nodeFactory.declaration('foo', undefined),
         nodeFactory.declaration('bar 20px', undefined),
         nodeFactory.ruleset('div', nodeFactory.rulelist([
@@ -91,7 +93,7 @@ describe('Parser', () => {
 
     it('can parse minified rulelists', () => {
       expect(parser.parse(fixtures.minifiedRuleset))
-          .to.be.eql(nodeFactory.stylesheet([
+          .to.containSubset(nodeFactory.stylesheet([
         nodeFactory.ruleset('.foo', nodeFactory.rulelist([
           nodeFactory.declaration('bar', nodeFactory.expression('baz'))
         ])),
@@ -103,7 +105,7 @@ describe('Parser', () => {
 
     it('can parse psuedo rulesets', () => {
       expect(parser.parse(fixtures.psuedoRuleset))
-          .to.be.eql(nodeFactory.stylesheet([
+          .to.containSubset(nodeFactory.stylesheet([
         nodeFactory.ruleset('.foo:bar:not(#rif)', nodeFactory.rulelist([
           nodeFactory.declaration('baz', nodeFactory.expression('qux'))
         ]))
@@ -112,7 +114,7 @@ describe('Parser', () => {
 
     it('can parse rulelists with data URIs', () => {
       expect(parser.parse(fixtures.dataUriRuleset))
-          .to.be.eql(nodeFactory.stylesheet([
+          .to.containSubset(nodeFactory.stylesheet([
         nodeFactory.ruleset('.foo', nodeFactory.rulelist([
           nodeFactory.declaration('bar', nodeFactory.expression('url(qux;gib)'))
         ]))
@@ -127,8 +129,8 @@ describe('Parser', () => {
         ])),
         nodeFactory.comment('/* unclosed\n@fiz {\n  --huk: {\n    /* buz */'),
         nodeFactory.declaration('baz', nodeFactory.expression('lur')),
-        {type: 'discarded', text: '};'} as any,
-        {type: 'discarded', text: '}'},
+        nodeFactory.discarded('};'),
+        nodeFactory.discarded('}'),
         nodeFactory.atRule('gak', 'wiz', undefined)
       ]));
     });
@@ -138,13 +140,13 @@ describe('Parser', () => {
           .to.containSubset(nodeFactory.stylesheet([
         nodeFactory.ruleset(':host', nodeFactory.rulelist([
           nodeFactory.declaration('margin', nodeFactory.expression('0')),
-          {type: 'discarded', text: ';;'} as any,
+          nodeFactory.discarded(';;'),
           nodeFactory.declaration('padding', nodeFactory.expression('0')),
-          {type: 'discarded', text: ';'},
-          {type: 'discarded', text: ';'},
+          nodeFactory.discarded(';'),
+          nodeFactory.discarded(';'),
           nodeFactory.declaration('display', nodeFactory.expression('block')),
         ])),
-        {type: 'discarded', text: ';'} as any
+        nodeFactory.discarded(';')
       ]));
     });
   });
@@ -158,9 +160,17 @@ describe('Parser', () => {
       });
       expect(rangeSubStrings).to.be.deep.equal([';;', ';', ';', ';']);
     });
+
+    it('extracts the correct ranges for expression nodes', () => {
+      const ast = parser.parse(fixtures.basicRuleset);
+      const expressionNodes = getNodesOfType(ast, 'expression');
+      const rangeSubStrings = Array.from(expressionNodes).map(d => {
+        return fixtures.basicRuleset.substring(d.range.start, d.range.end);
+      });
+      expect(rangeSubStrings).to.be.deep.equal(['0', '0px']);
+    });
   });
 });
-
 
 function *getNodesOfType<K extends keyof NodeTypeMap>(node: Node, type: K): Iterable<NodeTypeMap[K]> {
   for (const n of iterAst(node)) {
@@ -185,10 +195,18 @@ function *iterAst(node: Node): Iterable<Node> {
         yield* iterAst(rule);
       }
       return;
-    case nodeType.expression:
-    case nodeType.atRule:
-    case nodeType.comment:
     case nodeType.declaration:
+      if (node.value !== undefined) {
+        yield* iterAst(node.value);
+      }
+      return;
+    case nodeType.atRule:
+      if (node.rulelist) {
+        yield* iterAst(node.rulelist);
+      }
+      return;
+    case nodeType.expression:
+    case nodeType.comment:
     case nodeType.discarded:
       return; // no child nodes
     default:

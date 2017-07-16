@@ -116,6 +116,8 @@ export interface Expression {
 
   /** The full text content of the expression (e.g., `url(img.jpg)`) */
   text: string;
+
+  range: Range;
 }
 
 /**

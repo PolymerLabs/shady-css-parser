@@ -78,8 +78,8 @@ class NodeFactory {
    * @param text The full text content of the expression (e.g.,
    * `url(img.jpg)`)
    */
-  expression(text: string): Expression {
-    return { type: nodeType.expression, text };
+  expression(text: string, range: Range): Expression {
+    return { type: nodeType.expression, text, range };
   }
 
   /**

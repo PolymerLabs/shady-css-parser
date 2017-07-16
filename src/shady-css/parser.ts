@@ -253,17 +253,21 @@ class Parser {
     if (tokenizer.currentToken.is(Token.type.propertyBoundary)) {
       let declarationName = tokenizer.slice(
           ruleStart!, colon ? colon.previous : ruleEnd);
-      // TODO(cdata): is .trim() bad for performance?
-      let expressionValue =
-          colon && tokenizer.slice(colon.next!, ruleEnd).trim();
+
+      let expression = undefined;
+      if (colon && colon.next) {
+        const rawExpressionRange = tokenizer.getRange(colon.next, ruleEnd);
+        const expressionRange = tokenizer.trimRange(rawExpressionRange);
+        // TODO(cdata): is .trim() bad for performance?
+        const expressionValue = tokenizer.cssText.slice(expressionRange.start, expressionRange.end).trim();
+        expression = this.nodeFactory.expression(expressionValue, expressionRange);
+      }
 
       if (tokenizer.currentToken.is(Token.type.semicolon)) {
         tokenizer.advance();
       }
 
-      return this.nodeFactory.declaration(
-          declarationName,
-          expressionValue && this.nodeFactory.expression(expressionValue) || undefined);
+      return this.nodeFactory.declaration(declarationName, expression);
     // This is the case for a mixin-like structure:
     } else if (colon && colon === ruleEnd) {
       let rulelist = this.parseRulelist(tokenizer);

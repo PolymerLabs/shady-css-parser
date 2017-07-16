@@ -8,8 +8,8 @@
  * subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
  */
 
-import { matcher } from './common';
-import { Token, boundaryTokenTypes } from './token';
+import {matcher, Range} from './common';
+import {boundaryTokenTypes, Token} from './token';
 
 /**
  * Class that implements tokenization of significant lexical features of the
@@ -95,6 +95,16 @@ class Tokenizer {
    */
   getRange(startToken: Token, endToken: Token|undefined|null=undefined) {
     return {start: startToken.start, end: (endToken || startToken).end};
+  }
+
+  trimRange({start, end}: Range): Range {
+    while (start <= end && /\s/.test(this.cssText.charAt(start))) {
+      start++;
+    }
+    while (start <= end && end > 0 && /\s/.test(this.cssText.charAt(end-1))) {
+      end--;
+    }
+    return {start, end};
   }
 
   /**

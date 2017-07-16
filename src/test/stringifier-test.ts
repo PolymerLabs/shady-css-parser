@@ -55,7 +55,7 @@ describe('Stringifier', () => {
 
     it('can stringify Declarations with Expression values', () => {
       let cssText = stringifier.stringify(
-          nodeFactory.declaration('color', nodeFactory.expression('red')));
+          nodeFactory.declaration('color', nodeFactory.expression('red', null as any)));
       expect(cssText).to.be.eql('color:red;');
     });
 
