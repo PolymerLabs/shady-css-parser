@@ -21,8 +21,8 @@ class NodeFactory {
    * @param rules The list of rules that appear at the top
    * level of the stylesheet.
    */
-  stylesheet(rules: Rule[]): Stylesheet {
-    return { type: nodeType.stylesheet, rules };
+  stylesheet(rules: Rule[], range: Range): Stylesheet {
+    return { type: nodeType.stylesheet, rules, range };
   }
 
   /**
@@ -32,8 +32,8 @@ class NodeFactory {
    * @param rulelist The Rulelist node (if any) of the At Rule.
    */
   atRule(name: string, parameters: string, rulelist: Rulelist|
-        undefined=undefined): AtRule {
-    return { type: nodeType.atRule, name, parameters, rulelist };
+        undefined=undefined, nameRange: Range, parametersRange: Range|undefined, range: Range): AtRule {
+    return { type: nodeType.atRule, name, parameters, rulelist, nameRange, parametersRange, range };
   }
 
   /**

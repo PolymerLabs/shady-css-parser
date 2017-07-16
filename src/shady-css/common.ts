@@ -43,17 +43,23 @@ export interface Stylesheet {
   /**
    * The list of rules that appear at the top level of the stylesheet.
    */
-  rules: Rule[]
+  rules: Rule[];
+
+  range: Range;
 }
 
 export interface AtRule {
   type: nodeType.atRule;
   /** The "name" of the At Rule (e.g., `charset`) */
   name: string;
+  nameRange: Range;
   /** The "parameters" of the At Rule (e.g., `utf8`) */
   parameters: string;
+  parametersRange: Range | undefined;
   /** The Rulelist node (if any) of the At Rule. */
   rulelist: Rulelist|undefined;
+
+  range: Range;
 }
 
 /**

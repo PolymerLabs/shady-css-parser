@@ -43,7 +43,7 @@ class Parser {
    * @param tokenizer A Tokenizer instance.
    */
   parseStylesheet(tokenizer: Tokenizer): Stylesheet {
-    return this.nodeFactory.stylesheet(this.parseRules(tokenizer));
+    return this.nodeFactory.stylesheet(this.parseRules(tokenizer), {start: 0, end: tokenizer.cssText.length});
   }
 
   /**
@@ -141,10 +141,16 @@ class Parser {
    * @param tokenizer A Tokenizer instance.
    */
   parseAtRule(tokenizer: Tokenizer): AtRule | null {
-    let name = '';
+    let name = undefined;
+    let nameRange = undefined;
     let rulelist = undefined;
     let parametersStart = undefined;
     let parametersEnd = undefined;
+
+    if (!tokenizer.currentToken) {
+      return null;
+    }
+    const start = tokenizer.currentToken.start;
 
     while (tokenizer.currentToken) {
       if (tokenizer.currentToken.is(Token.type.whitespace)) {
@@ -159,7 +165,8 @@ class Parser {
                tokenizer.currentToken.is(Token.type.word)) {
           end = tokenizer.advance();
         }
-        name = tokenizer.slice(start, end);
+        nameRange = tokenizer.getRange(start, end);
+        name = tokenizer.cssText.slice(nameRange.start, nameRange.end);
       } else if (tokenizer.currentToken.is(Token.type.openBrace)) {
         rulelist = this.parseRulelist(tokenizer);
         break;
@@ -175,10 +182,21 @@ class Parser {
       }
     }
 
+    if (name === undefined || nameRange === undefined) {
+      return null;
+    }
+    let parametersRange = undefined;
+    let parameters = '';
+    if (parametersStart) {
+      parametersRange = tokenizer.getRange(parametersStart, parametersEnd);
+      parameters = tokenizer.cssText.slice(parametersRange.start, parametersRange.end);
+    }
+    const end = tokenizer.currentToken ?
+        tokenizer.currentToken.previous!.end :
+        tokenizer.cssText.length;
+
     return this.nodeFactory.atRule(
-        name,
-        parametersStart ? tokenizer.slice(parametersStart, parametersEnd) : '',
-        rulelist || undefined);
+        name, parameters, rulelist, nameRange, parametersRange, {start, end});
   }
 
   /**
