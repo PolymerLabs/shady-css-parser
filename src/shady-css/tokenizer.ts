@@ -86,7 +86,7 @@ class Tokenizer {
    */
   slice(startToken: Token, endToken: Token|undefined|null = undefined): string {
     endToken = endToken || startToken;
-    return this.cssText.substring(startToken.start!, endToken.end);
+    return this.cssText.substring(startToken.start, endToken.end);
   }
 
   /**
@@ -107,23 +107,23 @@ class Tokenizer {
    * tokenized.
    */
   private getNextToken_(): Token|null {
-    let character = this.cssText[this.offset!];
+    let character = this.cssText[this.offset];
     let token;
 
     this.currentToken_ = null;
 
-    if (this.offset! >= this.cssText.length) {
+    if (this.offset >= this.cssText.length) {
       return null;
     } else if (matcher.whitespace.test(character)) {
-      token = this.tokenizeWhitespace(this.offset!);
+      token = this.tokenizeWhitespace(this.offset);
     } else if (matcher.stringBoundary.test(character)) {
-      token = this.tokenizeString(this.offset!);
-    } else if (character === '/' && this.cssText[this.offset! + 1] === '*') {
-      token = this.tokenizeComment(this.offset!);
+      token = this.tokenizeString(this.offset);
+    } else if (character === '/' && this.cssText[this.offset + 1] === '*') {
+      token = this.tokenizeComment(this.offset);
     } else if (matcher.boundary.test(character)) {
-      token = this.tokenizeBoundary(this.offset!);
+      token = this.tokenizeBoundary(this.offset);
     } else {
-      token = this.tokenizeWord(this.offset!);
+      token = this.tokenizeWord(this.offset);
     }
 
     token.previous = this.cursorToken_;

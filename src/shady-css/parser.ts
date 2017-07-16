@@ -76,7 +76,10 @@ class Parser {
    */
   parseRule(tokenizer: Tokenizer): Rule|null {
     // Trim leading whitespace:
-    const token = tokenizer.currentToken!;
+    const token = tokenizer.currentToken;
+    if (token === null) {
+      return null;
+    }
     if (token.is(Token.type.whitespace)) {
       tokenizer.advance();
       return null;
@@ -104,7 +107,11 @@ class Parser {
    * @return {object} A Comment node.
    */
   parseComment(tokenizer: Tokenizer) {
-    return this.nodeFactory.comment(tokenizer.slice(tokenizer.advance()!));
+    const token = tokenizer.advance();
+    if (token === null) {
+      return null;
+    }
+    return this.nodeFactory.comment(tokenizer.slice(token));
   }
 
   /**
@@ -117,6 +124,10 @@ class Parser {
   parseUnknown(tokenizer: Tokenizer) {
     let start = tokenizer.advance();
     let end;
+
+    if (start === null) {
+      return null;
+    }
 
     while (tokenizer.currentToken &&
            tokenizer.currentToken.is(Token.type.boundary)) {
@@ -209,10 +220,15 @@ class Parser {
     let ruleEnd = null;
     let colon = null;
 
+    // This code is not obviously correct. e.g. there's what looks to be a
+    // null-dereference if the declaration starts with an open brace or
+    // property boundary.. though that may be impossible.
+
     while (tokenizer.currentToken) {
       if (tokenizer.currentToken.is(Token.type.whitespace)) {
         tokenizer.advance();
       } else if (tokenizer.currentToken.is(Token.type.openParenthesis)) {
+        // skip until close paren
         while (tokenizer.currentToken &&
                !tokenizer.currentToken.is(Token.type.closeParenthesis)) {
           tokenizer.advance();
@@ -225,7 +241,7 @@ class Parser {
           colon = tokenizer.currentToken;
         }
 
-        if (!ruleStart) {
+        if (ruleStart === null) {
           ruleStart = tokenizer.advance();
           ruleEnd = ruleStart;
         } else {
@@ -234,15 +250,19 @@ class Parser {
       }
     }
 
+    if (tokenizer.currentToken === null) {
+      // terminated early
+      return null;
+    }
     // A ruleset never contains or ends with a semi-colon.
-    if (tokenizer.currentToken!.is(Token.type.propertyBoundary)) {
+    if (tokenizer.currentToken.is(Token.type.propertyBoundary)) {
       let declarationName = tokenizer.slice(
           ruleStart!, colon ? colon.previous : ruleEnd);
       // TODO(cdata): is .trim() bad for performance?
       let expressionValue =
           colon && tokenizer.slice(colon.next!, ruleEnd).trim();
 
-      if (tokenizer.currentToken!.is(Token.type.semicolon)) {
+      if (tokenizer.currentToken.is(Token.type.semicolon)) {
         tokenizer.advance();
       }
 
@@ -253,7 +273,7 @@ class Parser {
     } else if (colon && colon === ruleEnd) {
       let rulelist = this.parseRulelist(tokenizer);
 
-      if (tokenizer.currentToken!.is(Token.type.semicolon)) {
+      if (tokenizer.currentToken.is(Token.type.semicolon)) {
         tokenizer.advance();
       }
 

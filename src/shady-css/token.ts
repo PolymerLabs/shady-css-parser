@@ -47,9 +47,9 @@ export enum TokenType {
 class Token {
   static type = TokenType;
 
-  type: TokenType;
-  start: number | undefined;
-  end: number | undefined;
+  readonly type: TokenType;
+  readonly start: number;
+  readonly end: number;
   previous: Token | null;
   next: Token | null;
 
@@ -61,7 +61,7 @@ class Token {
    * @param {number} end The end index of the text corresponding to the Token
    * in the CSS text.
    */
-  constructor(type: TokenType, start: number|undefined=undefined, end: number|undefined=undefined) {
+  constructor(type: TokenType, start: number, end: number) {
     this.type = type;
     this.start = start;
     this.end = end;
