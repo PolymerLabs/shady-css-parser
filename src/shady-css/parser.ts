@@ -8,7 +8,7 @@
  * subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
  */
 
-import {Rule, Stylesheet} from './common';
+import {AtRule, Comment, Declaration, Discarded, Rule, Rulelist, Ruleset, Stylesheet} from './common';
 import {NodeFactory} from './node-factory';
 import {Token} from './token';
 import {Tokenizer} from './tokenizer';
@@ -106,7 +106,7 @@ class Parser {
    * @param {Tokenizer} tokenizer A Tokenizer instance.
    * @return {object} A Comment node.
    */
-  parseComment(tokenizer: Tokenizer) {
+  parseComment(tokenizer: Tokenizer): Comment | null {
     const token = tokenizer.advance();
     if (token === null) {
       return null;
@@ -121,7 +121,7 @@ class Parser {
    * @param {Tokenizer} tokenizer A Tokenizer instance.
    * @return {object} A Discarded node.
    */
-  parseUnknown(tokenizer: Tokenizer) {
+  parseUnknown(tokenizer: Tokenizer): Discarded | null {
     let start = tokenizer.advance();
     let end;
 
@@ -142,7 +142,7 @@ class Parser {
    * @param {Tokenizer} tokenizer A Tokenizer instance.
    * @return {object} An At Rule node.
    */
-  parseAtRule(tokenizer: Tokenizer) {
+  parseAtRule(tokenizer: Tokenizer): AtRule | null {
     let name = '';
     let rulelist = undefined;
     let parametersStart = undefined;
@@ -180,7 +180,7 @@ class Parser {
     return this.nodeFactory.atRule(
         name,
         parametersStart ? tokenizer.slice(parametersStart, parametersEnd) : '',
-        rulelist);
+        rulelist || undefined);
   }
 
   /**
@@ -188,7 +188,7 @@ class Parser {
    * @param {Tokenizer} tokenizer A Tokenizer instance.
    * @return {object} A Rulelist node.
    */
-  parseRulelist(tokenizer: Tokenizer) {
+  parseRulelist(tokenizer: Tokenizer): Rulelist {
     let rules = [];
 
     // Take the opening { boundary:
@@ -215,7 +215,7 @@ class Parser {
    * @param {Tokenizer} tokenizer A Tokenizer node.
    * @return {object} One of a Declaration or Ruleset node.
    */
-  parseDeclarationOrRuleset(tokenizer: Tokenizer) {
+  parseDeclarationOrRuleset(tokenizer: Tokenizer): Ruleset | Declaration | null {
     let ruleStart = null;
     let ruleEnd = null;
     let colon = null;

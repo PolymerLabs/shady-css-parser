@@ -25,10 +25,8 @@ const matcher = {
 /**
  * An enumeration of Node types.
  * @constant
- * @type {object}
- * @default
  */
-enum nodeType {
+export enum nodeType {
   stylesheet= 'stylesheet',
   comment= 'comment',
   atRule= 'atRule',
@@ -136,4 +134,4 @@ export interface Discarded {
   text: string;
 }
 
-export { matcher, nodeType };
+export { matcher };

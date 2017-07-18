@@ -29,8 +29,7 @@ npm install shady-css-parser
 Run the following commands from the project root:
 
 ```sh
-npm install
-gulp
+npm run build
 ```
 
 This will create a `dist` directory containing distributable artifacts.
@@ -40,45 +39,45 @@ This will create a `dist` directory containing distributable artifacts.
 #### Basic parsing
 
 ```js
-var css = 'body { color: red; }';
-var parser = new shadyCss.Parser();
-var ast = parser.parse(css);
+import * as shadyCss from 'shady-css-parser';
+const css = 'body { color: red; }';
+const parser = new shadyCss.Parser();
+const ast = parser.parse(css);
 ```
 
 #### Custom parsing
 
 ```js
 /* Step 1: Inherit from NodeFactory */
-function CustomNodeFactory() {
-  shadyCss.NodeFactory.apply(this, arguments);
-}
+class CustomNodeFactory extends shadyCss.NodeFactory {
 
-CustomNodeFactory.prototype = Object.create(shadyCss.NodeFactory.prototype);
-
-/* Step 2: Implement a custom node factory method. Here we override the default
- * factory for Expression nodes */
-CustomNodeFactory.prototype.expression = function(text) {
-  if (/^darken\(/.test(text)) {
-    return {
-      type: 'darkenExpression',
-      color: text.replace(/^darken\(/, '').replace(/\)$/, '')
-    };
-  } else {
-    return shadyCss.NodeFactory.prototype.expression.apply(this, arguments);
+  /*
+   * Step 2: Implement a custom node factory method. Here we override the
+   *   default factory for Expression nodes
+   */
+  expression(text) {
+    if (/^darken\(/.test(text)) {
+      return {
+        type: 'darkenExpression',
+        color: text.replace(/^darken\(/, '').replace(/\)$/, ''),
+      };
+    } else {
+      return super.expression.apply(this, arguments);
+    }
   }
 }
 
-var css = 'body { color: darken(red); }';
+const css = 'body { color: darken(red); }';
 /* Step 3: Instantiate a Parser with an instance of the specialized
  * CustomNodeFactory */
-var parser = new shadyCss.Parser(new CustomNodeFactory());
-var ast = parser.parse(css);
+const parser = new shadyCss.Parser(new CustomNodeFactory());
+const ast = parser.parse(css);
 ```
 
 #### Basic stringification
 
 ```js
-var stringifier = new shadyCss.Stringifier();
+const stringifier = new shadyCss.Stringifier();
 stringifier.stringify(ast);
 ```
 
@@ -89,25 +88,24 @@ from parsed CSS.
 
 ```js
 /* Step 1: Inherit from Stringifier. */
-function CustomStringifier() {
-  shadyCss.Stringifier.apply(this, arguments);
+class CustomStringifier extends shadyCss.Stringifier {
+
+  /**
+  * Step 2: Implement a stringification method named after the type of the node
+  * you are interested in stringifying. In this case, we are implementing
+  * stringification for the Darken Expression nodes we implemented parsing for
+  * above.
+  */
+  darkenExpression(darkenExpression) {
+    // For the sake of brevity, please assume that the darken function returns
+    // a darker version of the color parameter:
+    return darken(darkenExpression.color);
+  }
 }
 
-CustomStringifier.prototype = Object.create(shadyCss.Stringifier.prototype);
-
-/* Step 2: Implement a stringification method named after the type of the node
- * you are interested in stringifying. In this case, we are implementing
- * stringification for the Darken Expression nodes we implemented parsing for
- * above. */
-CustomStringifier.prototype.darkenExpression = function(darkenExpression) {
-  // For the sake of brevity, please assume that the darken function returns
-  // a darker version of the color parameter:
-  return darken(darkenExpression.color);
-};
-
 /* Step 3: Use the custom stringifer: */
-var stringifier = new CustomStringifier();
-var css = stringifier.stringify(ast);
+const stringifier = new CustomStringifier();
+const css = stringifier.stringify(ast);
 ```
 
 ### Example ASTs

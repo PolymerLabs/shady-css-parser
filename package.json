@@ -15,8 +15,9 @@
     "watchy": "^0.6.7"
   },
   "scripts": {
-    "prepublishOnly": "tsc",
-    "test": "tsc || echo '' && mocha --require source-map-support/register dist/test/*.js",
+    "prepublishOnly": "npm run build",
+    "build": "tsc",
+    "test": "npm run build && mocha --require source-map-support/register dist/test/*.js",
     "test:watch": "watchy -w src/ -- npm test --loglevel=silent"
   },
   "repository": {
