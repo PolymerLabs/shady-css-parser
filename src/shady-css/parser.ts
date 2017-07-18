@@ -190,7 +190,8 @@ class Parser {
     let parametersRange = undefined;
     let parameters = '';
     if (parametersStart) {
-      parametersRange = tokenizer.trimRange(tokenizer.getRange(parametersStart, parametersEnd));
+      parametersRange = tokenizer.trimRange(
+          tokenizer.getRange(parametersStart, parametersEnd));
       parameters =
           tokenizer.cssText.slice(parametersRange.start, parametersRange.end);
     }
