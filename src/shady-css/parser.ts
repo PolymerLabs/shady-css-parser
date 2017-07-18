@@ -145,7 +145,7 @@ class Parser {
   parseAtRule(tokenizer: Tokenizer): AtRule|null {
     let name = undefined;
     let nameRange = undefined;
-    let rulelist = undefined;
+    let rulelist: Rulelist|undefined = undefined;
     let parametersStart = undefined;
     let parametersEnd = undefined;
 
@@ -190,7 +190,8 @@ class Parser {
     let parametersRange = undefined;
     let parameters = '';
     if (parametersStart) {
-      parametersRange = tokenizer.getRange(parametersStart, parametersEnd);
+      parametersRange = tokenizer.trimRange(
+          tokenizer.getRange(parametersStart, parametersEnd));
       parameters =
           tokenizer.cssText.slice(parametersRange.start, parametersRange.end);
     }
@@ -237,7 +238,7 @@ class Parser {
    * a Ruleset node, as appropriate.
    * @param tokenizer A Tokenizer node.
    */
-  parseDeclarationOrRuleset(tokenizer: Tokenizer): Ruleset|Declaration|null {
+  parseDeclarationOrRuleset(tokenizer: Tokenizer): Declaration|Ruleset|null {
     let ruleStart = null;
     let ruleEnd = null;
     let colon = null;

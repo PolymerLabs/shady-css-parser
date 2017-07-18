@@ -9,7 +9,8 @@
  * rights grant found at http://polymer.github.io/PATENTS.txt
  */
 
-export {nodeType} from './shady-css/common';
+export {iterateOverAst} from './shady-css/ast-iterator';
+export {AtRule, Comment, Declaration, Discarded, Expression, Node, nodeType, Range, Rule, Rulelist, Ruleset, Stylesheet} from './shady-css/common';
 export {NodeFactory} from './shady-css/node-factory';
 export {NodeVisitor} from './shady-css/node-visitor';
 export {Parser} from './shady-css/parser';
