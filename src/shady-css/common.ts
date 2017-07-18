@@ -43,17 +43,23 @@ export interface Stylesheet {
   /**
    * The list of rules that appear at the top level of the stylesheet.
    */
-  rules: Rule[]
+  rules: Rule[];
+
+  range: Range;
 }
 
 export interface AtRule {
   type: nodeType.atRule;
   /** The "name" of the At Rule (e.g., `charset`) */
   name: string;
+  nameRange: Range;
   /** The "parameters" of the At Rule (e.g., `utf8`) */
   parameters: string;
+  parametersRange: Range | undefined;
   /** The Rulelist node (if any) of the At Rule. */
   rulelist: Rulelist|undefined;
+
+  range: Range;
 }
 
 /**
@@ -66,6 +72,7 @@ export interface Comment {
    * comment signature.
    */
   value: string;
+  range: Range;
 }
 
 /**
@@ -76,6 +83,8 @@ export interface Rulelist {
 
   /** An array of the Rule nodes found within the Ruleset. */
   rules: Rule[];
+
+  range: Range;
 }
 
 /**
@@ -87,9 +96,12 @@ export interface Ruleset {
   /** The selector that corresponds to the Ruleset (e.g., `#foo > .bar`). */
   selector: string;
 
+  selectorRange: Range;
+
   /** The Rulelist node that corresponds to the Selector. */
   rulelist: Rulelist;
 
+  range: Range;
 }
 
 /**
@@ -101,11 +113,16 @@ export interface Declaration {
   /** The property name of the Declaration (e.g., `color`). */
   name: string;
 
+  /** The range in the original sourcetext where the name can be found. */
+  nameRange: Range;
+
   /**
    * Either an Expression node, or a Rulelist node, that
    * corresponds to the value of the Declaration.
    */
   value:  Expression | Rulelist | undefined;
+
+  range: Range;
 }
 
 /**
@@ -116,6 +133,8 @@ export interface Expression {
 
   /** The full text content of the expression (e.g., `url(img.jpg)`) */
   text: string;
+
+  range: Range;
 }
 
 /**
@@ -128,6 +147,26 @@ export interface Discarded {
 
   /** The text content that is discarded. */
   text: string;
+
+  range: Range;
 }
+
+export interface Range {
+  start: number;
+  end: number;
+}
+
+export interface NodeTypeMap {
+  'stylesheet': Stylesheet;
+  'atRule': AtRule;
+  'comment': Comment;
+  'rulelist': Rulelist;
+  'ruleset': Ruleset;
+  'declaration': Declaration;
+  'expression': Expression;
+  'discarded': Discarded;
+}
+
+
 
 export { matcher };

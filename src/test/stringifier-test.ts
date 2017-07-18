@@ -8,18 +8,20 @@
  * subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
  */
 
-import { expect } from 'chai';
+import {expect} from 'chai';
+
+import {Parser} from '../shady-css/parser';
+import {Stringifier} from '../shady-css/stringifier';
+
 import * as fixtures from './fixtures';
-import { Stringifier } from '../shady-css/stringifier';
-import { Parser } from '../shady-css/parser';
-import { NodeFactory } from '../shady-css/node-factory';
+import {TestNodeFactory} from './test-node-factory';
 
 describe('Stringifier', () => {
-  let nodeFactory: NodeFactory;
+  let nodeFactory: TestNodeFactory;
   let stringifier: Stringifier;
 
   beforeEach(() => {
-    nodeFactory = new NodeFactory();
+    nodeFactory = new TestNodeFactory();
     stringifier = new Stringifier();
   });
 

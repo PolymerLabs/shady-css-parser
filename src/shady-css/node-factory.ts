@@ -8,7 +8,7 @@
  * subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
  */
 
-import { nodeType, Rule, Stylesheet, Rulelist, Comment, Expression, Declaration, Discarded, AtRule, Ruleset } from './common';
+import {AtRule, Comment, Declaration, Discarded, Expression, nodeType, Range, Rule, Rulelist, Ruleset, Stylesheet} from './common';
 
 /**
  * Class used for generating nodes in a CSS AST. Extend this class to implement
@@ -21,8 +21,8 @@ class NodeFactory {
    * @param rules The list of rules that appear at the top
    * level of the stylesheet.
    */
-  stylesheet(rules: Rule[]): Stylesheet {
-    return { type: nodeType.stylesheet, rules };
+  stylesheet(rules: Rule[], range: Range): Stylesheet {
+    return { type: nodeType.stylesheet, rules, range };
   }
 
   /**
@@ -32,8 +32,8 @@ class NodeFactory {
    * @param rulelist The Rulelist node (if any) of the At Rule.
    */
   atRule(name: string, parameters: string, rulelist: Rulelist|
-        undefined=undefined): AtRule {
-    return { type: nodeType.atRule, name, parameters, rulelist };
+        undefined=undefined, nameRange: Range, parametersRange: Range|undefined, range: Range): AtRule {
+    return { type: nodeType.atRule, name, parameters, rulelist, nameRange, parametersRange, range };
   }
 
   /**
@@ -41,16 +41,16 @@ class NodeFactory {
    * @param value The full text content of the comment, including
    * opening and closing comment signature.
    */
-  comment(value: string): Comment {
-    return { type: nodeType.comment, value };
+  comment(value: string, range: Range): Comment {
+    return { type: nodeType.comment, value, range };
   }
 
   /**
    * Creates a Rulelist node.
    * @param rules An array of the Rule nodes found within the Ruleset.
    */
-  rulelist(rules: Rule[]): Rulelist {
-    return { type: nodeType.rulelist, rules };
+  rulelist(rules: Rule[], range: Range): Rulelist {
+    return { type: nodeType.rulelist, rules, range };
   }
 
   /**
@@ -59,8 +59,8 @@ class NodeFactory {
    * (e.g., `#foo > .bar`).
    * @param rulelist The Rulelist node that corresponds to the Selector.
    */
-  ruleset(selector: string, rulelist: Rulelist): Ruleset {
-    return { type: nodeType.ruleset, selector, rulelist };
+  ruleset(selector: string, rulelist: Rulelist, selectorRange: Range, range: Range): Ruleset {
+    return { type: nodeType.ruleset, selector, rulelist, selectorRange, range };
   }
 
   /**
@@ -69,8 +69,8 @@ class NodeFactory {
    * @param value Either an Expression node, or a Rulelist node, that
    * corresponds to the value of the Declaration.
    */
-  declaration(name: string, value: Expression|Rulelist|undefined): Declaration {
-    return { type: nodeType.declaration, name, value };
+  declaration(name: string, value: Expression|Rulelist|undefined, nameRange: Range, range: Range): Declaration {
+    return { type: nodeType.declaration, name, value, nameRange, range};
   }
 
   /**
@@ -78,8 +78,8 @@ class NodeFactory {
    * @param text The full text content of the expression (e.g.,
    * `url(img.jpg)`)
    */
-  expression(text: string): Expression {
-    return { type: nodeType.expression, text };
+  expression(text: string, range: Range): Expression {
+    return { type: nodeType.expression, text, range };
   }
 
   /**
@@ -87,8 +87,8 @@ class NodeFactory {
    * parseable (usually due to typos, or otherwise unrecognized syntax).
    * @param text The text content that is discarded.
    */
-  discarded(text: string): Discarded {
-    return { type: nodeType.discarded, text };
+  discarded(text: string, range: Range): Discarded {
+    return { type: nodeType.discarded, text, range};
   }
 }
 
