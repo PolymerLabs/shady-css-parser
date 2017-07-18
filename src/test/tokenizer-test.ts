@@ -11,8 +11,8 @@
 import { expect } from 'chai';
 import * as fixtures from './fixtures';
 import * as helpers from './helpers';
-import { Tokenizer } from '../src/shady-css/tokenizer';
-import { Token } from '../src/shady-css/token';
+import { Tokenizer } from '../shady-css/tokenizer';
+import { Token } from '../shady-css/token';
 
 describe('Tokenizer', () => {
   describe('when tokenizing basic structures', () => {

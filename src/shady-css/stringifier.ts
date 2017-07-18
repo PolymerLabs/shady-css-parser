@@ -8,28 +8,28 @@
  * subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
  */
 
-import { nodeType } from './common';
-import { NodeVisitor } from './node-visitor';
+import {AtRule, Comment, Declaration, Discarded, Expression, Node, nodeType, Rulelist, Ruleset, Stylesheet} from './common';
+import {NodeVisitor} from './node-visitor';
 
 /**
  * Class that implements basic stringification of an AST produced by the Parser.
  */
-class Stringifier extends NodeVisitor {
+class Stringifier extends NodeVisitor<Node, string> {
   /**
    * Stringify an AST such as one produced by a Parser.
-   * @param {object} ast A node object representing the root of an AST.
-   * @return {string} The stringified CSS corresponding to the AST.
+   * @param ast A node object representing the root of an AST.
+   * @return The stringified CSS corresponding to the AST.
    */
-  stringify(ast) {
+  stringify(ast: Node) {
     return this.visit(ast) || '';
   }
 
   /**
    * Visit and stringify a Stylesheet node.
-   * @param {object} stylesheet A Stylesheet node.
-   * @return {string} The stringified CSS of the Stylesheet.
+   * @param stylesheet A Stylesheet node.
+   * @return The stringified CSS of the Stylesheet.
    */
-  [nodeType.stylesheet](stylesheet) {
+  [nodeType.stylesheet](stylesheet: Stylesheet) {
     let rules = '';
 
     for (let i = 0; i < stylesheet.rules.length; ++i) {
@@ -41,10 +41,10 @@ class Stringifier extends NodeVisitor {
 
   /**
    * Visit and stringify an At Rule node.
-   * @param {object} atRule An At Rule node.
-   * @return {string} The stringified CSS of the At Rule.
+   * @param atRule An At Rule node.
+   * @return The stringified CSS of the At Rule.
    */
-  [nodeType.atRule](atRule) {
+  [nodeType.atRule](atRule: AtRule) {
     return `@${atRule.name}` +
       (atRule.parameters ? ` ${atRule.parameters}` : '') +
       (atRule.rulelist ? `${this.visit(atRule.rulelist)}` : ';');
@@ -52,10 +52,10 @@ class Stringifier extends NodeVisitor {
 
   /**
    * Visit and stringify a Rulelist node.
-   * @param {object} rulelist A Rulelist node.
-   * @return {string} The stringified CSS of the Rulelist.
+   * @param rulelist A Rulelist node.
+   * @return The stringified CSS of the Rulelist.
    */
-  [nodeType.rulelist](rulelist) {
+  [nodeType.rulelist](rulelist: Rulelist) {
     let rules = '{';
 
     for (let i = 0; i < rulelist.rules.length; ++i) {
@@ -67,28 +67,28 @@ class Stringifier extends NodeVisitor {
 
   /**
    * Visit and stringify a Comment node.
-   * @param {object} comment A Comment node.
-   * @return {string} The stringified CSS of the Comment.
+   * @param comment A Comment node.
+   * @return The stringified CSS of the Comment.
    */
-  [nodeType.comment](comment) {
+  [nodeType.comment](comment: Comment) {
     return `${comment.value}`;
   }
 
   /**
    * Visit and stringify a Seletor node.
-   * @param {object} ruleset A Ruleset node.
-   * @return {string} The stringified CSS of the Ruleset.
+   * @param ruleset A Ruleset node.
+   * @return The stringified CSS of the Ruleset.
    */
-  [nodeType.ruleset](ruleset) {
+  [nodeType.ruleset](ruleset: Ruleset) {
     return `${ruleset.selector}${this.visit(ruleset.rulelist)}`;
   }
 
   /**
    * Visit and stringify a Declaration node.
-   * @param {object} declaration A Declaration node.
-   * @return {string} The stringified CSS of the Declaration.
+   * @param declaration A Declaration node.
+   * @return The stringified CSS of the Declaration.
    */
-  [nodeType.declaration](declaration) {
+  [nodeType.declaration](declaration: Declaration) {
     return declaration.value != null ?
       `${declaration.name}:${this.visit(declaration.value)};` :
       `${declaration.name};`;
@@ -96,19 +96,19 @@ class Stringifier extends NodeVisitor {
 
   /**
    * Visit and stringify an Expression node.
-   * @param {object} expression An Expression node.
-   * @return {string} The stringified CSS of the Expression.
+   * @param expression An Expression node.
+   * @return The stringified CSS of the Expression.
    */
-  [nodeType.expression](expression) {
+  [nodeType.expression](expression: Expression) {
     return `${expression.text}`;
   }
 
   /**
    * Visit a discarded node.
-   * @param {object} discarded A Discarded node.
-   * @return {string} An empty string, since Discarded nodes are discarded.
+   * @param discarded A Discarded node.
+   * @return An empty string, since Discarded nodes are discarded.
    */
-  [nodeType.discarded](discarded) {
+  [nodeType.discarded](_discarded: Discarded) {
     return '';
   }
 }

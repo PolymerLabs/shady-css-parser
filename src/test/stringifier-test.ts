@@ -10,13 +10,13 @@
 
 import { expect } from 'chai';
 import * as fixtures from './fixtures';
-import { Stringifier } from '../src/shady-css/stringifier';
-import { Parser } from '../src/shady-css/parser';
-import { NodeFactory } from '../src/shady-css/node-factory';
+import { Stringifier } from '../shady-css/stringifier';
+import { Parser } from '../shady-css/parser';
+import { NodeFactory } from '../shady-css/node-factory';
 
 describe('Stringifier', () => {
-  let nodeFactory;
-  let stringifier;
+  let nodeFactory: NodeFactory;
+  let stringifier: Stringifier;
 
   beforeEach(() => {
     nodeFactory = new NodeFactory();
@@ -67,7 +67,7 @@ describe('Stringifier', () => {
   });
 
   describe('when stringifying CSS ASTs', () => {
-    let parser;
+    let parser: Parser;
 
     beforeEach(() => {
       parser = new Parser();

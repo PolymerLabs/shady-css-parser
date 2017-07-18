@@ -8,15 +8,18 @@
  * subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
  */
 
-import { expect } from 'chai';
-import { Token } from '../src/shady-css/token';
+import {expect} from 'chai';
 
-function expectTokenType(token, type) {
+import {Tokenizer} from '../shady-css';
+import {Token, TokenType} from '../shady-css/token';
+
+function expectTokenType(token: Token, type: TokenType) {
   expect(token).to.be.ok;
   expect(token.type).to.be.equal(type);
 }
 
-function expectTokenSequence(lexer, sequence) {
+function expectTokenSequence(
+    lexer: Tokenizer, sequence: Array<TokenType|string>) {
   let lexedSequence = [];
   let token;
 
@@ -27,7 +30,7 @@ function expectTokenSequence(lexer, sequence) {
   expect(lexedSequence).to.be.eql(sequence);
 }
 
-function linkedTokens(tokens) {
+function linkedTokens(tokens: Token[]) {
   tokens.reduce(function(l, r) {
     if (l) {
       l.next = r;

@@ -9,9 +9,15 @@
  */
 
 import { expect } from 'chai';
-import { NodeVisitor } from '../src/shady-css/node-visitor';
+import { NodeVisitor } from '../shady-css/node-visitor';
 
-class TestNodeVisitor extends NodeVisitor {
+type TestNode = TestNodeA | TestNodeB;
+interface TestNodeA {type: 'a', callback?: () => void};
+interface TestNodeB {type: 'b', child?: TestNode};
+class TestNodeVisitor extends NodeVisitor<TestNode, string> {
+  aCallCount: number;
+  bCallCount: number;
+
   constructor() {
     super();
 
@@ -19,7 +25,7 @@ class TestNodeVisitor extends NodeVisitor {
     this.bCallCount = 0;
   }
 
-  a(a) {
+  a(a: TestNodeA) {
     this.aCallCount++;
     if (a.callback) {
       a.callback();
@@ -27,7 +33,7 @@ class TestNodeVisitor extends NodeVisitor {
     return 'a';
   }
 
-  b(b) {
+  b(b: TestNodeB) {
     this.bCallCount++;
     if (b.child) {
       this.visit(b.child);
@@ -37,7 +43,7 @@ class TestNodeVisitor extends NodeVisitor {
 }
 
 describe('NodeVisitor', () => {
-  let nodeVisitor;
+  let nodeVisitor: TestNodeVisitor;
 
   beforeEach(function() {
     nodeVisitor = new TestNodeVisitor();
@@ -58,19 +64,19 @@ describe('NodeVisitor', () => {
 
   it('reveals the path of the recursive visitation of nodes', () => {
     let a1 = {
-      type: 'a',
+      type: 'a' as 'a',
       callback: function() {
         expect(nodeVisitor.path).to.be.eql([a1]);
       }
     };
-    let a2 = {
-      type: 'a',
+    let a2: TestNodeA = {
+      type: 'a' as 'a',
       callback: function() {
         expect(nodeVisitor.path).to.be.eql([b, a2]);
       }
     };
     let b =  {
-      type: 'b',
+      type: 'b' as 'b',
       child: a2
     };
 
