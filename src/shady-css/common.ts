@@ -1,11 +1,12 @@
 /**
  * @license
  * Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
- * This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
- * The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
- * The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
- * Code distributed by Google as part of the polymer project is also
- * subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt The complete set of authors may be found
+ * at http://polymer.github.io/AUTHORS.txt The complete set of contributors may
+ * be found at http://polymer.github.io/CONTRIBUTORS.txt Code distributed by
+ * Google as part of the polymer project is also subject to an additional IP
+ * rights grant found at http://polymer.github.io/PATENTS.txt
  */
 
 /**
@@ -23,22 +24,24 @@ const matcher = {
  * An enumeration of Node types.
  */
 export enum nodeType {
-  stylesheet= 'stylesheet',
-  comment= 'comment',
-  atRule= 'atRule',
-  ruleset= 'ruleset',
-  expression= 'expression',
-  declaration= 'declaration',
-  rulelist= 'rulelist',
-  discarded= 'discarded'
-};
+  stylesheet = 'stylesheet',
+  comment = 'comment',
+  atRule = 'atRule',
+  ruleset = 'ruleset',
+  expression = 'expression',
+  declaration = 'declaration',
+  rulelist = 'rulelist',
+  discarded = 'discarded'
+}
 
-export type Node = Stylesheet | AtRule | Comment | Rulelist | Ruleset | Expression | Declaration | Discarded;
+
+export type Node = Stylesheet | AtRule | Comment | Rulelist | Ruleset |
+    Expression | Declaration | Discarded;
 export type Rule = Ruleset | Declaration | AtRule | Discarded | Comment;
 
 /** A Stylesheet node. */
 export interface Stylesheet {
-  type: nodeType.stylesheet,
+  type: nodeType.stylesheet;
 
   /**
    * The list of rules that appear at the top level of the stylesheet.
@@ -55,7 +58,7 @@ export interface AtRule {
   nameRange: Range;
   /** The "parameters" of the At Rule (e.g., `utf8`) */
   parameters: string;
-  parametersRange: Range | undefined;
+  parametersRange: Range|undefined;
   /** The Rulelist node (if any) of the At Rule. */
   rulelist: Rulelist|undefined;
 
@@ -108,7 +111,7 @@ export interface Ruleset {
  * A Declaration node.
  */
 export interface Declaration {
-  type: nodeType.declaration
+  type: nodeType.declaration;
 
   /** The property name of the Declaration (e.g., `color`). */
   name: string;
@@ -120,7 +123,7 @@ export interface Declaration {
    * Either an Expression node, or a Rulelist node, that
    * corresponds to the value of the Declaration.
    */
-  value:  Expression | Rulelist | undefined;
+  value: Expression|Rulelist|undefined;
 
   range: Range;
 }
@@ -167,6 +170,4 @@ export interface NodeTypeMap {
   'discarded': Discarded;
 }
 
-
-
-export { matcher };
+export {matcher};

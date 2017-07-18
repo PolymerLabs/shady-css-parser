@@ -1,42 +1,44 @@
 /**
  * @license
  * Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
- * This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
- * The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
- * The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
- * Code distributed by Google as part of the polymer project is also
- * subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt The complete set of authors may be found
+ * at http://polymer.github.io/AUTHORS.txt The complete set of contributors may
+ * be found at http://polymer.github.io/CONTRIBUTORS.txt Code distributed by
+ * Google as part of the polymer project is also subject to an additional IP
+ * rights grant found at http://polymer.github.io/PATENTS.txt
  */
 
 /**
  * An enumeration of Token types.
  */
 export enum TokenType {
-  none =  0,
-  whitespace =  (2 ** 0),
-  string =  (2 ** 1),
-  comment =  (2 ** 2),
-  word =  (2 ** 3),
-  boundary =  (2 ** 4),
-  propertyBoundary =  (2 ** 5),
+  none = 0,
+  whitespace = (2 ** 0),
+  string = (2 ** 1),
+  comment = (2 ** 2),
+  word = (2 ** 3),
+  boundary = (2 ** 4),
+  propertyBoundary = (2 ** 5),
   // Special cases for boundary:
-  openParenthesis =  (2 ** 6) | TokenType.boundary,
-  closeParenthesis =  (2 ** 7) | TokenType.boundary,
-  at =  (2 ** 8) | TokenType.boundary,
-  openBrace =  (2 ** 9) | TokenType.boundary,
+  openParenthesis = (2 ** 6) | TokenType.boundary,
+  closeParenthesis = (2 ** 7) | TokenType.boundary,
+  at = (2 ** 8) | TokenType.boundary,
+  openBrace = (2 ** 9) | TokenType.boundary,
   // [};] are property boundaries:
-  closeBrace =  (2 ** 10) | TokenType.propertyBoundary | TokenType.boundary,
-  semicolon =  (2 ** 11) | TokenType.propertyBoundary | TokenType.boundary,
+  closeBrace = (2 ** 10) | TokenType.propertyBoundary | TokenType.boundary,
+  semicolon = (2 ** 11) | TokenType.propertyBoundary | TokenType.boundary,
   // : is a chimaeric abomination:
   // foo:bar{}
   // foo:bar;
-  colon =  (2 ** 12) | TokenType.boundary | TokenType.word,
+  colon = (2 ** 12) | TokenType.boundary | TokenType.word,
 
   // TODO: are these two boundaries? I mean, sometimes they are I guess? Or
   //       maybe they shouldn't exist in the boundaryTokenTypes map.
   hyphen = (2 ** 13),
   underscore = (2 ** 14)
-};
+}
+
 
 /**
  * Class that describes individual tokens as produced by the Tokenizer.
@@ -47,8 +49,8 @@ class Token {
   readonly type: TokenType;
   readonly start: number;
   readonly end: number;
-  previous: Token | null;
-  next: Token | null;
+  previous: Token|null;
+  next: Token|null;
 
   /**
    * Create a Token instance.
@@ -81,7 +83,7 @@ class Token {
 /**
  * A mapping of boundary token text to their corresponding types.
  */
-const boundaryTokenTypes: {[boundaryText: string]: TokenType|undefined} = {
+const boundaryTokenTypes: {[boundaryText: string]: TokenType | undefined} = {
   '(': Token.type.openParenthesis,
   ')': Token.type.closeParenthesis,
   ':': Token.type.colon,
@@ -93,4 +95,4 @@ const boundaryTokenTypes: {[boundaryText: string]: TokenType|undefined} = {
   '_': Token.type.underscore
 };
 
-export { Token, boundaryTokenTypes };
+export {Token, boundaryTokenTypes};
