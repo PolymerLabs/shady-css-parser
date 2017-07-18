@@ -286,8 +286,7 @@ class Parser {
       if (colon && colon.next) {
         const rawExpressionRange = tokenizer.getRange(colon.next, ruleEnd);
         const expressionRange = tokenizer.trimRange(rawExpressionRange);
-        // TODO(cdata): is .trim() bad for performance?
-        const expressionValue = tokenizer.cssText.slice(expressionRange.start, expressionRange.end).trim();
+        const expressionValue = tokenizer.cssText.slice(expressionRange.start, expressionRange.end);
         expression = this.nodeFactory.expression(expressionValue, expressionRange);
       }
 
