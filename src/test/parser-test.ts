@@ -10,9 +10,9 @@
  */
 
 import {expect, use} from 'chai';
-import * as util from 'util';
 
 import {nodeType, Parser} from '../shady-css';
+import {iterateOverAst} from '../shady-css/ast-iterator';
 import {Node, NodeTypeMap} from '../shady-css/common';
 
 import * as fixtures from './fixtures';
@@ -389,44 +389,10 @@ describe('Parser', () => {
 function*
     getNodesOfType<K extends keyof NodeTypeMap>(node: Node, type: K):
         Iterable<NodeTypeMap[K]> {
-  for (const n of iterAst(node)) {
+  for (const n of iterateOverAst(node)) {
     if (n.type === type as any as nodeType) {
       yield n;
     }
   }
 }
 
-function* iterAst(node: Node): Iterable<Node> {
-  yield node;
-  switch (node.type) {
-    case nodeType.stylesheet:
-      for (const rule of node.rules) {
-        yield* iterAst(rule);
-      }
-      return;
-    case nodeType.ruleset:
-      return yield* iterAst(node.rulelist);
-    case nodeType.rulelist:
-      for (const rule of node.rules) {
-        yield* iterAst(rule);
-      }
-      return;
-    case nodeType.declaration:
-      if (node.value !== undefined) {
-        yield* iterAst(node.value);
-      }
-      return;
-    case nodeType.atRule:
-      if (node.rulelist) {
-        yield* iterAst(node.rulelist);
-      }
-      return;
-    case nodeType.expression:
-    case nodeType.comment:
-    case nodeType.discarded:
-      return;  // no child nodes
-    default:
-      const never: never = node;
-      console.error(`Got a node of unknown type: ${util.inspect(never)}`);
-  }
-}
