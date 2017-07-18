@@ -10,9 +10,6 @@
 
 /**
  * An enumeration of Token types.
- * @type {object}
- * @default
- * @static
  */
 export enum TokenType {
   none =  0,
@@ -55,10 +52,10 @@ class Token {
 
   /**
    * Create a Token instance.
-   * @param {number} type The lexical type of the Token.
-   * @param {number} start The start index of the text corresponding to the
+   * @param type The lexical type of the Token.
+   * @param start The start index of the text corresponding to the
    * Token in the CSS text.
-   * @param {number} end The end index of the text corresponding to the Token
+   * @param end The end index of the text corresponding to the Token
    * in the CSS text.
    */
   constructor(type: TokenType, start: number, end: number) {
@@ -73,7 +70,7 @@ class Token {
    * Test if the Token matches a given numeric type. Types match if the bitwise
    * AND of the Token's type and the argument type are equivalent to the
    * argument type.
-   * @param {number} type The numeric type to test for equivalency with the
+   * @param type The numeric type to test for equivalency with the
    * Token.
    */
   is(type: TokenType) {
@@ -83,9 +80,6 @@ class Token {
 
 /**
  * A mapping of boundary token text to their corresponding types.
- * @type {object}
- * @default
- * @const
  */
 const boundaryTokenTypes: {[boundaryText: string]: TokenType|undefined} = {
   '(': Token.type.openParenthesis,

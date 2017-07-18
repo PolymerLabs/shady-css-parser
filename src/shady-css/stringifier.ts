@@ -17,8 +17,8 @@ import {NodeVisitor} from './node-visitor';
 class Stringifier extends NodeVisitor<Node, string> {
   /**
    * Stringify an AST such as one produced by a Parser.
-   * @param {object} ast A node object representing the root of an AST.
-   * @return {string} The stringified CSS corresponding to the AST.
+   * @param ast A node object representing the root of an AST.
+   * @return The stringified CSS corresponding to the AST.
    */
   stringify(ast: Node) {
     return this.visit(ast) || '';
@@ -26,8 +26,8 @@ class Stringifier extends NodeVisitor<Node, string> {
 
   /**
    * Visit and stringify a Stylesheet node.
-   * @param {object} stylesheet A Stylesheet node.
-   * @return {string} The stringified CSS of the Stylesheet.
+   * @param stylesheet A Stylesheet node.
+   * @return The stringified CSS of the Stylesheet.
    */
   [nodeType.stylesheet](stylesheet: Stylesheet) {
     let rules = '';
@@ -41,8 +41,8 @@ class Stringifier extends NodeVisitor<Node, string> {
 
   /**
    * Visit and stringify an At Rule node.
-   * @param {object} atRule An At Rule node.
-   * @return {string} The stringified CSS of the At Rule.
+   * @param atRule An At Rule node.
+   * @return The stringified CSS of the At Rule.
    */
   [nodeType.atRule](atRule: AtRule) {
     return `@${atRule.name}` +
@@ -52,8 +52,8 @@ class Stringifier extends NodeVisitor<Node, string> {
 
   /**
    * Visit and stringify a Rulelist node.
-   * @param {object} rulelist A Rulelist node.
-   * @return {string} The stringified CSS of the Rulelist.
+   * @param rulelist A Rulelist node.
+   * @return The stringified CSS of the Rulelist.
    */
   [nodeType.rulelist](rulelist: Rulelist) {
     let rules = '{';
@@ -67,8 +67,8 @@ class Stringifier extends NodeVisitor<Node, string> {
 
   /**
    * Visit and stringify a Comment node.
-   * @param {object} comment A Comment node.
-   * @return {string} The stringified CSS of the Comment.
+   * @param comment A Comment node.
+   * @return The stringified CSS of the Comment.
    */
   [nodeType.comment](comment: Comment) {
     return `${comment.value}`;
@@ -76,8 +76,8 @@ class Stringifier extends NodeVisitor<Node, string> {
 
   /**
    * Visit and stringify a Seletor node.
-   * @param {object} ruleset A Ruleset node.
-   * @return {string} The stringified CSS of the Ruleset.
+   * @param ruleset A Ruleset node.
+   * @return The stringified CSS of the Ruleset.
    */
   [nodeType.ruleset](ruleset: Ruleset) {
     return `${ruleset.selector}${this.visit(ruleset.rulelist)}`;
@@ -85,8 +85,8 @@ class Stringifier extends NodeVisitor<Node, string> {
 
   /**
    * Visit and stringify a Declaration node.
-   * @param {object} declaration A Declaration node.
-   * @return {string} The stringified CSS of the Declaration.
+   * @param declaration A Declaration node.
+   * @return The stringified CSS of the Declaration.
    */
   [nodeType.declaration](declaration: Declaration) {
     return declaration.value != null ?
@@ -96,8 +96,8 @@ class Stringifier extends NodeVisitor<Node, string> {
 
   /**
    * Visit and stringify an Expression node.
-   * @param {object} expression An Expression node.
-   * @return {string} The stringified CSS of the Expression.
+   * @param expression An Expression node.
+   * @return The stringified CSS of the Expression.
    */
   [nodeType.expression](expression: Expression) {
     return `${expression.text}`;
@@ -105,8 +105,8 @@ class Stringifier extends NodeVisitor<Node, string> {
 
   /**
    * Visit a discarded node.
-   * @param {object} discarded A Discarded node.
-   * @return {string} An empty string, since Discarded nodes are discarded.
+   * @param discarded A Discarded node.
+   * @return An empty string, since Discarded nodes are discarded.
    */
   [nodeType.discarded](_discarded: Discarded) {
     return '';

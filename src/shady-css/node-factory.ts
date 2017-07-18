@@ -18,9 +18,8 @@ import { nodeType, Rule, Stylesheet, Rulelist, Comment, Expression, Declaration,
 class NodeFactory {
   /**
    * Creates a Stylesheet node.
-   * @param {array} rules The list of rules that appear at the top
+   * @param rules The list of rules that appear at the top
    * level of the stylesheet.
-   * @return {object} A Stylesheet node.
    */
   stylesheet(rules: Rule[]): Stylesheet {
     return { type: nodeType.stylesheet, rules };
@@ -28,10 +27,9 @@ class NodeFactory {
 
   /**
    * Creates an At Rule node.
-   * @param {string} name The "name" of the At Rule (e.g., `charset`)
-   * @param {string} parameters The "parameters" of the At Rule (e.g., `utf8`)
-   * @param {object=} rulelist The Rulelist node (if any) of the At Rule.
-   * @return {object} An At Rule node.
+   * @param name The "name" of the At Rule (e.g., `charset`)
+   * @param parameters The "parameters" of the At Rule (e.g., `utf8`)
+   * @param rulelist The Rulelist node (if any) of the At Rule.
    */
   atRule(name: string, parameters: string, rulelist: Rulelist|
         undefined=undefined): AtRule {
@@ -40,9 +38,8 @@ class NodeFactory {
 
   /**
    * Creates a Comment node.
-   * @param {string} value The full text content of the comment, including
+   * @param value The full text content of the comment, including
    * opening and closing comment signature.
-   * @return {object} A Comment node.
    */
   comment(value: string): Comment {
     return { type: nodeType.comment, value };
@@ -50,8 +47,7 @@ class NodeFactory {
 
   /**
    * Creates a Rulelist node.
-   * @param {array} rules An array of the Rule nodes found within the Ruleset.
-   * @return {object} A Rulelist node.
+   * @param rules An array of the Rule nodes found within the Ruleset.
    */
   rulelist(rules: Rule[]): Rulelist {
     return { type: nodeType.rulelist, rules };
@@ -59,10 +55,9 @@ class NodeFactory {
 
   /**
    * Creates a Ruleset node.
-   * @param {string} selector The selector that corresponds to the Selector
+   * @param selector The selector that corresponds to the Selector
    * (e.g., `#foo > .bar`).
-   * @param {object} rulelist The Rulelist node that corresponds to the Selector.
-   * @return {object} A Selector node.
+   * @param rulelist The Rulelist node that corresponds to the Selector.
    */
   ruleset(selector: string, rulelist: Rulelist): Ruleset {
     return { type: nodeType.ruleset, selector, rulelist };
@@ -70,10 +65,9 @@ class NodeFactory {
 
   /**
    * Creates a Declaration node.
-   * @param {string} name The property name of the Declaration (e.g., `color`).
-   * @param {object} value Either an Expression node, or a Rulelist node, that
+   * @param name The property name of the Declaration (e.g., `color`).
+   * @param value Either an Expression node, or a Rulelist node, that
    * corresponds to the value of the Declaration.
-   * @return {object} A Declaration node.
    */
   declaration(name: string, value: Expression|Rulelist|undefined): Declaration {
     return { type: nodeType.declaration, name, value };
@@ -81,9 +75,8 @@ class NodeFactory {
 
   /**
    * Creates an Expression node.
-   * @param {string} text The full text content of the expression (e.g.,
+   * @param text The full text content of the expression (e.g.,
    * `url(img.jpg)`)
-   * @return {object} An Expression node.
    */
   expression(text: string): Expression {
     return { type: nodeType.expression, text };
@@ -92,8 +85,7 @@ class NodeFactory {
   /**
    * Creates a Discarded node. Discarded nodes contain content that was not
    * parseable (usually due to typos, or otherwise unrecognized syntax).
-   * @param {string} text The text content that is discarded.
-   * @return {object} A Discarded node.
+   * @param text The text content that is discarded.
    */
   discarded(text: string): Discarded {
     return { type: nodeType.discarded, text };

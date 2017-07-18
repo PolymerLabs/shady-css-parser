@@ -10,9 +10,6 @@
 
 /**
  * A set of common RegExp matchers for tokenizing CSS.
- * @constant
- * @type {object}
- * @default
  */
 const matcher = {
   whitespace: /\s/,
@@ -24,7 +21,6 @@ const matcher = {
 
 /**
  * An enumeration of Node types.
- * @constant
  */
 export enum nodeType {
   stylesheet= 'stylesheet',

@@ -32,7 +32,7 @@ class Tokenizer {
 
   /**
    * Create a Tokenizer instance.
-   * @param {string} cssText The raw CSS string to be tokenized.
+   * @param cssText The raw CSS string to be tokenized.
    *
    */
   constructor(cssText: string) {
@@ -58,7 +58,7 @@ class Tokenizer {
 
   /**
    * Advance the Tokenizer to the next token in the sequence.
-   * @return {Token} The current token prior to the call to `advance`, or null
+   * @return The current token prior to the call to `advance`, or null
    * if the entire CSS text has been tokenized.
    */
   advance(): Token|null {
@@ -77,11 +77,11 @@ class Tokenizer {
    * of text to be extracted. The extracted text will include all text between
    * the start index of the first token and the offset index of the second token
    * (or the offset index of the first token if the second is not provided).
-   * @param {Token} startToken The token that represents the beginning of the
+   * @param startToken The token that represents the beginning of the
    * text range to be extracted.
-   * @param {Token} endToken The token that represents the end of the text range
+   * @param endToken The token that represents the end of the text range
    * to be extracted. Defaults to the startToken if no endToken is provided.
-   * @return {string} The substring of the CSS text corresponding to the
+   * @return The substring of the CSS text corresponding to the
    * startToken and endToken.
    */
   slice(startToken: Token, endToken: Token|undefined|null = undefined): string {
@@ -91,7 +91,7 @@ class Tokenizer {
 
   /**
    * Flush all tokens from the Tokenizer.
-   * @return {array} An array of all tokens corresponding to the CSS text.
+   * @return An array of all tokens corresponding to the CSS text.
    */
   flush() {
     let tokens = [];
@@ -103,7 +103,7 @@ class Tokenizer {
 
   /**
    * Extract the next token from the CSS text and advance the Tokenizer.
-   * @return {Token} A Token instance, or null if the entire CSS text has beeen
+   * @return A Token instance, or null if the entire CSS text has beeen
    * tokenized.
    */
   private getNextToken_(): Token|null {
@@ -137,8 +137,8 @@ class Tokenizer {
    * Tokenize a string starting at a given offset in the CSS text. A string is
    * any span of text that is wrapped by eclusively paired, non-escaped matching
    * quotation marks.
-   * @param {number} offset An offset in the CSS text.
-   * @return {Token} A string Token instance.
+   * @param offset An offset in the CSS text.
+   * @return A string Token instance.
    */
   tokenizeString(offset: number) {
     let quotation = this.cssText[offset];
@@ -169,8 +169,8 @@ class Tokenizer {
    * Tokenize a word starting at a given offset in the CSS text. A word is any
    * span of text that is not whitespace, is not a string, is not a comment and
    * is not a structural delimiter (such as braces and semicolon).
-   * @param {offset} number An offset in the CSS text.
-   * @return {Token} A word Token instance.
+   * @param number An offset in the CSS text.
+   * @return A word Token instance.
    */
   tokenizeWord(offset: number): Token {
     let start = offset;
@@ -188,8 +188,8 @@ class Tokenizer {
    * Tokenize whitespace starting at a given offset in the CSS text. Whitespace
    * is any span of text made up of consecutive spaces, tabs, newlines and other
    * single whitespace characters.
-   * @param {offset} number An offset in the CSS text.
-   * @return {Token} A whitespace Token instance.
+   * @param number An offset in the CSS text.
+   * @return A whitespace Token instance.
    */
   tokenizeWhitespace(offset: number) {
     let start = offset;
@@ -208,8 +208,8 @@ class Tokenizer {
    * Tokenize a comment starting at a given offset in the CSS text. A comment is
    * any span of text beginning with the two characters / and *, and ending with
    * a matching counterpart pair of consecurtive characters (* and /).
-   * @param {offset} number An offset in the CSS text.
-   * @return {Token} A comment Token instance.
+   * @param number An offset in the CSS text.
+   * @return A comment Token instance.
    */
   tokenizeComment(offset: number) {
     let start = offset;
@@ -230,8 +230,8 @@ class Tokenizer {
    * Tokenize a boundary at a given offset in the CSS text. A boundary is any
    * single structurally significant character. These characters include braces,
    * semicolons, the "at" symbol and others.
-   * @param {offset} number An offset in the CSS text.
-   * @return {Token} A boundary Token instance.
+   * @param number An offset in the CSS text.
+   * @return A boundary Token instance.
    */
   tokenizeBoundary(offset: number): Token {
     // TODO(cdata): Evaluate if this is faster than a switch statement:
