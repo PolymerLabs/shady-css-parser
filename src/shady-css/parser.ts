@@ -172,8 +172,10 @@ class Parser {
       } else if (tokenizer.currentToken.is(Token.type.openBrace)) {
         rulelist = this.parseRulelist(tokenizer);
         break;
-      } else if (tokenizer.currentToken.is(Token.type.propertyBoundary)) {
+      } else if (tokenizer.currentToken.is(Token.type.semicolon)) {
         tokenizer.advance();
+        break;
+      } else if (tokenizer.currentToken.is(Token.type.closeBrace)) {
         break;
       } else {
         if (parametersStart == null) {
