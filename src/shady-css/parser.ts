@@ -11,7 +11,7 @@
 
 import {AtRule, Comment, Declaration, Discarded, Rule, Rulelist, Ruleset, Stylesheet} from './common';
 import {NodeFactory} from './node-factory';
-import {Token} from './token';
+import {TokenType} from './token';
 import {Tokenizer} from './tokenizer';
 
 /**
@@ -81,20 +81,20 @@ class Parser {
     if (token === null) {
       return null;
     }
-    if (token.is(Token.type.whitespace)) {
+    if (token.is(TokenType.whitespace)) {
       tokenizer.advance();
       return null;
 
-    } else if (token.is(Token.type.comment)) {
+    } else if (token.is(TokenType.comment)) {
       return this.parseComment(tokenizer);
 
-    } else if (token.is(Token.type.word)) {
+    } else if (token.is(TokenType.word)) {
       return this.parseDeclarationOrRuleset(tokenizer);
 
-    } else if (token.is(Token.type.propertyBoundary)) {
+    } else if (token.is(TokenType.propertyBoundary)) {
       return this.parseUnknown(tokenizer);
 
-    } else if (token.is(Token.type.at)) {
+    } else if (token.is(TokenType.at)) {
       return this.parseAtRule(tokenizer);
 
     } else {
@@ -130,7 +130,7 @@ class Parser {
     }
 
     while (tokenizer.currentToken &&
-           tokenizer.currentToken.is(Token.type.boundary)) {
+           tokenizer.currentToken.is(TokenType.boundary)) {
       end = tokenizer.advance();
     }
 
@@ -155,27 +155,27 @@ class Parser {
     const start = tokenizer.currentToken.start;
 
     while (tokenizer.currentToken) {
-      if (tokenizer.currentToken.is(Token.type.whitespace)) {
+      if (tokenizer.currentToken.is(TokenType.whitespace)) {
         tokenizer.advance();
-      } else if (!name && tokenizer.currentToken.is(Token.type.at)) {
+      } else if (!name && tokenizer.currentToken.is(TokenType.at)) {
         // Discard the @:
         tokenizer.advance();
         const start = tokenizer.currentToken;
         let end;
 
         while (tokenizer.currentToken &&
-               tokenizer.currentToken.is(Token.type.word)) {
+               tokenizer.currentToken.is(TokenType.word)) {
           end = tokenizer.advance();
         }
         nameRange = tokenizer.getRange(start, end);
         name = tokenizer.cssText.slice(nameRange.start, nameRange.end);
-      } else if (tokenizer.currentToken.is(Token.type.openBrace)) {
+      } else if (tokenizer.currentToken.is(TokenType.openBrace)) {
         rulelist = this.parseRulelist(tokenizer);
         break;
-      } else if (tokenizer.currentToken.is(Token.type.semicolon)) {
+      } else if (tokenizer.currentToken.is(TokenType.semicolon)) {
         tokenizer.advance();
         break;
-      } else if (tokenizer.currentToken.is(Token.type.closeBrace)) {
+      } else if (tokenizer.currentToken.is(TokenType.closeBrace)) {
         break;
       } else {
         if (parametersStart == null) {
@@ -217,7 +217,7 @@ class Parser {
     tokenizer.advance();
 
     while (tokenizer.currentToken) {
-      if (tokenizer.currentToken.is(Token.type.closeBrace)) {
+      if (tokenizer.currentToken.is(TokenType.closeBrace)) {
         endToken = tokenizer.currentToken;
         tokenizer.advance();
         break;
@@ -250,20 +250,20 @@ class Parser {
     // property boundary.. though that may be impossible.
 
     while (tokenizer.currentToken) {
-      if (tokenizer.currentToken.is(Token.type.whitespace)) {
+      if (tokenizer.currentToken.is(TokenType.whitespace)) {
         tokenizer.advance();
-      } else if (tokenizer.currentToken.is(Token.type.openParenthesis)) {
+      } else if (tokenizer.currentToken.is(TokenType.openParenthesis)) {
         // skip until close paren
         while (tokenizer.currentToken &&
-               !tokenizer.currentToken.is(Token.type.closeParenthesis)) {
+               !tokenizer.currentToken.is(TokenType.closeParenthesis)) {
           tokenizer.advance();
         }
       } else if (
-          tokenizer.currentToken.is(Token.type.openBrace) ||
-          tokenizer.currentToken.is(Token.type.propertyBoundary)) {
+          tokenizer.currentToken.is(TokenType.openBrace) ||
+          tokenizer.currentToken.is(TokenType.propertyBoundary)) {
         break;
       } else {
-        if (tokenizer.currentToken.is(Token.type.colon)) {
+        if (tokenizer.currentToken.is(TokenType.colon)) {
           colon = tokenizer.currentToken;
         }
 
@@ -282,7 +282,7 @@ class Parser {
     }
 
     // A ruleset never contains or ends with a semi-colon.
-    if (tokenizer.currentToken.is(Token.type.propertyBoundary)) {
+    if (tokenizer.currentToken.is(TokenType.propertyBoundary)) {
       const nameRange =
           tokenizer.getRange(ruleStart!, colon ? colon.previous : ruleEnd);
       const declarationName =
@@ -298,7 +298,7 @@ class Parser {
             this.nodeFactory.expression(expressionValue, expressionRange);
       }
 
-      if (tokenizer.currentToken.is(Token.type.semicolon)) {
+      if (tokenizer.currentToken.is(TokenType.semicolon)) {
         tokenizer.advance();
       }
 
@@ -313,7 +313,7 @@ class Parser {
     } else if (colon && colon === ruleEnd) {
       const rulelist = this.parseRulelist(tokenizer);
 
-      if (tokenizer.currentToken.is(Token.type.semicolon)) {
+      if (tokenizer.currentToken.is(TokenType.semicolon)) {
         tokenizer.advance();
       }
 

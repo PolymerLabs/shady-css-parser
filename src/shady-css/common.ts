@@ -23,7 +23,7 @@ const matcher = {
 /**
  * An enumeration of Node types.
  */
-export enum nodeType {
+export const enum nodeType {
   stylesheet = 'stylesheet',
   comment = 'comment',
   atRule = 'atRule',
