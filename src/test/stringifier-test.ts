@@ -107,6 +107,14 @@ describe('Stringifier', () => {
       expect(cssText).to.be.eql(':root{--qux:vim;--foo:{bar:baz;};}');
     });
 
+    it('can stringify empty selectors', () => {
+      const cssText =
+          stringifier.stringify(parser.parse(
+              '{ empty-a } { empty-b } empty-c { empty-d }'));
+      expect(cssText).to.be
+          .eql('{empty-a;}{empty-b;}empty-c{empty-d;}');
+    });
+
     describe('with discarded nodes', () => {
       it('stringifies to a corrected stylesheet', () => {
         const cssText =
