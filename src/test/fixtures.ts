@@ -68,6 +68,8 @@ div {
 
 export const minifiedRuleset = '.foo{bar:baz}div .qux{vim:fet;}';
 
+export const minifiedRulesetWithExtraSemicolons = '.foo{bar:baz;;}div .qux{vim:fet;}';
+
 export const psuedoRuleset = '.foo:bar:not(#rif){baz:qux}';
 
 export const dataUriRuleset = '.foo{bar:url(qux;gib)}';
