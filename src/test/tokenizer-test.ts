@@ -11,7 +11,7 @@
 
 import {expect} from 'chai';
 
-import {Token} from '../shady-css/token';
+import {Token, TokenType} from '../shady-css/token';
 import {Tokenizer} from '../shady-css/tokenizer';
 
 import * as fixtures from './fixtures';
@@ -21,29 +21,29 @@ describe('Tokenizer', () => {
   describe('when tokenizing basic structures', () => {
     it('can identify strings', () => {
       expect(new Tokenizer('"foo"').flush()).to.be.eql(helpers.linkedTokens([
-        new Token(Token.type.string, 0, 5)
+        new Token(TokenType.string, 0, 5)
       ]));
     });
 
     it('can identify comments', () => {
       expect(new Tokenizer('/*foo*/').flush()).to.be.eql(helpers.linkedTokens([
-        new Token(Token.type.comment, 0, 7)
+        new Token(TokenType.comment, 0, 7)
       ]));
     });
 
     it('can identify words', () => {
       expect(new Tokenizer('font-family').flush())
-          .to.be.eql(helpers.linkedTokens([new Token(Token.type.word, 0, 11)]));
+          .to.be.eql(helpers.linkedTokens([new Token(TokenType.word, 0, 11)]));
     });
 
     it('can identify boundaries', () => {
       expect(new Tokenizer('@{};()').flush()).to.be.eql(helpers.linkedTokens([
-        new Token(Token.type.at, 0, 1),
-        new Token(Token.type.openBrace, 1, 2),
-        new Token(Token.type.closeBrace, 2, 3),
-        new Token(Token.type.semicolon, 3, 4),
-        new Token(Token.type.openParenthesis, 4, 5),
-        new Token(Token.type.closeParenthesis, 5, 6)
+        new Token(TokenType.at, 0, 1),
+        new Token(TokenType.openBrace, 1, 2),
+        new Token(TokenType.closeBrace, 2, 3),
+        new Token(TokenType.semicolon, 3, 4),
+        new Token(TokenType.openParenthesis, 4, 5),
+        new Token(TokenType.closeParenthesis, 5, 6)
       ]));
     });
   });
@@ -51,99 +51,99 @@ describe('Tokenizer', () => {
   describe('when tokenizing standard CSS structures', () => {
     it('can tokenize a basic ruleset', () => {
       helpers.expectTokenSequence(new Tokenizer(fixtures.basicRuleset), [
-        Token.type.whitespace, '\n',   Token.type.word,       'body',
-        Token.type.whitespace, ' ',    Token.type.openBrace,  '{',
-        Token.type.whitespace, '\n  ', Token.type.word,       'margin',
-        Token.type.colon,      ':',    Token.type.whitespace, ' ',
-        Token.type.word,       '0',    Token.type.semicolon,  ';',
-        Token.type.whitespace, '\n  ', Token.type.word,       'padding',
-        Token.type.colon,      ':',    Token.type.whitespace, ' ',
-        Token.type.word,       '0px',  Token.type.whitespace, '\n',
-        Token.type.closeBrace, '}',    Token.type.whitespace, '\n'
+        TokenType.whitespace, '\n',   TokenType.word,       'body',
+        TokenType.whitespace, ' ',    TokenType.openBrace,  '{',
+        TokenType.whitespace, '\n  ', TokenType.word,       'margin',
+        TokenType.colon,      ':',    TokenType.whitespace, ' ',
+        TokenType.word,       '0',    TokenType.semicolon,  ';',
+        TokenType.whitespace, '\n  ', TokenType.word,       'padding',
+        TokenType.colon,      ':',    TokenType.whitespace, ' ',
+        TokenType.word,       '0px',  TokenType.whitespace, '\n',
+        TokenType.closeBrace, '}',    TokenType.whitespace, '\n'
       ]);
     });
 
     it('can tokenize @rules', () => {
       helpers.expectTokenSequence(new Tokenizer(fixtures.atRules), [
-        Token.type.whitespace,
+        TokenType.whitespace,
         '\n',
-        Token.type.at,
+        TokenType.at,
         '@',
-        Token.type.word,
+        TokenType.word,
         'import',
-        Token.type.whitespace,
+        TokenType.whitespace,
         ' ',
-        Token.type.word,
+        TokenType.word,
         'url',
-        Token.type.openParenthesis,
+        TokenType.openParenthesis,
         '(',
-        Token.type.string,
+        TokenType.string,
         '\'foo.css\'',
-        Token.type.closeParenthesis,
+        TokenType.closeParenthesis,
         ')',
-        Token.type.semicolon,
+        TokenType.semicolon,
         ';',
-        Token.type.whitespace,
+        TokenType.whitespace,
         '\n\n',
-        Token.type.at,
+        TokenType.at,
         '@',
-        Token.type.word,
+        TokenType.word,
         'font-face',
-        Token.type.whitespace,
+        TokenType.whitespace,
         ' ',
-        Token.type.openBrace,
+        TokenType.openBrace,
         '{',
-        Token.type.whitespace,
+        TokenType.whitespace,
         '\n  ',
-        Token.type.word,
+        TokenType.word,
         'font-family',
-        Token.type.colon,
+        TokenType.colon,
         ':',
-        Token.type.whitespace,
+        TokenType.whitespace,
         ' ',
-        Token.type.word,
+        TokenType.word,
         'foo',
-        Token.type.semicolon,
+        TokenType.semicolon,
         ';',
-        Token.type.whitespace,
+        TokenType.whitespace,
         '\n',
-        Token.type.closeBrace,
+        TokenType.closeBrace,
         '}',
-        Token.type.whitespace,
+        TokenType.whitespace,
         '\n\n',
-        Token.type.at,
+        TokenType.at,
         '@',
-        Token.type.word,
+        TokenType.word,
         'charset',
-        Token.type.whitespace,
+        TokenType.whitespace,
         ' ',
-        Token.type.string,
+        TokenType.string,
         '\'foo\'',
-        Token.type.semicolon,
+        TokenType.semicolon,
         ';',
-        Token.type.whitespace,
+        TokenType.whitespace,
         '\n'
       ]);
     });
 
     it('navigates pathological boundary usage', () => {
       helpers.expectTokenSequence(new Tokenizer(fixtures.extraSemicolons), [
-        Token.type.whitespace, '\n',      Token.type.colon,      ':',
-        Token.type.word,       'host',    Token.type.whitespace, ' ',
-        Token.type.openBrace,  '{',       Token.type.whitespace, '\n  ',
-        Token.type.word,       'margin',  Token.type.colon,      ':',
-        Token.type.whitespace, ' ',       Token.type.word,       '0',
-        Token.type.semicolon,  ';',       Token.type.semicolon,  ';',
-        Token.type.semicolon,  ';',       Token.type.whitespace, '\n  ',
-        Token.type.word,       'padding', Token.type.colon,      ':',
-        Token.type.whitespace, ' ',       Token.type.word,       '0',
-        Token.type.semicolon,  ';',       Token.type.semicolon,  ';',
-        Token.type.whitespace, '\n  ',    Token.type.semicolon,  ';',
-        Token.type.word,       'display', Token.type.colon,      ':',
-        Token.type.whitespace, ' ',       Token.type.word,       'block',
-        Token.type.semicolon,  ';',       Token.type.whitespace, '\n',
-        Token.type.closeBrace, '}',       Token.type.semicolon,  ';',
-        Token.type.whitespace, '\n'
+        TokenType.whitespace, '\n',      TokenType.colon,      ':',
+        TokenType.word,       'host',    TokenType.whitespace, ' ',
+        TokenType.openBrace,  '{',       TokenType.whitespace, '\n  ',
+        TokenType.word,       'margin',  TokenType.colon,      ':',
+        TokenType.whitespace, ' ',       TokenType.word,       '0',
+        TokenType.semicolon,  ';',       TokenType.semicolon,  ';',
+        TokenType.semicolon,  ';',       TokenType.whitespace, '\n  ',
+        TokenType.word,       'padding', TokenType.colon,      ':',
+        TokenType.whitespace, ' ',       TokenType.word,       '0',
+        TokenType.semicolon,  ';',       TokenType.semicolon,  ';',
+        TokenType.whitespace, '\n  ',    TokenType.semicolon,  ';',
+        TokenType.word,       'display', TokenType.colon,      ':',
+        TokenType.whitespace, ' ',       TokenType.word,       'block',
+        TokenType.semicolon,  ';',       TokenType.whitespace, '\n',
+        TokenType.closeBrace, '}',       TokenType.semicolon,  ';',
+        TokenType.whitespace, '\n'
       ]);
     });
   });
@@ -152,7 +152,7 @@ describe('Tokenizer', () => {
     it('can slice the string using tokens', () => {
       const tokenizer = new Tokenizer('foo bar');
       const substring = tokenizer.slice(
-          new Token(Token.type.word, 2, 3), new Token(Token.type.word, 5, 6));
+          new Token(TokenType.word, 2, 3), new Token(TokenType.word, 5, 6));
       expect(substring).to.be.eql('o ba');
     });
   });

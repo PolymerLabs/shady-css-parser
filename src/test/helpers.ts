@@ -42,7 +42,7 @@ function linkedTokens(tokens: Token[]) {
     }
 
     return r;
-  }, new Token(Token.type.none, 0, 0));
+  }, new Token(TokenType.none, 0, 0));
 
   return tokens;
 }

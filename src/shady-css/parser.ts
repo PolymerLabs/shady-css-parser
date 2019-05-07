@@ -11,7 +11,7 @@
 
 import {AtRule, Comment, Declaration, Discarded, Rule, Rulelist, Ruleset, Stylesheet} from './common';
 import {NodeFactory} from './node-factory';
-import {Token} from './token';
+import {TokenType} from './token';
 import {Tokenizer} from './tokenizer';
 
 /**
@@ -81,20 +81,21 @@ class Parser {
     if (token === null) {
       return null;
     }
-    if (token.is(Token.type.whitespace)) {
+    if (token.is(TokenType.whitespace)) {
       tokenizer.advance();
       return null;
 
-    } else if (token.is(Token.type.comment)) {
+    } else if (token.is(TokenType.comment)) {
       return this.parseComment(tokenizer);
 
-    } else if (token.is(Token.type.word)) {
+    } else if (token.is(TokenType.word) ||
+               token.is(TokenType.openBrace)) {
       return this.parseDeclarationOrRuleset(tokenizer);
 
-    } else if (token.is(Token.type.propertyBoundary)) {
+    } else if (token.is(TokenType.propertyBoundary)) {
       return this.parseUnknown(tokenizer);
 
-    } else if (token.is(Token.type.at)) {
+    } else if (token.is(TokenType.at)) {
       return this.parseAtRule(tokenizer);
 
     } else {
@@ -130,7 +131,7 @@ class Parser {
     }
 
     while (tokenizer.currentToken &&
-           tokenizer.currentToken.is(Token.type.boundary)) {
+           tokenizer.currentToken.is(TokenType.semicolon)) {
       end = tokenizer.advance();
     }
 
@@ -155,25 +156,27 @@ class Parser {
     const start = tokenizer.currentToken.start;
 
     while (tokenizer.currentToken) {
-      if (tokenizer.currentToken.is(Token.type.whitespace)) {
+      if (tokenizer.currentToken.is(TokenType.whitespace)) {
         tokenizer.advance();
-      } else if (!name && tokenizer.currentToken.is(Token.type.at)) {
+      } else if (!name && tokenizer.currentToken.is(TokenType.at)) {
         // Discard the @:
         tokenizer.advance();
         const start = tokenizer.currentToken;
         let end;
 
         while (tokenizer.currentToken &&
-               tokenizer.currentToken.is(Token.type.word)) {
+               tokenizer.currentToken.is(TokenType.word)) {
           end = tokenizer.advance();
         }
         nameRange = tokenizer.getRange(start, end);
         name = tokenizer.cssText.slice(nameRange.start, nameRange.end);
-      } else if (tokenizer.currentToken.is(Token.type.openBrace)) {
+      } else if (tokenizer.currentToken.is(TokenType.openBrace)) {
         rulelist = this.parseRulelist(tokenizer);
         break;
-      } else if (tokenizer.currentToken.is(Token.type.propertyBoundary)) {
+      } else if (tokenizer.currentToken.is(TokenType.semicolon)) {
         tokenizer.advance();
+        break;
+      } else if (tokenizer.currentToken.is(TokenType.closeBrace)) {
         break;
       } else {
         if (parametersStart == null) {
@@ -215,7 +218,7 @@ class Parser {
     tokenizer.advance();
 
     while (tokenizer.currentToken) {
-      if (tokenizer.currentToken.is(Token.type.closeBrace)) {
+      if (tokenizer.currentToken.is(TokenType.closeBrace)) {
         endToken = tokenizer.currentToken;
         tokenizer.advance();
         break;
@@ -239,50 +242,40 @@ class Parser {
    * @param tokenizer A Tokenizer node.
    */
   parseDeclarationOrRuleset(tokenizer: Tokenizer): Declaration|Ruleset|null {
-    let ruleStart = null;
-    let ruleEnd = null;
-    let colon = null;
-
-    // This code is not obviously correct. e.g. there's what looks to be a
-    // null-dereference if the declaration starts with an open brace or
-    // property boundary.. though that may be impossible.
-
-    while (tokenizer.currentToken) {
-      if (tokenizer.currentToken.is(Token.type.whitespace)) {
-        tokenizer.advance();
-      } else if (tokenizer.currentToken.is(Token.type.openParenthesis)) {
-        // skip until close paren
-        while (tokenizer.currentToken &&
-               !tokenizer.currentToken.is(Token.type.closeParenthesis)) {
-          tokenizer.advance();
-        }
-      } else if (
-          tokenizer.currentToken.is(Token.type.openBrace) ||
-          tokenizer.currentToken.is(Token.type.propertyBoundary)) {
-        break;
-      } else {
-        if (tokenizer.currentToken.is(Token.type.colon)) {
-          colon = tokenizer.currentToken;
-        }
-
-        if (ruleStart === null) {
-          ruleStart = tokenizer.advance();
-          ruleEnd = ruleStart;
-        } else {
-          ruleEnd = tokenizer.advance();
-        }
-      }
-    }
-
-    if (tokenizer.currentToken === null) {
-      // terminated early
+    if (!tokenizer.currentToken) {
       return null;
     }
 
+    let ruleStart = tokenizer.currentToken;
+    let ruleEnd = ruleStart.previous;
+    let colon = null;
+
+    while (tokenizer.currentToken) {
+      if (tokenizer.currentToken.is(TokenType.whitespace)) {
+        tokenizer.advance();
+      } else if (tokenizer.currentToken.is(TokenType.openParenthesis)) {
+        // skip until close paren
+        while (tokenizer.currentToken &&
+               !tokenizer.currentToken.is(TokenType.closeParenthesis)) {
+          tokenizer.advance();
+        }
+      } else if (
+          tokenizer.currentToken.is(TokenType.openBrace) ||
+          tokenizer.currentToken.is(TokenType.propertyBoundary)) {
+        break;
+      } else {
+        if (tokenizer.currentToken.is(TokenType.colon)) {
+          colon = tokenizer.currentToken;
+        }
+        ruleEnd = tokenizer.advance();
+      }
+    }
+
     // A ruleset never contains or ends with a semi-colon.
-    if (tokenizer.currentToken.is(Token.type.propertyBoundary)) {
+    if (!tokenizer.currentToken ||
+        tokenizer.currentToken.is(TokenType.propertyBoundary)) {
       const nameRange =
-          tokenizer.getRange(ruleStart!, colon ? colon.previous : ruleEnd);
+          tokenizer.getRange(ruleStart, colon ? colon.previous : ruleEnd);
       const declarationName =
           tokenizer.cssText.slice(nameRange.start, nameRange.end);
 
@@ -296,12 +289,13 @@ class Parser {
             this.nodeFactory.expression(expressionValue, expressionRange);
       }
 
-      if (tokenizer.currentToken.is(Token.type.semicolon)) {
+      if (tokenizer.currentToken &&
+          tokenizer.currentToken.is(TokenType.semicolon)) {
         tokenizer.advance();
       }
 
       const range = tokenizer.trimRange(tokenizer.getRange(
-          ruleStart!,
+          ruleStart,
           tokenizer.currentToken && tokenizer.currentToken.previous ||
               ruleEnd));
 
@@ -311,16 +305,17 @@ class Parser {
     } else if (colon && colon === ruleEnd) {
       const rulelist = this.parseRulelist(tokenizer);
 
-      if (tokenizer.currentToken.is(Token.type.semicolon)) {
+      if (tokenizer.currentToken &&
+          tokenizer.currentToken.is(TokenType.semicolon)) {
         tokenizer.advance();
       }
 
-      const nameRange = tokenizer.getRange(ruleStart!, ruleEnd.previous);
+      const nameRange = tokenizer.getRange(ruleStart, ruleEnd.previous);
       const declarationName =
           tokenizer.cssText.slice(nameRange.start, nameRange.end);
 
       const range = tokenizer.trimRange(tokenizer.getRange(
-          ruleStart!,
+          ruleStart,
           tokenizer.currentToken && tokenizer.currentToken.previous ||
               ruleEnd));
 
@@ -328,16 +323,16 @@ class Parser {
           declarationName, rulelist, nameRange, range);
       // Otherwise, this is a ruleset:
     } else {
-      const selectorRange = tokenizer.getRange(ruleStart!, ruleEnd);
+      const selectorRange = tokenizer.getRange(ruleStart, ruleEnd);
       const selector =
           tokenizer.cssText.slice(selectorRange.start, selectorRange.end);
       const rulelist = this.parseRulelist(tokenizer);
-      const start = ruleStart!.start;
+      const start = ruleStart.start;
       let end;
       if (tokenizer.currentToken) {
         end = tokenizer.currentToken.previous ?
             tokenizer.currentToken.previous.end :
-            ruleStart!.end;
+            ruleStart.end;
       } else {
         // no current token? must have reached the end of input, so go up
         // until there

@@ -147,6 +147,54 @@ describe('Parser', () => {
             nodeFactory.discarded(';')
           ]));
     });
+
+    it('can parse empty selectors', () => {
+      expect(parser.parse('{ empty-a } { empty-b } empty-c { empty-d }'))
+          .to.containSubset(nodeFactory.stylesheet([
+            nodeFactory.ruleset(
+              '', nodeFactory.rulelist([
+                nodeFactory.declaration('empty-a', undefined)])),
+            nodeFactory.ruleset(
+              '', nodeFactory.rulelist([
+                nodeFactory.declaration('empty-b', undefined)])),
+            nodeFactory.ruleset(
+              'empty-c', nodeFactory.rulelist([
+                nodeFactory.declaration('empty-d', undefined)])),
+          ]));
+    });
+
+    it('can parse unclosed blocks', () => {
+      expect(parser.parse('uncl-a { uncl-b: uncl-c uncl-d'))
+          .to.containSubset(nodeFactory.stylesheet([
+            nodeFactory.ruleset(
+              'uncl-a', nodeFactory.rulelist([
+                nodeFactory.declaration(
+                  'uncl-b', nodeFactory.expression('uncl-c uncl-d'))
+              ]))
+          ]));
+    });
+
+    it('can parse unclosed blocks without a colon', () => {
+      expect(parser.parse('uncol-a { uncol-b'))
+          .to.containSubset(nodeFactory.stylesheet([
+            nodeFactory.ruleset(
+              'uncol-a', nodeFactory.rulelist([
+                nodeFactory.declaration('uncol-b', undefined)
+            ]))
+          ]));
+    });
+
+    it('can parse minified rulelists with extra semicolons', () => {
+      expect(parser.parse(fixtures.minifiedRulesetWithExtraSemicolons))
+          .to.containSubset(nodeFactory.stylesheet([
+            nodeFactory.ruleset(
+                '.foo', nodeFactory.rulelist([nodeFactory.declaration(
+                            'bar', nodeFactory.expression('baz'))])),
+            nodeFactory.ruleset(
+                'div .qux', nodeFactory.rulelist([nodeFactory.declaration(
+                                'vim', nodeFactory.expression('fet'))]))
+          ]));
+    });
   });
 
   describe('when extracting ranges', () => {

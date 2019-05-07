@@ -12,31 +12,31 @@
 /**
  * An enumeration of Token types.
  */
-export enum TokenType {
+export const enum TokenType {
   none = 0,
-  whitespace = (2 ** 0),
-  string = (2 ** 1),
-  comment = (2 ** 2),
-  word = (2 ** 3),
-  boundary = (2 ** 4),
-  propertyBoundary = (2 ** 5),
+  whitespace = (1 << 0),
+  string = (1 << 1),
+  comment = (1 << 2),
+  word = (1 << 3),
+  boundary = (1 << 4),
+  propertyBoundary = (1 << 5),
   // Special cases for boundary:
-  openParenthesis = (2 ** 6) | TokenType.boundary,
-  closeParenthesis = (2 ** 7) | TokenType.boundary,
-  at = (2 ** 8) | TokenType.boundary,
-  openBrace = (2 ** 9) | TokenType.boundary,
+  openParenthesis = (1 << 6) | TokenType.boundary,
+  closeParenthesis = (1 << 7) | TokenType.boundary,
+  at = (1 << 8) | TokenType.boundary,
+  openBrace = (1 << 9) | TokenType.boundary,
   // [};] are property boundaries:
-  closeBrace = (2 ** 10) | TokenType.propertyBoundary | TokenType.boundary,
-  semicolon = (2 ** 11) | TokenType.propertyBoundary | TokenType.boundary,
+  closeBrace = (1 << 10) | TokenType.propertyBoundary | TokenType.boundary,
+  semicolon = (1 << 11) | TokenType.propertyBoundary | TokenType.boundary,
   // : is a chimaeric abomination:
   // foo:bar{}
   // foo:bar;
-  colon = (2 ** 12) | TokenType.boundary | TokenType.word,
+  colon = (1 << 12) | TokenType.boundary | TokenType.word,
 
   // TODO: are these two boundaries? I mean, sometimes they are I guess? Or
   //       maybe they shouldn't exist in the boundaryTokenTypes map.
-  hyphen = (2 ** 13),
-  underscore = (2 ** 14)
+  hyphen = (1 << 13),
+  underscore = (1 << 14)
 }
 
 
@@ -44,8 +44,6 @@ export enum TokenType {
  * Class that describes individual tokens as produced by the Tokenizer.
  */
 class Token {
-  static type = TokenType;
-
   readonly type: TokenType;
   readonly start: number;
   readonly end: number;
@@ -84,15 +82,15 @@ class Token {
  * A mapping of boundary token text to their corresponding types.
  */
 const boundaryTokenTypes: {[boundaryText: string]: TokenType | undefined} = {
-  '(': Token.type.openParenthesis,
-  ')': Token.type.closeParenthesis,
-  ':': Token.type.colon,
-  '@': Token.type.at,
-  '{': Token.type.openBrace,
-  '}': Token.type.closeBrace,
-  ';': Token.type.semicolon,
-  '-': Token.type.hyphen,
-  '_': Token.type.underscore
+  '(': TokenType.openParenthesis,
+  ')': TokenType.closeParenthesis,
+  ':': TokenType.colon,
+  '@': TokenType.at,
+  '{': TokenType.openBrace,
+  '}': TokenType.closeBrace,
+  ';': TokenType.semicolon,
+  '-': TokenType.hyphen,
+  '_': TokenType.underscore
 };
 
 export {Token, boundaryTokenTypes};

@@ -10,7 +10,7 @@
  */
 
 import {matcher, Range} from './common';
-import {boundaryTokenTypes, Token} from './token';
+import {boundaryTokenTypes, Token, TokenType} from './token';
 
 /**
  * Class that implements tokenization of significant lexical features of the
@@ -23,7 +23,7 @@ class Tokenizer {
    * Tracks the position of the tokenizer in the source string.
    * Also the default head of the Token linked list.
    */
-  private cursorToken_ = new Token(Token.type.none, 0, 0);
+  private cursorToken_ = new Token(TokenType.none, 0, 0);
 
   /**
    * Holds a reference to a Token that is "next" in the source string, often
@@ -181,7 +181,7 @@ class Tokenizer {
       }
     }
 
-    return new Token(Token.type.string, start, offset);
+    return new Token(TokenType.string, start, offset);
   }
 
   /**
@@ -200,7 +200,7 @@ class Tokenizer {
       offset++;
     }
 
-    return new Token(Token.type.word, start, offset);
+    return new Token(TokenType.word, start, offset);
   }
 
   /**
@@ -220,7 +220,7 @@ class Tokenizer {
       offset = matcher.whitespaceGreedy.lastIndex;
     }
 
-    return new Token(Token.type.whitespace, start, offset);
+    return new Token(TokenType.whitespace, start, offset);
   }
 
   /**
@@ -242,7 +242,7 @@ class Tokenizer {
       offset = matcher.commentGreedy.lastIndex;
     }
 
-    return new Token(Token.type.comment, start, offset);
+    return new Token(TokenType.comment, start, offset);
   }
 
   /**
@@ -255,7 +255,7 @@ class Tokenizer {
   tokenizeBoundary(offset: number): Token {
     // TODO(cdata): Evaluate if this is faster than a switch statement:
     const type =
-        boundaryTokenTypes[this.cssText[offset]] || Token.type.boundary;
+        boundaryTokenTypes[this.cssText[offset]] || TokenType.boundary;
 
     return new Token(type, offset, offset + 1);
   }
