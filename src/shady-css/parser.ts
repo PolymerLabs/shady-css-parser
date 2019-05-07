@@ -131,7 +131,7 @@ class Parser {
     }
 
     while (tokenizer.currentToken &&
-           tokenizer.currentToken.is(TokenType.boundary)) {
+           tokenizer.currentToken.is(TokenType.semicolon)) {
       end = tokenizer.advance();
     }
 

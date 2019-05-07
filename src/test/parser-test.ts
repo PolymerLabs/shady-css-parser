@@ -183,6 +183,18 @@ describe('Parser', () => {
             ]))
           ]));
     });
+
+    it('can parse minified rulelists with extra semicolons', () => {
+      expect(parser.parse(fixtures.minifiedRulesetWithExtraSemicolons))
+          .to.containSubset(nodeFactory.stylesheet([
+            nodeFactory.ruleset(
+                '.foo', nodeFactory.rulelist([nodeFactory.declaration(
+                            'bar', nodeFactory.expression('baz'))])),
+            nodeFactory.ruleset(
+                'div .qux', nodeFactory.rulelist([nodeFactory.declaration(
+                                'vim', nodeFactory.expression('fet'))]))
+          ]));
+    });
   });
 
   describe('when extracting ranges', () => {
