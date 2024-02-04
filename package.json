@@ -24,7 +24,7 @@
     "test": "wireit",
     "test:sloppy": "tsc || echo '' && mocha --require source-map-support/register dist/test/*.js",
     "lint": "wireit",
-    "format": "find src | grep '\\.js$\\|\\.ts$' | xargs clang-format --style=file -i"
+    "format": "wireit"
   },
   "repository": {
     "type": "git",
@@ -68,6 +68,13 @@
       ],
       "output": [],
       "command": "tslint -p ./"
+    },
+    "format": {
+      "files": [
+        "src/**/*.ts",
+        "src/**/*.js"
+      ],
+      "command": "find src | grep '\\.js$\\|\\.ts$' | xargs clang-format --style=file -i"
     }
   }
 }

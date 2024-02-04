@@ -11,16 +11,17 @@
 
 import {expect} from 'chai';
 
+import {nodeType} from '../shady-css/common';
 import {NodeVisitor} from '../shady-css/node-visitor';
 
 type TestNode = TestNodeA|TestNodeB;
 interface TestNodeA {
-  type: 'a';
+  type: nodeType.stylesheet;
   callback?: () => void;
 }
 
 interface TestNodeB {
-  type: 'b';
+  type: nodeType.rulelist;
   child?: TestNode;
 }
 
@@ -35,20 +36,20 @@ class TestNodeVisitor extends NodeVisitor<TestNode, string> {
     this.bCallCount = 0;
   }
 
-  a(a: TestNodeA) {
+  stylesheet(a: TestNodeA) {
     this.aCallCount++;
     if (a.callback) {
       a.callback();
     }
-    return 'a';
+    return 'stylesheet';
   }
 
-  b(b: TestNodeB) {
+  rulelist(b: TestNodeB) {
     this.bCallCount++;
     if (b.child) {
       this.visit(b.child);
     }
-    return 'b';
+    return 'rulelist';
   }
 }
 
@@ -60,28 +61,28 @@ describe('NodeVisitor', () => {
   });
 
   it('visits nodes based on their type property', () => {
-    nodeVisitor.visit({type: 'a'});
+    nodeVisitor.visit({type: nodeType.stylesheet});
     expect(nodeVisitor.aCallCount).to.be.eql(1);
     expect(nodeVisitor.bCallCount).to.be.eql(0);
-    nodeVisitor.visit({type: 'b'});
+    nodeVisitor.visit({type: nodeType.rulelist});
     expect(nodeVisitor.aCallCount).to.be.eql(1);
     expect(nodeVisitor.bCallCount).to.be.eql(1);
   });
 
   it('reveals the path of the recursive visitation of nodes', () => {
     const a1 = {
-      type: 'a' as 'a',
+      type: nodeType.stylesheet as const,
       callback: function() {
         expect(nodeVisitor.path).to.be.eql([a1]);
-      }
+      },
     };
     const a2: TestNodeA = {
-      type: 'a' as 'a',
+      type: nodeType.stylesheet as const,
       callback: function() {
         expect(nodeVisitor.path).to.be.eql([b, a2]);
-      }
+      },
     };
-    const b = {type: 'b' as 'b', child: a2};
+    const b = {type: nodeType.rulelist as const, child: a2};
 
     nodeVisitor.visit(a1);
     expect(nodeVisitor.aCallCount).to.be.eql(1);
