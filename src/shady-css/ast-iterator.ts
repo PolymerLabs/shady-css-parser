@@ -45,6 +45,6 @@ export function* getChildren(node: Node) {
       return;  // no child nodes
     default:
       const never: never = node;
-      console.error(`Got a node of unknown type: ${never}`);
+      console.error(`Got a node of unknown type: `, never);
   }
 }
