@@ -1,0 +1,46 @@
+name: Tests
+
+on: [push, pull_request]
+
+jobs:
+  tests:
+    strategy:
+      # We support Node Current, LTS, and Maintenance. See
+      # https://nodejs.org/en/about/releases/ for release schedule.
+      #
+      # We test all supported Node versions on Linux, and the oldest and newest
+      # on macOS/Windows.
+      matrix:
+        include:
+          - node: 18
+            os: ubuntu-22.04
+          - node: 18
+            os: macos-12
+          - node: 18
+            os: windows-2022
+          - node: 20
+            os: ubuntu-22.04
+          - node: 20
+            os: macos-12
+          - node: 20
+            os: windows-2022
+
+      # Allow all matrix configurations to complete, instead of cancelling as
+      # soon as one fails. Useful because we often have different kinds of
+      # failures depending on the OS.
+      fail-fast: false
+
+    runs-on: ${{ matrix.os }}
+
+    env:
+      WIREIT_LOGGER: "quiet-ci"
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - uses: google/wireit@setup-github-actions-caching/v1
+      - run: npm ci
+      - run: npm test
