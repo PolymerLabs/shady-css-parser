@@ -14,7 +14,7 @@ import {expect} from 'chai';
 import {nodeType} from '../shady-css/common';
 import {NodeVisitor} from '../shady-css/node-visitor';
 
-type TestNode = TestNodeA|TestNodeB;
+type TestNode = TestNodeA | TestNodeB;
 interface TestNodeA {
   type: nodeType.stylesheet;
   callback?: () => void;
@@ -56,7 +56,7 @@ class TestNodeVisitor extends NodeVisitor<TestNode, string> {
 describe('NodeVisitor', () => {
   let nodeVisitor: TestNodeVisitor;
 
-  beforeEach(function() {
+  beforeEach(function () {
     nodeVisitor = new TestNodeVisitor();
   });
 
@@ -72,13 +72,13 @@ describe('NodeVisitor', () => {
   it('reveals the path of the recursive visitation of nodes', () => {
     const a1 = {
       type: nodeType.stylesheet as const,
-      callback: function() {
+      callback: function () {
         expect(nodeVisitor.path).to.be.eql([a1]);
       },
     };
     const a2: TestNodeA = {
       type: nodeType.stylesheet as const,
-      callback: function() {
+      callback: function () {
         expect(nodeVisitor.path).to.be.eql([b, a2]);
       },
     };

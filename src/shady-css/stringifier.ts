@@ -9,7 +9,18 @@
  * rights grant found at http://polymer.github.io/PATENTS.txt
  */
 
-import {AtRule, Comment, Declaration, Discarded, Expression, Node, nodeType, Rulelist, Ruleset, Stylesheet} from './common';
+import {
+  AtRule,
+  Comment,
+  Declaration,
+  Discarded,
+  Expression,
+  Node,
+  nodeType,
+  Rulelist,
+  Ruleset,
+  Stylesheet,
+} from './common';
 import {NodeVisitor} from './node-visitor';
 
 /**
@@ -46,9 +57,11 @@ class Stringifier extends NodeVisitor<Node, string> {
    * @return The stringified CSS of the At Rule.
    */
   [nodeType.atRule](atRule: AtRule) {
-    return `@${atRule.name}` +
-        (atRule.parameters ? ` ${atRule.parameters}` : '') +
-        (atRule.rulelist ? `${this.visit(atRule.rulelist)}` : ';');
+    return (
+      `@${atRule.name}` +
+      (atRule.parameters ? ` ${atRule.parameters}` : '') +
+      (atRule.rulelist ? `${this.visit(atRule.rulelist)}` : ';')
+    );
   }
 
   /**
@@ -90,9 +103,9 @@ class Stringifier extends NodeVisitor<Node, string> {
    * @return The stringified CSS of the Declaration.
    */
   [nodeType.declaration](declaration: Declaration) {
-    return declaration.value != null ?
-        `${declaration.name}:${this.visit(declaration.value)};` :
-        `${declaration.name};`;
+    return declaration.value != null
+      ? `${declaration.name}:${this.visit(declaration.value)};`
+      : `${declaration.name};`;
   }
 
   /**

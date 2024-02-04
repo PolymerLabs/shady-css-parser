@@ -20,11 +20,13 @@ function expectTokenType(token: Token, type: TokenType) {
 }
 
 function expectTokenSequence(
-    lexer: Tokenizer, sequence: Array<TokenType|string>) {
+  lexer: Tokenizer,
+  sequence: Array<TokenType | string>,
+) {
   const lexedSequence = [];
   let token;
 
-  while (token = lexer.advance()) {
+  while ((token = lexer.advance())) {
     lexedSequence.push(token.type, lexer.slice(token));
   }
 
@@ -32,17 +34,20 @@ function expectTokenSequence(
 }
 
 function linkedTokens(tokens: Token[]) {
-  tokens.reduce(function(l, r) {
-    if (l) {
-      l.next = r;
-    }
+  tokens.reduce(
+    function (l, r) {
+      if (l) {
+        l.next = r;
+      }
 
-    if (r) {
-      r.previous = l;
-    }
+      if (r) {
+        r.previous = l;
+      }
 
-    return r;
-  }, new Token(Token.type.none, 0, 0));
+      return r;
+    },
+    new Token(Token.type.none, 0, 0),
+  );
 
   return tokens;
 }

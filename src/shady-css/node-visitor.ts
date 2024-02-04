@@ -9,7 +9,17 @@
  * rights grant found at http://polymer.github.io/PATENTS.txt
  */
 
-import {AtRule, Comment, Declaration, Discarded, Expression, nodeType, Rulelist, Ruleset, Stylesheet} from './common';
+import {
+  AtRule,
+  Comment,
+  Declaration,
+  Discarded,
+  Expression,
+  nodeType,
+  Rulelist,
+  Ruleset,
+  Stylesheet,
+} from './common';
 
 /**
  * Class that implements a visitor pattern for ASTs produced by the Parser.
@@ -42,12 +52,14 @@ class NodeVisitor<Node extends {type: nodeType}, ReturnValue> {
    * @return The return value of the method visiting the node, if any.
    */
   visit(node: Node) {
-    let result: ReturnValue|undefined;
+    let result: ReturnValue | undefined;
     const callback = this[node.type];
     if (callback) {
       this.path_.push(node);
-      result =
-          (callback as unknown as (node: Node) => ReturnValue).call(this, node);
+      result = (callback as unknown as (node: Node) => ReturnValue).call(
+        this,
+        node,
+      );
       this.path_.pop();
     }
     return result;

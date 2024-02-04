@@ -33,15 +33,17 @@ describe('Stringifier', () => {
     });
 
     it('can stringify an At Rule without a Rulelist', () => {
-      const cssText =
-          stringifier.stringify(nodeFactory.atRule('foo', '("bar")'));
+      const cssText = stringifier.stringify(
+        nodeFactory.atRule('foo', '("bar")'),
+      );
 
       expect(cssText).to.be.eql('@foo ("bar");');
     });
 
     it('can stringify an At Rule with a Rulelist', () => {
       const cssText = stringifier.stringify(
-          nodeFactory.atRule('foo', '("bar")', nodeFactory.rulelist([])));
+        nodeFactory.atRule('foo', '("bar")', nodeFactory.rulelist([])),
+      );
 
       expect(cssText).to.be.eql('@foo ("bar"){}');
     });
@@ -53,19 +55,22 @@ describe('Stringifier', () => {
 
     it('can stringify Rulesets', () => {
       const cssText = stringifier.stringify(
-          nodeFactory.ruleset('.fiz #buz', nodeFactory.rulelist([])));
+        nodeFactory.ruleset('.fiz #buz', nodeFactory.rulelist([])),
+      );
       expect(cssText).to.be.eql('.fiz #buz{}');
     });
 
     it('can stringify Declarations with Expression values', () => {
       const cssText = stringifier.stringify(
-          nodeFactory.declaration('color', nodeFactory.expression('red')));
+        nodeFactory.declaration('color', nodeFactory.expression('red')),
+      );
       expect(cssText).to.be.eql('color:red;');
     });
 
     it('can stringify Declarations with Rulelist values', () => {
       const cssText = stringifier.stringify(
-          nodeFactory.declaration('--mixin', nodeFactory.rulelist([])));
+        nodeFactory.declaration('--mixin', nodeFactory.rulelist([])),
+      );
       expect(cssText).to.be.eql('--mixin:{};');
     });
   });
@@ -78,41 +83,48 @@ describe('Stringifier', () => {
     });
 
     it('can stringify a basic ruleset', () => {
-      const cssText =
-          stringifier.stringify(parser.parse(fixtures.basicRuleset));
+      const cssText = stringifier.stringify(
+        parser.parse(fixtures.basicRuleset),
+      );
       expect(cssText).to.be.eql('body{margin:0;padding:0px;}');
     });
 
     it('can stringify at rules', () => {
       const cssText = stringifier.stringify(parser.parse(fixtures.atRules));
       expect(cssText).to.be.eql(
-          '@import url(\'foo.css\');@font-face{font-family:foo;}@charset \'foo\';');
+        "@import url('foo.css');@font-face{font-family:foo;}@charset 'foo';",
+      );
     });
 
     it('can stringify keyframes', () => {
       const cssText = stringifier.stringify(parser.parse(fixtures.keyframes));
       expect(cssText).to.be.eql(
-          '@keyframes foo{from{fiz:0%;}99.9%{fiz:100px;buz:true;}}');
+        '@keyframes foo{from{fiz:0%;}99.9%{fiz:100px;buz:true;}}',
+      );
     });
 
     it('can stringify declarations without value', () => {
-      const cssText =
-          stringifier.stringify(parser.parse(fixtures.declarationsWithNoValue));
+      const cssText = stringifier.stringify(
+        parser.parse(fixtures.declarationsWithNoValue),
+      );
       expect(cssText).to.be.eql('foo;bar 20px;div{baz;}');
     });
 
     it('can stringify custom properties', () => {
-      const cssText =
-          stringifier.stringify(parser.parse(fixtures.customProperties));
+      const cssText = stringifier.stringify(
+        parser.parse(fixtures.customProperties),
+      );
       expect(cssText).to.be.eql(':root{--qux:vim;--foo:{bar:baz;};}');
     });
 
     describe('with discarded nodes', () => {
       it('stringifies to a corrected stylesheet', () => {
-        const cssText =
-            stringifier.stringify(parser.parse(fixtures.pathologicalComments));
+        const cssText = stringifier.stringify(
+          parser.parse(fixtures.pathologicalComments),
+        );
         expect(cssText).to.be.eql(
-            '.foo{bar:/*baz*/vim;}/* unclosed\n@fiz {\n  --huk: {\n    /* buz */baz:lur;@gak wiz;');
+          '.foo{bar:/*baz*/vim;}/* unclosed\n@fiz {\n  --huk: {\n    /* buz */baz:lur;@gak wiz;',
+        );
       });
     });
   });

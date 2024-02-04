@@ -21,8 +21,11 @@ export class TestNodeFactory {
     return {type: nodeType.stylesheet, rules};
   }
 
-  atRule(name: string, parameters: string, rulelist: any|undefined = undefined):
-      any {
+  atRule(
+    name: string,
+    parameters: string,
+    rulelist: any | undefined = undefined,
+  ): any {
     return {type: nodeType.atRule, name, parameters, rulelist};
   }
 
@@ -38,7 +41,7 @@ export class TestNodeFactory {
     return {type: nodeType.ruleset, selector, rulelist};
   }
 
-  declaration(name: string, value: any|undefined): any {
+  declaration(name: string, value: any | undefined): any {
     return {type: nodeType.declaration, name, value};
   }
   expression(text: string): any {

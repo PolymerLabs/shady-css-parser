@@ -7,14 +7,14 @@ fast and flexible CSS parsing and transformation is a critical feature.
 
 ### Goals
 
- -  Feasibility of being used in conjunction with Polymer or Polymer
-Designer.
- -  Parse CSS loosely and flexibly. This parser is not spec-compliant, however
- it will parse all spec-compliant CSS.
- -  Parse CSS quickly and efficiently. This parser is a suitable tool to aide in
- the design and implementation of runtime transformations.
- -  Graceful error recovery. Malformed CSS will be parsed by this
-parser as closely as possible to the way a browser would parse it.
+- Feasibility of being used in conjunction with Polymer or Polymer
+  Designer.
+- Parse CSS loosely and flexibly. This parser is not spec-compliant, however
+  it will parse all spec-compliant CSS.
+- Parse CSS quickly and efficiently. This parser is a suitable tool to aide in
+  the design and implementation of runtime transformations.
+- Graceful error recovery. Malformed CSS will be parsed by this
+  parser as closely as possible to the way a browser would parse it.
 
 ### Installing
 
@@ -50,7 +50,6 @@ const ast = parser.parse(css);
 ```js
 /* Step 1: Inherit from NodeFactory */
 class CustomNodeFactory extends shadyCss.NodeFactory {
-
   /*
    * Step 2: Implement a custom node factory method. Here we override the
    *   default factory for Expression nodes
@@ -89,13 +88,12 @@ from parsed CSS.
 ```js
 /* Step 1: Inherit from Stringifier. */
 class CustomStringifier extends shadyCss.Stringifier {
-
   /**
-  * Step 2: Implement a stringification method named after the type of the node
-  * you are interested in stringifying. In this case, we are implementing
-  * stringification for the Darken Expression nodes we implemented parsing for
-  * above.
-  */
+   * Step 2: Implement a stringification method named after the type of the node
+   * you are interested in stringifying. In this case, we are implementing
+   * stringification for the Darken Expression nodes we implemented parsing for
+   * above.
+   */
   darkenExpression(darkenExpression) {
     // For the sake of brevity, please assume that the darken function returns
     // a darker version of the color parameter:
@@ -117,6 +115,7 @@ const css = stringifier.stringify(ast);
   --nog: blue;
 }
 ```
+
 ```js
 {
   "type": 1, /* stylesheet */
@@ -151,6 +150,7 @@ ruleset {
   };
 }
 ```
+
 ```js
 {
   "type": 1, /* stylesheet */
@@ -185,9 +185,10 @@ ruleset {
 
 ```css
 .title {
-  @apply(--my-toolbar-title-theme);
+  @apply (--my-toolbar-title-theme);
 }
 ```
+
 ```js
 {
   "type": 1, /* stylesheet */
@@ -222,6 +223,7 @@ ruleset {
   };
 }
 ```
+
 ```js
 {
   "type": 1, /* stylesheet */
@@ -258,9 +260,11 @@ ruleset {
 /* before */
 body {
   margin: 0;
-  padding: 0px
+  padding: 0px;
 }
 ```
+
+<!-- prettier-ignore -->
 ```css
 /* after */
 body{margin:0;padding:0px;}
@@ -278,6 +282,8 @@ body{margin:0;padding:0px;}
 
 @charset 'foo';
 ```
+
+<!-- prettier-ignore -->
 ```css
 /* after */
 @import url('foo.css');@font-face{font-family:foo;}@charset 'foo';
@@ -296,9 +302,11 @@ body{margin:0;padding:0px;}
 
 #target {
   gak: var(--qux);
-  @apply(--foo);
+  @apply (--foo);
 }
 ```
+
+<!-- prettier-ignore -->
 ```css
 /* after */
 :root{--qux:vim;--foo:{bar:baz;};}#target{gak:var(--qux);@apply (--foo);}

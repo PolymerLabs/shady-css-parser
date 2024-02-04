@@ -18,7 +18,10 @@ import {Node} from './common';
  * child of its predecessor.
  */
 export function getNodesAtLocation(
-    initialNode: Node, location: number, path: Node[] = []): Node[] {
+  initialNode: Node,
+  location: number,
+  path: Node[] = [],
+): Node[] {
   let current = initialNode;
   outer: while (true) {
     for (const child of getChildren(current)) {

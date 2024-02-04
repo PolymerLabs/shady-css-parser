@@ -9,7 +9,19 @@
  * rights grant found at http://polymer.github.io/PATENTS.txt
  */
 
-import {AtRule, Comment, Declaration, Discarded, Expression, nodeType, Range, Rule, Rulelist, Ruleset, Stylesheet} from './common';
+import {
+  AtRule,
+  Comment,
+  Declaration,
+  Discarded,
+  Expression,
+  nodeType,
+  Range,
+  Rule,
+  Rulelist,
+  Ruleset,
+  Stylesheet,
+} from './common';
 
 /**
  * Class used for generating nodes in a CSS AST. Extend this class to implement
@@ -33,9 +45,13 @@ class NodeFactory {
    * @param rulelist The Rulelist node (if any) of the At Rule.
    */
   atRule(
-      name: string, parameters: string,
-      rulelist: Rulelist|undefined = undefined, nameRange: Range,
-      parametersRange: Range|undefined, range: Range): AtRule {
+    name: string,
+    parameters: string,
+    rulelist: Rulelist | undefined = undefined,
+    nameRange: Range,
+    parametersRange: Range | undefined,
+    range: Range,
+  ): AtRule {
     return {
       type: nodeType.atRule,
       name,
@@ -43,7 +59,7 @@ class NodeFactory {
       rulelist,
       nameRange,
       parametersRange,
-      range
+      range,
     };
   }
 
@@ -71,8 +87,11 @@ class NodeFactory {
    * @param rulelist The Rulelist node that corresponds to the Selector.
    */
   ruleset(
-      selector: string, rulelist: Rulelist, selectorRange: Range,
-      range: Range): Ruleset {
+    selector: string,
+    rulelist: Rulelist,
+    selectorRange: Range,
+    range: Range,
+  ): Ruleset {
     return {type: nodeType.ruleset, selector, rulelist, selectorRange, range};
   }
 
@@ -83,8 +102,11 @@ class NodeFactory {
    * corresponds to the value of the Declaration.
    */
   declaration(
-      name: string, value: Expression|Rulelist|undefined, nameRange: Range,
-      range: Range): Declaration {
+    name: string,
+    value: Expression | Rulelist | undefined,
+    nameRange: Range,
+    range: Range,
+  ): Declaration {
     return {type: nodeType.declaration, name, value, nameRange, range};
   }
 
