@@ -9,12 +9,24 @@
  * rights grant found at http://polymer.github.io/PATENTS.txt
  */
 
+import {
+  AtRule,
+  Comment,
+  Declaration,
+  Discarded,
+  Expression,
+  nodeType,
+  Rulelist,
+  Ruleset,
+  Stylesheet,
+} from './common';
+
 /**
  * Class that implements a visitor pattern for ASTs produced by the Parser.
  * Extend the NodeVisitor class to implement useful tree traversal operations
  * such as stringification.
  */
-class NodeVisitor<Node extends{type: any}, ReturnValue> {
+class NodeVisitor<Node extends {type: nodeType}, ReturnValue> {
   private path_: Node[];
   /**
    * Create a NodeVisitor instance.
@@ -40,16 +52,27 @@ class NodeVisitor<Node extends{type: any}, ReturnValue> {
    * @return The return value of the method visiting the node, if any.
    */
   visit(node: Node) {
-    let result: ReturnValue|undefined;
-    const callback: ((token: Node) => ReturnValue)|undefined =
-        (this as any)[node.type];
+    let result: ReturnValue | undefined;
+    const callback = this[node.type];
     if (callback) {
       this.path_.push(node);
-      result = (this as any)[node.type](node);
+      result = (callback as unknown as (node: Node) => ReturnValue).call(
+        this,
+        node,
+      );
       this.path_.pop();
     }
     return result;
   }
+
+  [nodeType.stylesheet]?(node: Stylesheet): ReturnValue;
+  [nodeType.atRule]?(node: AtRule): ReturnValue;
+  [nodeType.rulelist]?(node: Rulelist): ReturnValue;
+  [nodeType.ruleset]?(node: Ruleset): ReturnValue;
+  [nodeType.expression]?(node: Expression): ReturnValue;
+  [nodeType.declaration]?(node: Declaration): ReturnValue;
+  [nodeType.comment]?(node: Comment): ReturnValue;
+  [nodeType.discarded]?(node: Discarded): ReturnValue;
 }
 
 export {NodeVisitor};

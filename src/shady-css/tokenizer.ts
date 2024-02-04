@@ -29,7 +29,7 @@ class Tokenizer {
    * Holds a reference to a Token that is "next" in the source string, often
    * due to having been peeked at.
    */
-  private currentToken_: null|Token = null;
+  private currentToken_: null | Token = null;
 
   /**
    * Create a Tokenizer instance.
@@ -49,7 +49,7 @@ class Tokenizer {
    * reference is useful for "peeking" at the next token ahead in the sequence.
    * If the entire CSS text has been tokenized, the `currentToken` will be null.
    */
-  get currentToken(): Token|null {
+  get currentToken(): Token | null {
     if (this.currentToken_ == null) {
       this.currentToken_ = this.getNextToken_();
     }
@@ -62,7 +62,7 @@ class Tokenizer {
    * @return The current token prior to the call to `advance`, or null
    * if the entire CSS text has been tokenized.
    */
-  advance(): Token|null {
+  advance(): Token | null {
     let token;
     if (this.currentToken_ != null) {
       token = this.currentToken_;
@@ -85,7 +85,10 @@ class Tokenizer {
    * @return The substring of the CSS text corresponding to the
    * startToken and endToken.
    */
-  slice(startToken: Token, endToken: Token|undefined|null = undefined): string {
+  slice(
+    startToken: Token,
+    endToken: Token | undefined | null = undefined,
+  ): string {
     const {start, end} = this.getRange(startToken, endToken);
     return this.cssText.substring(start, end);
   }
@@ -94,7 +97,7 @@ class Tokenizer {
    * Like `slice`, but returns the offsets into the source, rather than the
    * substring itself.
    */
-  getRange(startToken: Token, endToken: Token|undefined|null = undefined) {
+  getRange(startToken: Token, endToken: Token | undefined | null = undefined) {
     return {start: startToken.start, end: (endToken || startToken).end};
   }
 
@@ -125,7 +128,7 @@ class Tokenizer {
    * @return A Token instance, or null if the entire CSS text has beeen
    * tokenized.
    */
-  private getNextToken_(): Token|null {
+  private getNextToken_(): Token | null {
     const character = this.cssText[this.offset];
     let token;
 
@@ -165,7 +168,7 @@ class Tokenizer {
     const start = offset;
     let character;
 
-    while (character = this.cssText[++offset]) {
+    while ((character = this.cssText[++offset])) {
       if (escaped) {
         escaped = false;
         continue;
@@ -195,8 +198,10 @@ class Tokenizer {
     const start = offset;
     let character;
     // TODO(cdata): change to greedy regex match?
-    while ((character = this.cssText[offset]) &&
-           !matcher.boundary.test(character)) {
+    while (
+      (character = this.cssText[offset]) &&
+      !matcher.boundary.test(character)
+    ) {
       offset++;
     }
 
@@ -255,7 +260,7 @@ class Tokenizer {
   tokenizeBoundary(offset: number): Token {
     // TODO(cdata): Evaluate if this is faster than a switch statement:
     const type =
-        boundaryTokenTypes[this.cssText[offset]] || Token.type.boundary;
+      boundaryTokenTypes[this.cssText[offset]] || Token.type.boundary;
 
     return new Token(type, offset, offset + 1);
   }

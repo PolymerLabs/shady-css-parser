@@ -17,7 +17,7 @@ const matcher = {
   whitespaceGreedy: /(\s+)/g,
   commentGreedy: /(\*\/)/g,
   boundary: /[\(\)\{\}'"@;:\s]/,
-  stringBoundary: /['"]/
+  stringBoundary: /['"]/,
 };
 
 /**
@@ -31,12 +31,18 @@ export enum nodeType {
   expression = 'expression',
   declaration = 'declaration',
   rulelist = 'rulelist',
-  discarded = 'discarded'
+  discarded = 'discarded',
 }
 
-
-export type Node = Stylesheet | AtRule | Comment | Rulelist | Ruleset |
-    Expression | Declaration | Discarded;
+export type Node =
+  | Stylesheet
+  | AtRule
+  | Comment
+  | Rulelist
+  | Ruleset
+  | Expression
+  | Declaration
+  | Discarded;
 export type Rule = Ruleset | Declaration | AtRule | Discarded | Comment;
 
 /** A Stylesheet node. */
@@ -58,9 +64,9 @@ export interface AtRule {
   nameRange: Range;
   /** The "parameters" of the At Rule (e.g., `utf8`) */
   parameters: string;
-  parametersRange: Range|undefined;
+  parametersRange: Range | undefined;
   /** The Rulelist node (if any) of the At Rule. */
-  rulelist: Rulelist|undefined;
+  rulelist: Rulelist | undefined;
 
   range: Range;
 }
@@ -123,7 +129,7 @@ export interface Declaration {
    * Either an Expression node, or a Rulelist node, that
    * corresponds to the value of the Declaration.
    */
-  value: Expression|Rulelist|undefined;
+  value: Expression | Rulelist | undefined;
 
   range: Range;
 }
@@ -160,14 +166,14 @@ export interface Range {
 }
 
 export interface NodeTypeMap {
-  'stylesheet': Stylesheet;
-  'atRule': AtRule;
-  'comment': Comment;
-  'rulelist': Rulelist;
-  'ruleset': Ruleset;
-  'declaration': Declaration;
-  'expression': Expression;
-  'discarded': Discarded;
+  stylesheet: Stylesheet;
+  atRule: AtRule;
+  comment: Comment;
+  rulelist: Rulelist;
+  ruleset: Ruleset;
+  declaration: Declaration;
+  expression: Expression;
+  discarded: Discarded;
 }
 
 export {matcher};

@@ -9,7 +9,16 @@
  * rights grant found at http://polymer.github.io/PATENTS.txt
  */
 
-import {AtRule, Comment, Declaration, Discarded, Rule, Rulelist, Ruleset, Stylesheet} from './common';
+import {
+  AtRule,
+  Comment,
+  Declaration,
+  Discarded,
+  Rule,
+  Rulelist,
+  Ruleset,
+  Stylesheet,
+} from './common';
 import {NodeFactory} from './node-factory';
 import {Token} from './token';
 import {Tokenizer} from './tokenizer';
@@ -44,8 +53,10 @@ class Parser {
    * @param tokenizer A Tokenizer instance.
    */
   parseStylesheet(tokenizer: Tokenizer): Stylesheet {
-    return this.nodeFactory.stylesheet(
-        this.parseRules(tokenizer), {start: 0, end: tokenizer.cssText.length});
+    return this.nodeFactory.stylesheet(this.parseRules(tokenizer), {
+      start: 0,
+      end: tokenizer.cssText.length,
+    });
   }
 
   /**
@@ -75,7 +86,7 @@ class Parser {
    * @return If the current token in the Tokenizer is whitespace,
    *   returns null. Otherwise, returns the next parseable node.
    */
-  parseRule(tokenizer: Tokenizer): Rule|null {
+  parseRule(tokenizer: Tokenizer): Rule | null {
     // Trim leading whitespace:
     const token = tokenizer.currentToken;
     if (token === null) {
@@ -84,19 +95,14 @@ class Parser {
     if (token.is(Token.type.whitespace)) {
       tokenizer.advance();
       return null;
-
     } else if (token.is(Token.type.comment)) {
       return this.parseComment(tokenizer);
-
     } else if (token.is(Token.type.word)) {
       return this.parseDeclarationOrRuleset(tokenizer);
-
     } else if (token.is(Token.type.propertyBoundary)) {
       return this.parseUnknown(tokenizer);
-
     } else if (token.is(Token.type.at)) {
       return this.parseAtRule(tokenizer);
-
     } else {
       return this.parseUnknown(tokenizer);
     }
@@ -106,13 +112,15 @@ class Parser {
    * Consumes tokens from a Tokenizer to parse a Comment node.
    * @param tokenizer A Tokenizer instance.
    */
-  parseComment(tokenizer: Tokenizer): Comment|null {
+  parseComment(tokenizer: Tokenizer): Comment | null {
     const token = tokenizer.advance();
     if (token === null) {
       return null;
     }
-    return this.nodeFactory.comment(
-        tokenizer.slice(token), {start: token.start, end: token.end});
+    return this.nodeFactory.comment(tokenizer.slice(token), {
+      start: token.start,
+      end: token.end,
+    });
   }
 
   /**
@@ -121,7 +129,7 @@ class Parser {
    * malformed CSS conditions.
    * @param tokenizer A Tokenizer instance.
    */
-  parseUnknown(tokenizer: Tokenizer): Discarded|null {
+  parseUnknown(tokenizer: Tokenizer): Discarded | null {
     const start = tokenizer.advance();
     let end;
 
@@ -129,23 +137,27 @@ class Parser {
       return null;
     }
 
-    while (tokenizer.currentToken &&
-           tokenizer.currentToken.is(Token.type.boundary)) {
+    while (
+      tokenizer.currentToken &&
+      tokenizer.currentToken.is(Token.type.boundary)
+    ) {
       end = tokenizer.advance();
     }
 
     return this.nodeFactory.discarded(
-        tokenizer.slice(start, end), tokenizer.getRange(start, end));
+      tokenizer.slice(start, end),
+      tokenizer.getRange(start, end),
+    );
   }
 
   /**
    * Consumes tokens from a Tokenizer to parse an At Rule node.
    * @param tokenizer A Tokenizer instance.
    */
-  parseAtRule(tokenizer: Tokenizer): AtRule|null {
+  parseAtRule(tokenizer: Tokenizer): AtRule | null {
     let name = undefined;
     let nameRange = undefined;
-    let rulelist: Rulelist|undefined = undefined;
+    let rulelist: Rulelist | undefined = undefined;
     let parametersStart = undefined;
     let parametersEnd = undefined;
 
@@ -163,8 +175,10 @@ class Parser {
         const start = tokenizer.currentToken;
         let end;
 
-        while (tokenizer.currentToken &&
-               tokenizer.currentToken.is(Token.type.word)) {
+        while (
+          tokenizer.currentToken &&
+          tokenizer.currentToken.is(Token.type.word)
+        ) {
           end = tokenizer.advance();
         }
         nameRange = tokenizer.getRange(start, end);
@@ -191,15 +205,25 @@ class Parser {
     let parameters = '';
     if (parametersStart) {
       parametersRange = tokenizer.trimRange(
-          tokenizer.getRange(parametersStart, parametersEnd));
-      parameters =
-          tokenizer.cssText.slice(parametersRange.start, parametersRange.end);
+        tokenizer.getRange(parametersStart, parametersEnd),
+      );
+      parameters = tokenizer.cssText.slice(
+        parametersRange.start,
+        parametersRange.end,
+      );
     }
-    const end = tokenizer.currentToken ? tokenizer.currentToken.previous!.end :
-                                         tokenizer.cssText.length;
+    const end = tokenizer.currentToken
+      ? tokenizer.currentToken.previous!.end
+      : tokenizer.cssText.length;
 
     return this.nodeFactory.atRule(
-        name, parameters, rulelist, nameRange, parametersRange, {start, end});
+      name,
+      parameters,
+      rulelist,
+      nameRange,
+      parametersRange,
+      {start, end},
+    );
   }
 
   /**
@@ -238,7 +262,9 @@ class Parser {
    * a Ruleset node, as appropriate.
    * @param tokenizer A Tokenizer node.
    */
-  parseDeclarationOrRuleset(tokenizer: Tokenizer): Declaration|Ruleset|null {
+  parseDeclarationOrRuleset(
+    tokenizer: Tokenizer,
+  ): Declaration | Ruleset | null {
     let ruleStart = null;
     let ruleEnd = null;
     let colon = null;
@@ -252,13 +278,16 @@ class Parser {
         tokenizer.advance();
       } else if (tokenizer.currentToken.is(Token.type.openParenthesis)) {
         // skip until close paren
-        while (tokenizer.currentToken &&
-               !tokenizer.currentToken.is(Token.type.closeParenthesis)) {
+        while (
+          tokenizer.currentToken &&
+          !tokenizer.currentToken.is(Token.type.closeParenthesis)
+        ) {
           tokenizer.advance();
         }
       } else if (
-          tokenizer.currentToken.is(Token.type.openBrace) ||
-          tokenizer.currentToken.is(Token.type.propertyBoundary)) {
+        tokenizer.currentToken.is(Token.type.openBrace) ||
+        tokenizer.currentToken.is(Token.type.propertyBoundary)
+      ) {
         break;
       } else {
         if (tokenizer.currentToken.is(Token.type.colon)) {
@@ -281,32 +310,47 @@ class Parser {
 
     // A ruleset never contains or ends with a semi-colon.
     if (tokenizer.currentToken.is(Token.type.propertyBoundary)) {
-      const nameRange =
-          tokenizer.getRange(ruleStart!, colon ? colon.previous : ruleEnd);
-      const declarationName =
-          tokenizer.cssText.slice(nameRange.start, nameRange.end);
+      const nameRange = tokenizer.getRange(
+        ruleStart!,
+        colon ? colon.previous : ruleEnd,
+      );
+      const declarationName = tokenizer.cssText.slice(
+        nameRange.start,
+        nameRange.end,
+      );
 
       let expression = undefined;
       if (colon && colon.next) {
         const rawExpressionRange = tokenizer.getRange(colon.next, ruleEnd);
         const expressionRange = tokenizer.trimRange(rawExpressionRange);
-        const expressionValue =
-            tokenizer.cssText.slice(expressionRange.start, expressionRange.end);
-        expression =
-            this.nodeFactory.expression(expressionValue, expressionRange);
+        const expressionValue = tokenizer.cssText.slice(
+          expressionRange.start,
+          expressionRange.end,
+        );
+        expression = this.nodeFactory.expression(
+          expressionValue,
+          expressionRange,
+        );
       }
 
       if (tokenizer.currentToken.is(Token.type.semicolon)) {
         tokenizer.advance();
       }
 
-      const range = tokenizer.trimRange(tokenizer.getRange(
+      const range = tokenizer.trimRange(
+        tokenizer.getRange(
           ruleStart!,
-          tokenizer.currentToken && tokenizer.currentToken.previous ||
-              ruleEnd));
+          (tokenizer.currentToken && tokenizer.currentToken.previous) ||
+            ruleEnd,
+        ),
+      );
 
       return this.nodeFactory.declaration(
-          declarationName, expression, nameRange, range);
+        declarationName,
+        expression,
+        nameRange,
+        range,
+      );
       // This is the case for a mixin-like structure:
     } else if (colon && colon === ruleEnd) {
       const rulelist = this.parseRulelist(tokenizer);
@@ -316,35 +360,48 @@ class Parser {
       }
 
       const nameRange = tokenizer.getRange(ruleStart!, ruleEnd.previous);
-      const declarationName =
-          tokenizer.cssText.slice(nameRange.start, nameRange.end);
+      const declarationName = tokenizer.cssText.slice(
+        nameRange.start,
+        nameRange.end,
+      );
 
-      const range = tokenizer.trimRange(tokenizer.getRange(
+      const range = tokenizer.trimRange(
+        tokenizer.getRange(
           ruleStart!,
-          tokenizer.currentToken && tokenizer.currentToken.previous ||
-              ruleEnd));
+          (tokenizer.currentToken && tokenizer.currentToken.previous) ||
+            ruleEnd,
+        ),
+      );
 
       return this.nodeFactory.declaration(
-          declarationName, rulelist, nameRange, range);
+        declarationName,
+        rulelist,
+        nameRange,
+        range,
+      );
       // Otherwise, this is a ruleset:
     } else {
       const selectorRange = tokenizer.getRange(ruleStart!, ruleEnd);
-      const selector =
-          tokenizer.cssText.slice(selectorRange.start, selectorRange.end);
+      const selector = tokenizer.cssText.slice(
+        selectorRange.start,
+        selectorRange.end,
+      );
       const rulelist = this.parseRulelist(tokenizer);
       const start = ruleStart!.start;
       let end;
       if (tokenizer.currentToken) {
-        end = tokenizer.currentToken.previous ?
-            tokenizer.currentToken.previous.end :
-            ruleStart!.end;
+        end = tokenizer.currentToken.previous
+          ? tokenizer.currentToken.previous.end
+          : ruleStart!.end;
       } else {
         // no current token? must have reached the end of input, so go up
         // until there
         end = tokenizer.cssText.length;
       }
-      return this.nodeFactory.ruleset(
-          selector, rulelist, selectorRange, {start, end});
+      return this.nodeFactory.ruleset(selector, rulelist, selectorRange, {
+        start,
+        end,
+      });
     }
   }
 }

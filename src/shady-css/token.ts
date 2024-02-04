@@ -14,12 +14,12 @@
  */
 export enum TokenType {
   none = 0,
-  whitespace = (2 ** 0),
-  string = (2 ** 1),
-  comment = (2 ** 2),
-  word = (2 ** 3),
-  boundary = (2 ** 4),
-  propertyBoundary = (2 ** 5),
+  whitespace = 2 ** 0,
+  string = 2 ** 1,
+  comment = 2 ** 2,
+  word = 2 ** 3,
+  boundary = 2 ** 4,
+  propertyBoundary = 2 ** 5,
   // Special cases for boundary:
   openParenthesis = (2 ** 6) | TokenType.boundary,
   closeParenthesis = (2 ** 7) | TokenType.boundary,
@@ -35,10 +35,9 @@ export enum TokenType {
 
   // TODO: are these two boundaries? I mean, sometimes they are I guess? Or
   //       maybe they shouldn't exist in the boundaryTokenTypes map.
-  hyphen = (2 ** 13),
-  underscore = (2 ** 14)
+  hyphen = 2 ** 13,
+  underscore = 2 ** 14,
 }
-
 
 /**
  * Class that describes individual tokens as produced by the Tokenizer.
@@ -49,8 +48,8 @@ class Token {
   readonly type: TokenType;
   readonly start: number;
   readonly end: number;
-  previous: Token|null;
-  next: Token|null;
+  previous: Token | null;
+  next: Token | null;
 
   /**
    * Create a Token instance.
@@ -92,7 +91,7 @@ const boundaryTokenTypes: {[boundaryText: string]: TokenType | undefined} = {
   '}': Token.type.closeBrace,
   ';': Token.type.semicolon,
   '-': Token.type.hyphen,
-  '_': Token.type.underscore
+  _: Token.type.underscore,
 };
 
 export {Token, boundaryTokenTypes};
