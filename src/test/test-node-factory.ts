@@ -14,6 +14,8 @@
  */
 import {nodeType} from '../shady-css';
 
+// tslint:disable:no-any
+
 export class TestNodeFactory {
   stylesheet(rules: any[]): any {
     return {type: nodeType.stylesheet, rules};
