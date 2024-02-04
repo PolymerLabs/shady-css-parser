@@ -99,6 +99,7 @@
     "arrowParens": "always",
     "bracketSameLine": true,
     "singleAttributePerLine": false,
-    "htmlWhitespaceSensitivity": "strict"
+    "htmlWhitespaceSensitivity": "strict",
+    "endOfLine": "lf"
   }
 }
