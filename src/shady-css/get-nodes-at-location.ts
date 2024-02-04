@@ -9,8 +9,8 @@
  * rights grant found at http://polymer.github.io/PATENTS.txt
  */
 
-import { getChildren } from "./ast-iterator";
-import { Node } from "./common";
+import {getChildren} from './ast-iterator';
+import {Node} from './common';
 
 /**
  * @returns An array of nodes whose range encompases the given location.
@@ -18,10 +18,7 @@ import { Node } from "./common";
  * child of its predecessor.
  */
 export function getNodesAtLocation(
-  initialNode: Node,
-  location: number,
-  path: Node[] = []
-): Node[] {
+    initialNode: Node, location: number, path: Node[] = []): Node[] {
   let current = initialNode;
   outer: while (true) {
     for (const child of getChildren(current)) {

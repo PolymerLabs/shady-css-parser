@@ -42,10 +42,9 @@ export function* getChildren(node: Node) {
     case nodeType.expression:
     case nodeType.comment:
     case nodeType.discarded:
-      return; // no child nodes
+      return;  // no child nodes
     default:
       const never: never = node;
       console.error(`Got a node of unknown type: ${never}`);
   }
 }
-

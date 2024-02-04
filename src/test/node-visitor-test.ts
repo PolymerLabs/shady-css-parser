@@ -10,6 +10,7 @@
  */
 
 import {expect} from 'chai';
+
 import {NodeVisitor} from '../shady-css/node-visitor';
 
 type TestNode = TestNodeA|TestNodeB;

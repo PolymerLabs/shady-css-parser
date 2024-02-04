@@ -10,6 +10,7 @@
  */
 
 import {expect} from 'chai';
+
 import {Token, TokenType} from '../shady-css/token';
 
 describe('Token', () => {

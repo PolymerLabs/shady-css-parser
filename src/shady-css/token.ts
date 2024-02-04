@@ -83,7 +83,7 @@ class Token {
 /**
  * A mapping of boundary token text to their corresponding types.
  */
-const boundaryTokenTypes: {[boundaryText: string]: TokenType | undefined} = {
+const boundaryTokenTypes: {[boundaryText: string]: TokenType|undefined} = {
   '(': Token.type.openParenthesis,
   ')': Token.type.closeParenthesis,
   ':': Token.type.colon,

@@ -396,6 +396,7 @@ function*
   }
 }
 
-function nodeHasType<K extends keyof NodeTypeMap>(node: Node, type: K): node is NodeTypeMap[K] {
+function nodeHasType<K extends keyof NodeTypeMap>(
+    node: Node, type: K): node is NodeTypeMap[K] {
   return node.type === type as unknown as nodeType;
 }

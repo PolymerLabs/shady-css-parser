@@ -14,7 +14,7 @@
  * Extend the NodeVisitor class to implement useful tree traversal operations
  * such as stringification.
  */
-class NodeVisitor<Node extends{type: any}, ReturnValue> {
+class NodeVisitor<Node extends {type: any}, ReturnValue> {
   private path_: Node[];
   /**
    * Create a NodeVisitor instance.

@@ -35,9 +35,9 @@ export enum nodeType {
 }
 
 
-export type Node = Stylesheet | AtRule | Comment | Rulelist | Ruleset |
-    Expression | Declaration | Discarded;
-export type Rule = Ruleset | Declaration | AtRule | Discarded | Comment;
+export type Node =
+    Stylesheet|AtRule|Comment|Rulelist|Ruleset|Expression|Declaration|Discarded;
+export type Rule = Ruleset|Declaration|AtRule|Discarded|Comment;
 
 /** A Stylesheet node. */
 export interface Stylesheet {
