@@ -390,8 +390,12 @@ function*
     getNodesOfType<K extends keyof NodeTypeMap>(node: Node, type: K):
         Iterable<NodeTypeMap[K]> {
   for (const n of iterateOverAst(node)) {
-    if (n.type === type as any as nodeType) {
+    if (nodeHasType(n, type)) {
       yield n;
     }
   }
+}
+
+function nodeHasType<K extends keyof NodeTypeMap>(node: Node, type: K): node is NodeTypeMap[K] {
+  return node.type === type as unknown as nodeType;
 }

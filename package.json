@@ -15,7 +15,7 @@
     "mocha": "^3.0.0",
     "source-map-support": "^0.4.15",
     "tslint": "^5.5.0",
-    "typescript": "^2.4.1",
+    "typescript": "^5.3.3",
     "watchy": "^0.6.7"
   },
   "scripts": {
